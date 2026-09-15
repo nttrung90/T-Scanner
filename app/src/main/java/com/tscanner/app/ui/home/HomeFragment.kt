@@ -304,50 +304,80 @@ class HomeFragment : Fragment() {
                 }.show()
             }
             DocumentAdapter.ActionType.OCR -> {
-                val path = doc.pagePaths.firstOrNull()
-                if (path != null) {
-                    Toast.makeText(requireContext(), getString(R.string.ocr_processing), Toast.LENGTH_SHORT).show()
-                    TextRecognitionHelper.recognizeTextFromFile(
-                        requireContext(),
-                        path,
-                        onSuccess = { text ->
-                            OcrResultActivity.start(requireContext(), text)
-                        },
-                        onError = {
-                            Toast.makeText(requireContext(), getString(R.string.no_text_found), Toast.LENGTH_SHORT).show()
-                        }
-                    )
-                } else if (doc.pdfPath != null) {
-                    PdfViewerActivity.start(requireContext(), doc.pdfPath, doc.title, doc.pagePaths)
-                }
+                processDocumentOcr(doc, isWordExport = false)
             }
             DocumentAdapter.ActionType.CONVERT_WORD -> {
-                val path = doc.pagePaths.firstOrNull()
-                if (path != null) {
-                    Toast.makeText(requireContext(), "Đang trích xuất và chuyển sang Word...", Toast.LENGTH_SHORT).show()
-                    TextRecognitionHelper.recognizeTextFromFile(
-                        requireContext(),
-                        path,
-                        onSuccess = { text ->
-                            lifecycleScope.launch {
-                                val exportDir = FileUtils.getExportsDir(requireContext())
-                                val file = File(exportDir, "${doc.title}_Word.doc")
-                                PdfConverterHelper.exportTextToWord(
-                                    text = text,
-                                    outputFile = file,
-                                    addWatermark = WatermarkHelper.shouldApplyWatermark(requireContext())
-                                )
-                                FileUtils.saveFileToDownloads(requireContext(), file, "application/msword")
-                                Toast.makeText(requireContext(), "Đã tạo và lưu file Word: ${file.name}", Toast.LENGTH_LONG).show()
-                            }
-                        },
-                        onError = {
-                            Toast.makeText(requireContext(), "Không thể nhận diện văn bản", Toast.LENGTH_SHORT).show()
-                        }
-                    )
-                }
+                processDocumentOcr(doc, isWordExport = true)
             }
             else -> {}
+        }
+    }
+
+    private fun processDocumentOcr(doc: DocumentItem, isWordExport: Boolean) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val ctx = context ?: return@launch
+            var pdfFile = doc.pdfPath?.let { File(it) }?.takeIf { it.exists() }
+            if (pdfFile == null && !doc.driveFileId.isNullOrEmpty()) {
+                Toast.makeText(ctx, "Đang tải tài liệu từ Google Drive...", Toast.LENGTH_SHORT).show()
+                val downloaded = kotlinx.coroutines.suspendCancellableCoroutine<File?> { cont ->
+                    CloudBackupManager.downloadDocument(ctx, doc) { file ->
+                        if (cont.isActive) cont.resumeWith(Result.success(file))
+                    }
+                }
+                if (!isAdded || view == null) return@launch
+                pdfFile = downloaded
+            }
+
+            var pages = doc.pagePaths.filter { File(it).exists() }
+            if (pages.isEmpty() && pdfFile != null) {
+                Toast.makeText(ctx, "Đang trích xuất các trang...", Toast.LENGTH_SHORT).show()
+                pages = PdfConverterHelper.convertPdfToImages(ctx, pdfFile)
+            }
+
+            if (!isAdded || view == null) return@launch
+
+            if (pages.isEmpty()) {
+                Toast.makeText(ctx, "Không tìm thấy nội dung để nhận diện", Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+
+            val actionMsg = if (isWordExport) "Đang trích xuất và chuyển sang Word..." else getString(R.string.ocr_processing)
+            Toast.makeText(ctx, actionMsg, Toast.LENGTH_SHORT).show()
+
+            val fullText = StringBuilder()
+            for ((idx, pagePath) in pages.withIndex()) {
+                val pageText = TextRecognitionHelper.recognizeTextFromFileSync(ctx, pagePath)
+                if (pages.size > 1) {
+                    fullText.append("--- TRANG ${idx + 1} ---\n")
+                }
+                fullText.append(pageText).append("\n\n")
+            }
+
+            if (!isAdded || view == null) return@launch
+
+            val resultText = fullText.toString().trim()
+            if (resultText.isEmpty()) {
+                Toast.makeText(ctx, getString(R.string.no_text_found), Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+
+            if (isWordExport) {
+                val exportDir = FileUtils.getExportsDir(ctx)
+                val file = File(exportDir, "${doc.title}_Word.doc")
+                val success = PdfConverterHelper.exportTextToWord(
+                    text = resultText,
+                    outputFile = file,
+                    addWatermark = WatermarkHelper.shouldApplyWatermark(ctx)
+                )
+                if (success) {
+                    FileUtils.saveFileToDownloads(ctx, file, "application/msword")
+                    Toast.makeText(ctx, "Đã tạo và lưu file Word: ${file.name}", Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(ctx, "Lỗi khi lưu tập tin Word", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                OcrResultActivity.start(ctx, resultText)
+            }
         }
     }
 

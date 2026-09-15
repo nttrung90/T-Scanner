@@ -79,6 +79,14 @@ class LanguageAdapter(
                     binding.tvEngineBadge.text = "ML Kit Latin"
                     binding.tvEngineBadge.setTextColor(binding.root.context.getColor(R.color.icon_image_fg))
                 }
+                OcrType.MLKIT_JAPANESE -> {
+                    binding.tvEngineBadge.text = "ML Kit Japanese"
+                    binding.tvEngineBadge.setTextColor(binding.root.context.getColor(R.color.icon_image_fg))
+                }
+                OcrType.MLKIT_KOREAN -> {
+                    binding.tvEngineBadge.text = "ML Kit Korean"
+                    binding.tvEngineBadge.setTextColor(binding.root.context.getColor(R.color.icon_image_fg))
+                }
                 OcrType.PLAY_SERVICES_DEVANAGARI -> {
                     binding.tvEngineBadge.text = "Play Services OCR"
                     binding.tvEngineBadge.setTextColor(binding.root.context.getColor(R.color.icon_ppt_fg))

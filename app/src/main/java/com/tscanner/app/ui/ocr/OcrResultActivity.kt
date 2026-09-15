@@ -66,8 +66,16 @@ class OcrResultActivity : AppCompatActivity() {
         }
         ViewCompat.requestApplyInsets(binding.root)
 
-        extractedText = largeTextCache ?: intent.getStringExtra(EXTRA_TEXT) ?: ""
-        largeTextCache = null
+        val filePath = intent.getStringExtra(EXTRA_TEXT_FILE)
+        extractedText = if (filePath != null && File(filePath).exists()) {
+            try {
+                File(filePath).readText()
+            } catch (e: Exception) {
+                intent.getStringExtra(EXTRA_TEXT) ?: ""
+            }
+        } else {
+            intent.getStringExtra(EXTRA_TEXT) ?: ""
+        }
         if (extractedText.isEmpty()) {
             extractedText = getString(R.string.no_text_found)
         }
@@ -237,18 +245,37 @@ class OcrResultActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        if (isFinishing) {
+            val filePath = intent.getStringExtra(EXTRA_TEXT_FILE)
+            if (filePath != null) {
+                try {
+                    File(filePath).delete()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
+
     companion object {
         const val EXTRA_TEXT = "extra_ocr_text"
+        const val EXTRA_TEXT_FILE = "extra_ocr_text_file"
         const val EXTRA_ENGINE = "extra_ocr_engine"
-        private var largeTextCache: String? = null
 
         fun start(context: Context, text: String, engine: String = com.tscanner.app.utils.TextRecognitionHelper.lastEngineUsed) {
             val intent = Intent(context, OcrResultActivity::class.java).apply {
-                if (text.length > 50_000) {
-                    largeTextCache = text
-                    putExtra(EXTRA_TEXT, "")
+                if (text.length > 10_000) {
+                    try {
+                        val tempFile = File(context.cacheDir, "ocr_res_${System.currentTimeMillis()}.txt")
+                        tempFile.writeText(text)
+                        putExtra(EXTRA_TEXT_FILE, tempFile.absolutePath)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        putExtra(EXTRA_TEXT, text)
+                    }
                 } else {
-                    largeTextCache = null
                     putExtra(EXTRA_TEXT, text)
                 }
                 putExtra(EXTRA_ENGINE, engine)

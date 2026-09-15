@@ -118,7 +118,11 @@ object PdfConverterHelper {
         }
     }
 
-    suspend fun convertPdfToImages(context: Context, pdfFile: File, outputDir: File): List<String> = withContext(Dispatchers.IO) {
+    suspend fun convertPdfToImages(
+        context: Context,
+        pdfFile: File,
+        outputDir: File = FileUtils.getPdfPreviewDir(context)
+    ): List<String> = withContext(Dispatchers.IO) {
         val imagePaths = mutableListOf<String>()
         var fileDescriptor: ParcelFileDescriptor? = null
         var renderer: PdfRenderer? = null
@@ -201,67 +205,73 @@ object PdfConverterHelper {
     ): Boolean = withContext(Dispatchers.IO) {
         var fileDescriptor: ParcelFileDescriptor? = null
         var renderer: PdfRenderer? = null
+        var longBitmap: Bitmap? = null
         try {
             fileDescriptor = ParcelFileDescriptor.open(pdfFile, ParcelFileDescriptor.MODE_READ_ONLY)
             renderer = PdfRenderer(fileDescriptor)
             val pageCount = renderer.pageCount
             if (pageCount == 0) return@withContext false
 
-            val bitmaps = mutableListOf<Bitmap>()
-            var maxWidth = 0
-            var totalHeight = 0
-
+            // Pass 1: Measure dimensions with uniform scaled width
+            val baseWidth = 1080
+            val pageHeights = mutableListOf<Int>()
             for (i in 0 until pageCount) {
                 val page = renderer.openPage(i)
-                val width = page.width
-                val height = page.height
-                val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-                bmp.eraseColor(Color.WHITE)
-                page.render(bmp, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+                val pw = page.width.coerceAtLeast(1)
+                val ph = page.height.coerceAtLeast(1)
+                val scaledH = ((ph.toFloat() / pw) * baseWidth).toInt().coerceAtLeast(1)
+                pageHeights.add(scaledH)
                 page.close()
-
-                bitmaps.add(bmp)
-                if (width > maxWidth) maxWidth = width
-                totalHeight += height
             }
 
-            if (totalHeight > 16384) {
-                // Scale down if total height exceeds max Android canvas limit (typically 16k)
-                val scale = 16384f / totalHeight
-                maxWidth = (maxWidth * scale).toInt()
-                totalHeight = 16384
+            var finalWidth = baseWidth
+            var totalHeight = pageHeights.sum()
+
+            // Max canvas dimension in Android is typically 16384
+            val maxCanvasHeight = 16384
+            val heightScale = if (totalHeight > maxCanvasHeight) maxCanvasHeight.toFloat() / totalHeight else 1.0f
+            if (heightScale < 1.0f) {
+                finalWidth = (baseWidth * heightScale).toInt().coerceAtLeast(100)
+                for (i in pageHeights.indices) {
+                    pageHeights[i] = (pageHeights[i] * heightScale).toInt().coerceAtLeast(1)
+                }
+                totalHeight = pageHeights.sum()
             }
 
-            val longBitmap = Bitmap.createBitmap(maxWidth, totalHeight, Bitmap.Config.ARGB_8888)
+            longBitmap = Bitmap.createBitmap(finalWidth, totalHeight, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(longBitmap)
             canvas.drawColor(Color.WHITE)
             val paint = Paint(Paint.FILTER_BITMAP_FLAG)
 
-            var currentY = 0f
-            for (bmp in bitmaps) {
-                val scaledBmp = if (bmp.width != maxWidth) {
-                    val scale = maxWidth.toFloat() / bmp.width
-                    Bitmap.createScaledBitmap(bmp, maxWidth, (bmp.height * scale).toInt(), true)
-                } else bmp
-                canvas.drawBitmap(scaledBmp, 0f, currentY, paint)
-                currentY += scaledBmp.height
-                if (scaledBmp != bmp) scaledBmp.recycle()
-                bmp.recycle()
+            // Pass 2: Stream render each page one by one to avoid OOM
+            var currentY = 0
+            for (i in 0 until pageCount) {
+                val page = renderer.openPage(i)
+                val pageH = pageHeights[i]
+                val pageBitmap = Bitmap.createBitmap(finalWidth, pageH, Bitmap.Config.ARGB_8888)
+                pageBitmap.eraseColor(Color.WHITE)
+                page.render(pageBitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+                page.close()
+
+                canvas.drawBitmap(pageBitmap, 0f, currentY.toFloat(), paint)
+                currentY += pageH
+                pageBitmap.recycle()
             }
 
             if (addWatermark) {
-                WatermarkHelper.drawBottomRightWatermark(canvas, maxWidth.toFloat(), totalHeight.toFloat())
+                WatermarkHelper.drawBottomRightWatermark(canvas, finalWidth.toFloat(), totalHeight.toFloat())
             }
 
+            outputFile.parentFile?.mkdirs()
             FileOutputStream(outputFile).use { out ->
                 longBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out)
             }
-            longBitmap.recycle()
             true
         } catch (e: Exception) {
             e.printStackTrace()
             false
         } finally {
+            longBitmap?.recycle()
             try {
                 renderer?.close()
                 fileDescriptor?.close()

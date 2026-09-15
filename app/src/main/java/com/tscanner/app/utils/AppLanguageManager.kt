@@ -10,7 +10,9 @@ import java.util.Locale
 
 enum class OcrType {
     TESSERACT_PRIMARY,          // vi, en (Mặc định Tiếng Việt & Tiếng Anh dùng Tesseract OCR v5 LSTM)
-    PADDLE_OCR_V4,              // zh, ja, ko (Thế mạnh vượt trội của PaddleOCR v4 Mobile)
+    PADDLE_OCR_V4,              // zh (PaddleOCR v4 Mobile Baidu ONNX cho Tiếng Trung)
+    MLKIT_JAPANESE,             // ja (Google ML Kit Japanese Text Recognizer)
+    MLKIT_KOREAN,               // ko (Google ML Kit Korean Text Recognizer)
     MLKIT_LATIN,                // 29 ngôn ngữ Latin khác (Google ML Kit Latin)
     PLAY_SERVICES_DEVANAGARI,   // hi (Google Play Services Devanagari)
     UNSUPPORTED_ON_DEVICE       // th, ar
@@ -37,10 +39,10 @@ object AppLanguageManager {
         SupportedLanguage("vi", "Tiếng Việt", "Tiếng Việt", "🇻🇳", OcrType.TESSERACT_PRIMARY),
         SupportedLanguage("en", "English", "Tiếng Anh", "🇺🇸", OcrType.TESSERACT_PRIMARY),
 
-        // 2. Nhóm ngôn ngữ Châu Á thế mạnh sử dụng PaddleOCR v4 Mobile:
+        // 2. Nhóm ngôn ngữ Châu Á với nhận diện chuyên biệt:
         SupportedLanguage("zh", "中文 (简体)", "Tiếng Trung (Giản thể)", "🇨🇳", OcrType.PADDLE_OCR_V4),
-        SupportedLanguage("ja", "日本語", "Tiếng Nhật", "🇯🇵", OcrType.PADDLE_OCR_V4),
-        SupportedLanguage("ko", "한국어", "Tiếng Hàn", "🇰🇷", OcrType.PADDLE_OCR_V4),
+        SupportedLanguage("ja", "日本語", "Tiếng Nhật", "🇯🇵", OcrType.MLKIT_JAPANESE),
+        SupportedLanguage("ko", "한국어", "Tiếng Hàn", "🇰🇷", OcrType.MLKIT_KOREAN),
 
         // 2. 29 ngôn ngữ giữ nguyên cơ chế OCR của ML Kit (Latin):
         SupportedLanguage("fr", "Français", "Tiếng Pháp", "🇫🇷", OcrType.MLKIT_LATIN),

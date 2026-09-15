@@ -160,10 +160,20 @@ object FileUtils {
                     uri = context.contentResolver.insert(MediaStore.Files.getContentUri("external"), values)
                 }
                 if (uri != null) {
-                    context.contentResolver.openOutputStream(uri)?.use { out ->
+                    val outStream = context.contentResolver.openOutputStream(uri)
+                    if (outStream == null) {
+                        context.contentResolver.delete(uri, null, null)
+                        return null
+                    }
+                    var bytesCopied = 0L
+                    outStream.use { out ->
                         file.inputStream().use { input ->
-                            input.copyTo(out)
+                            bytesCopied = input.copyTo(out)
                         }
+                    }
+                    if (file.length() > 0L && bytesCopied == 0L) {
+                        context.contentResolver.delete(uri, null, null)
+                        return null
                     }
                     values.clear()
                     values.put(MediaStore.MediaColumns.IS_PENDING, 0)
@@ -175,7 +185,9 @@ object FileUtils {
                 if (!downloadsDir.exists()) downloadsDir.mkdirs()
                 val dest = File(downloadsDir, fileName)
                 file.copyTo(dest, overwrite = true)
-                Uri.fromFile(dest)
+                if (dest.exists() && (file.length() == 0L || dest.length() > 0L)) {
+                    Uri.fromFile(dest)
+                } else null
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -200,12 +212,14 @@ object FileUtils {
 
     fun copyFileToUri(context: Context, sourceFile: File, targetUri: Uri): Boolean {
         return try {
-            context.contentResolver.openOutputStream(targetUri)?.use { out ->
+            val out = context.contentResolver.openOutputStream(targetUri) ?: return false
+            var bytesCopied = 0L
+            out.use { output ->
                 sourceFile.inputStream().use { input ->
-                    input.copyTo(out)
+                    bytesCopied = input.copyTo(output)
                 }
             }
-            true
+            !(sourceFile.length() > 0L && bytesCopied == 0L)
         } catch (e: Exception) {
             e.printStackTrace()
             false
@@ -224,10 +238,20 @@ object FileUtils {
             val fileName = targetFileName ?: sourceFile.name
             val cleanMime = if (mimeType.isBlank()) "application/octet-stream" else mimeType
             val newFile = rootDoc.createFile(cleanMime, fileName) ?: return null
-            context.contentResolver.openOutputStream(newFile.uri)?.use { out ->
+            val out = context.contentResolver.openOutputStream(newFile.uri)
+            if (out == null) {
+                newFile.delete()
+                return null
+            }
+            var bytesCopied = 0L
+            out.use { output ->
                 sourceFile.inputStream().use { input ->
-                    input.copyTo(out)
+                    bytesCopied = input.copyTo(output)
                 }
+            }
+            if (sourceFile.length() > 0L && bytesCopied == 0L) {
+                newFile.delete()
+                return null
             }
             newFile.uri
         } catch (e: Exception) {
@@ -248,12 +272,22 @@ object FileUtils {
             for (file in sourceFiles) {
                 val newFile = rootDoc.createFile(mimeType, file.name)
                 if (newFile != null) {
-                    context.contentResolver.openOutputStream(newFile.uri)?.use { out ->
-                        file.inputStream().use { input ->
-                            input.copyTo(out)
+                    val out = context.contentResolver.openOutputStream(newFile.uri)
+                    if (out != null) {
+                        var bytesCopied = 0L
+                        out.use { o ->
+                            file.inputStream().use { input ->
+                                bytesCopied = input.copyTo(o)
+                            }
                         }
+                        if (file.length() == 0L || bytesCopied > 0L) {
+                            savedUris.add(newFile.uri)
+                        } else {
+                            newFile.delete()
+                        }
+                    } else {
+                        newFile.delete()
                     }
-                    savedUris.add(newFile.uri)
                 }
             }
         } catch (e: Exception) {

@@ -8,7 +8,10 @@ import android.util.Log
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.TextRecognizer
+import com.google.mlkit.vision.text.chinese.ChineseTextRecognizerOptions
 import com.google.mlkit.vision.text.devanagari.DevanagariTextRecognizerOptions
+import com.google.mlkit.vision.text.japanese.JapaneseTextRecognizerOptions
+import com.google.mlkit.vision.text.korean.KoreanTextRecognizerOptions
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.tscanner.app.paddleocr.PaddleOcrEngine
 import kotlinx.coroutines.CoroutineScope
@@ -170,7 +173,13 @@ object TextRecognitionHelper {
 
         // 3. User explicitly set Google ML Kit
         if (preferred == ENGINE_MODE_MLKIT) {
-            val mlKitText = runMlKitLatin(bitmap, "Google ML Kit ($langLabel)")
+            val mlKitText = when (ocrType) {
+                OcrType.MLKIT_JAPANESE -> runMlKitJapanese(bitmap, "Google ML Kit ($langLabel)")
+                OcrType.MLKIT_KOREAN -> runMlKitKorean(bitmap, "Google ML Kit ($langLabel)")
+                OcrType.PLAY_SERVICES_DEVANAGARI -> runMlKitDevanagari(bitmap, "Google ML Kit ($langLabel)")
+                OcrType.PADDLE_OCR_V4 -> runMlKitChinese(bitmap, "Google ML Kit ($langLabel)")
+                else -> runMlKitLatin(bitmap, "Google ML Kit ($langLabel)")
+            }
             if (mlKitText.isNotBlank()) {
                 return mlKitText
             }
@@ -213,19 +222,53 @@ object TextRecognitionHelper {
             }
 
             OcrType.PADDLE_OCR_V4 -> {
-                // zh, ja, ko: Primary is PaddleOCR v4 Mobile (Baidu ONNX)
+                // zh: Primary is PaddleOCR v4 Mobile (Baidu ONNX)
                 val paddleText = runPaddleOcr(context, bitmap)
                 if (paddleText.isNotBlank()) {
                     lastEngineUsed = "PaddleOCR v4 Mobile ($langLabel)"
                     return paddleText
                 }
-                // Fallback 1: Tesseract
+                // Fallback 1: ML Kit Chinese
+                val mlChinese = runMlKitChinese(bitmap, "Google ML Kit (Tiếng Trung)")
+                if (mlChinese.isNotBlank()) {
+                    return mlChinese
+                }
+                // Fallback 2: Tesseract
                 val tessText = runTesseract(context, bitmap, "eng")
                 if (tessText.isNotBlank()) {
                     lastEngineUsed = "Tesseract OCR v5 (Dự phòng)"
                     return tessText
                 }
-                // Fallback 2: ML Kit Latin
+                runMlKitLatin(bitmap, "Google ML Kit (Dự phòng)")
+            }
+
+            OcrType.MLKIT_JAPANESE -> {
+                // ja: Primary is dedicated ML Kit Japanese Recognizer
+                val jaText = runMlKitJapanese(bitmap, "Google ML Kit (Tiếng Nhật)")
+                if (jaText.isNotBlank()) {
+                    return jaText
+                }
+                // Fallback: PaddleOCR
+                val paddleText = runPaddleOcr(context, bitmap)
+                if (paddleText.isNotBlank()) {
+                    lastEngineUsed = "PaddleOCR v4 Mobile (Dự phòng)"
+                    return paddleText
+                }
+                runMlKitLatin(bitmap, "Google ML Kit (Dự phòng)")
+            }
+
+            OcrType.MLKIT_KOREAN -> {
+                // ko: Primary is dedicated ML Kit Korean Recognizer
+                val koText = runMlKitKorean(bitmap, "Google ML Kit (Tiếng Hàn)")
+                if (koText.isNotBlank()) {
+                    return koText
+                }
+                // Fallback: PaddleOCR
+                val paddleText = runPaddleOcr(context, bitmap)
+                if (paddleText.isNotBlank()) {
+                    lastEngineUsed = "PaddleOCR v4 Mobile (Dự phòng)"
+                    return paddleText
+                }
                 runMlKitLatin(bitmap, "Google ML Kit (Dự phòng)")
             }
 
@@ -269,6 +312,96 @@ object TextRecognitionHelper {
         } catch (t: Throwable) {
             Log.w(TAG, "Tesseract execution failed: ${t.message}")
             ""
+        }
+    }
+
+    private suspend fun runMlKitJapanese(bitmap: Bitmap, engineLabel: String): String {
+        return suspendCancellableCoroutine { cont ->
+            try {
+                val recognizer = TextRecognition.getClient(JapaneseTextRecognizerOptions.Builder().build())
+                val image = InputImage.fromBitmap(bitmap, 0)
+                recognizer.process(image)
+                    .addOnSuccessListener { visionText ->
+                        val res = visionText.text.trim()
+                        if (res.isNotBlank()) {
+                            lastEngineUsed = engineLabel
+                        }
+                        if (cont.isActive) {
+                            cont.resumeWith(Result.success(res))
+                        }
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w(TAG, "ML Kit Japanese failed: ${e.message}")
+                        if (cont.isActive) {
+                            cont.resumeWith(Result.success(""))
+                        }
+                    }
+            } catch (t: Throwable) {
+                Log.e(TAG, "Error in ML Kit Japanese: ${t.message}", t)
+                if (cont.isActive) {
+                    cont.resumeWith(Result.success(""))
+                }
+            }
+        }
+    }
+
+    private suspend fun runMlKitKorean(bitmap: Bitmap, engineLabel: String): String {
+        return suspendCancellableCoroutine { cont ->
+            try {
+                val recognizer = TextRecognition.getClient(KoreanTextRecognizerOptions.Builder().build())
+                val image = InputImage.fromBitmap(bitmap, 0)
+                recognizer.process(image)
+                    .addOnSuccessListener { visionText ->
+                        val res = visionText.text.trim()
+                        if (res.isNotBlank()) {
+                            lastEngineUsed = engineLabel
+                        }
+                        if (cont.isActive) {
+                            cont.resumeWith(Result.success(res))
+                        }
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w(TAG, "ML Kit Korean failed: ${e.message}")
+                        if (cont.isActive) {
+                            cont.resumeWith(Result.success(""))
+                        }
+                    }
+            } catch (t: Throwable) {
+                Log.e(TAG, "Error in ML Kit Korean: ${t.message}", t)
+                if (cont.isActive) {
+                    cont.resumeWith(Result.success(""))
+                }
+            }
+        }
+    }
+
+    private suspend fun runMlKitChinese(bitmap: Bitmap, engineLabel: String): String {
+        return suspendCancellableCoroutine { cont ->
+            try {
+                val recognizer = TextRecognition.getClient(ChineseTextRecognizerOptions.Builder().build())
+                val image = InputImage.fromBitmap(bitmap, 0)
+                recognizer.process(image)
+                    .addOnSuccessListener { visionText ->
+                        val res = visionText.text.trim()
+                        if (res.isNotBlank()) {
+                            lastEngineUsed = engineLabel
+                        }
+                        if (cont.isActive) {
+                            cont.resumeWith(Result.success(res))
+                        }
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w(TAG, "ML Kit Chinese failed: ${e.message}")
+                        if (cont.isActive) {
+                            cont.resumeWith(Result.success(""))
+                        }
+                    }
+            } catch (t: Throwable) {
+                Log.e(TAG, "Error in ML Kit Chinese: ${t.message}", t)
+                if (cont.isActive) {
+                    cont.resumeWith(Result.success(""))
+                }
+            }
         }
     }
 

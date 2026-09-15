@@ -230,35 +230,46 @@ class CropOverlayView @JvmOverloads constructor(
         return TouchHandle.NONE
     }
 
+    private fun safeClamp(value: Float, minVal: Float, maxVal: Float): Float {
+        return if (minVal <= maxVal) {
+            value.coerceIn(minVal, maxVal)
+        } else {
+            (minVal + maxVal) / 2f
+        }
+    }
+
     private fun applyMove(handle: TouchHandle, dx: Float, dy: Float) {
+        val minW = minCropSize.coerceAtMost(imageBounds.width() * 0.5f).coerceAtLeast(10f)
+        val minH = minCropSize.coerceAtMost(imageBounds.height() * 0.5f).coerceAtLeast(10f)
+
         when (handle) {
             TouchHandle.EDGE_TOP -> {
-                cropRect.top = (cropRect.top + dy).coerceIn(imageBounds.top, cropRect.bottom - minCropSize)
+                cropRect.top = safeClamp(cropRect.top + dy, imageBounds.top, cropRect.bottom - minH)
             }
             TouchHandle.EDGE_BOTTOM -> {
-                cropRect.bottom = (cropRect.bottom + dy).coerceIn(cropRect.top + minCropSize, imageBounds.bottom)
+                cropRect.bottom = safeClamp(cropRect.bottom + dy, cropRect.top + minH, imageBounds.bottom)
             }
             TouchHandle.EDGE_LEFT -> {
-                cropRect.left = (cropRect.left + dx).coerceIn(imageBounds.left, cropRect.right - minCropSize)
+                cropRect.left = safeClamp(cropRect.left + dx, imageBounds.left, cropRect.right - minW)
             }
             TouchHandle.EDGE_RIGHT -> {
-                cropRect.right = (cropRect.right + dx).coerceIn(cropRect.left + minCropSize, imageBounds.right)
+                cropRect.right = safeClamp(cropRect.right + dx, cropRect.left + minW, imageBounds.right)
             }
             TouchHandle.CORNER_TOP_LEFT -> {
-                cropRect.left = (cropRect.left + dx).coerceIn(imageBounds.left, cropRect.right - minCropSize)
-                cropRect.top = (cropRect.top + dy).coerceIn(imageBounds.top, cropRect.bottom - minCropSize)
+                cropRect.left = safeClamp(cropRect.left + dx, imageBounds.left, cropRect.right - minW)
+                cropRect.top = safeClamp(cropRect.top + dy, imageBounds.top, cropRect.bottom - minH)
             }
             TouchHandle.CORNER_TOP_RIGHT -> {
-                cropRect.right = (cropRect.right + dx).coerceIn(cropRect.left + minCropSize, imageBounds.right)
-                cropRect.top = (cropRect.top + dy).coerceIn(imageBounds.top, cropRect.bottom - minCropSize)
+                cropRect.right = safeClamp(cropRect.right + dx, cropRect.left + minW, imageBounds.right)
+                cropRect.top = safeClamp(cropRect.top + dy, imageBounds.top, cropRect.bottom - minH)
             }
             TouchHandle.CORNER_BOTTOM_LEFT -> {
-                cropRect.left = (cropRect.left + dx).coerceIn(imageBounds.left, cropRect.right - minCropSize)
-                cropRect.bottom = (cropRect.bottom + dy).coerceIn(cropRect.top + minCropSize, imageBounds.bottom)
+                cropRect.left = safeClamp(cropRect.left + dx, imageBounds.left, cropRect.right - minW)
+                cropRect.bottom = safeClamp(cropRect.bottom + dy, cropRect.top + minH, imageBounds.bottom)
             }
             TouchHandle.CORNER_BOTTOM_RIGHT -> {
-                cropRect.right = (cropRect.right + dx).coerceIn(cropRect.left + minCropSize, imageBounds.right)
-                cropRect.bottom = (cropRect.bottom + dy).coerceIn(cropRect.top + minCropSize, imageBounds.bottom)
+                cropRect.right = safeClamp(cropRect.right + dx, cropRect.left + minW, imageBounds.right)
+                cropRect.bottom = safeClamp(cropRect.bottom + dy, cropRect.top + minH, imageBounds.bottom)
             }
             TouchHandle.PAN -> {
                 var newLeft = cropRect.left + dx
