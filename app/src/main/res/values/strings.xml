@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">T-Scanner</string>
     
     <!-- Navigation Tabs -->
@@ -256,4 +256,32 @@
     <string name="converting_wait">Converting, please wait...</string>
     <string name="extracted_images_count">Extracted %1$d images from PDF</string>
     <string name="presentation_created">Presentation created with %1$d slides</string>
+
+    <!-- Post-Scan Editor Strings -->
+    <string name="btn_preview" tools:ignore="MissingTranslation">Preview</string>
+    <string name="btn_save_pdf" tools:ignore="MissingTranslation">Save PDF</string>
+    <string name="view_initial_image" tools:ignore="MissingTranslation">View initial image</string>
+    <string name="tool_filter" tools:ignore="MissingTranslation">Filters</string>
+    <string name="tool_filter_desc" tools:ignore="MissingTranslation">Original, Gray, B&amp;W</string>
+    <string name="tool_enhance" tools:ignore="MissingTranslation">Sharpen</string>
+    <string name="tool_enhance_desc" tools:ignore="MissingTranslation">Adjust sharpness</string>
+    <string name="tool_crop_rotate" tools:ignore="MissingTranslation">Crop &amp; Rotate</string>
+    <string name="tool_crop_rotate_desc" tools:ignore="MissingTranslation">Frame &amp; Rotate</string>
+    <string name="tool_clean" tools:ignore="MissingTranslation">Clean</string>
+    <string name="tool_clean_desc" tools:ignore="MissingTranslation">Shadow &amp; Lighten</string>
+    <string name="filter_original" tools:ignore="MissingTranslation">Original</string>
+    <string name="filter_grayscale" tools:ignore="MissingTranslation">Grayscale</string>
+    <string name="filter_black_white" tools:ignore="MissingTranslation">Black &amp; White</string>
+    <string name="apply_all_pages" tools:ignore="MissingTranslation">All pages</string>
+    <string name="undo_page" tools:ignore="MissingTranslation">Undo</string>
+    <string name="apply_changes" tools:ignore="MissingTranslation">Apply</string>
+    <string name="shadow_reduction" tools:ignore="MissingTranslation">Shadow reduction</string>
+    <string name="background_lighten" tools:ignore="MissingTranslation">Background whitening</string>
+    <string name="sharpness_level" tools:ignore="MissingTranslation">Sharpness</string>
+    <string name="page_indicator_format" tools:ignore="MissingTranslation">Page %1$d / %2$d</string>
+    <string name="discard_session_title" tools:ignore="MissingTranslation">Discard edits?</string>
+    <string name="discard_session_msg" tools:ignore="MissingTranslation">Unsaved changes will be lost. Are you sure you want to discard this scan session?</string>
+    <string name="discard_session_btn" tools:ignore="MissingTranslation">Discard</string>
+    <string name="keep_editing_btn" tools:ignore="MissingTranslation">Keep editing</string>
+    <string name="rendering_full_res" tools:ignore="MissingTranslation">Rendering high quality document...</string>
 </resources>

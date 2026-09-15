@@ -256,4 +256,32 @@
     <string name="converting_wait">Đang chuyển đổi, vui lòng đợi...</string>
     <string name="extracted_images_count">Đã trích xuất %1$d hình ảnh từ PDF</string>
     <string name="presentation_created">Đã tạo bài thuyết trình với %1$d trang</string>
+
+    <!-- Post-Scan Editor Strings -->
+    <string name="btn_preview">Xem trước</string>
+    <string name="btn_save_pdf">Lưu PDF</string>
+    <string name="view_initial_image">Xem ảnh ban đầu</string>
+    <string name="tool_filter">Bộ lọc</string>
+    <string name="tool_filter_desc">Gốc, xám, đen trắng</string>
+    <string name="tool_enhance">Tăng nét</string>
+    <string name="tool_enhance_desc">Điều chỉnh độ nét</string>
+    <string name="tool_crop_rotate">Cắt &amp; xoay</string>
+    <string name="tool_crop_rotate_desc">Cắt khung, xoay ảnh</string>
+    <string name="tool_clean">Làm sạch</string>
+    <string name="tool_clean_desc">Giảm bóng, làm sáng nền</string>
+    <string name="filter_original">Ảnh ban đầu</string>
+    <string name="filter_grayscale">Thang xám</string>
+    <string name="filter_black_white">Đen trắng</string>
+    <string name="apply_all_pages">Tất cả trang</string>
+    <string name="undo_page">Hoàn tác</string>
+    <string name="apply_changes">Áp dụng</string>
+    <string name="shadow_reduction">Giảm bóng</string>
+    <string name="background_lighten">Làm sáng nền</string>
+    <string name="sharpness_level">Cường độ nét</string>
+    <string name="page_indicator_format">Trang %1$d / %2$d</string>
+    <string name="discard_session_title">Hủy chỉnh sửa?</string>
+    <string name="discard_session_msg">Các thay đổi chưa lưu sẽ bị mất. Bạn có chắc chắn muốn hủy phiên quét này không?</string>
+    <string name="discard_session_btn">Hủy tài liệu</string>
+    <string name="keep_editing_btn">Tiếp tục chỉnh sửa</string>
+    <string name="rendering_full_res">Đang xử lý ảnh chất lượng cao...</string>
 </resources>

@@ -1,0 +1,152 @@
+package com.tscanner.app.utils
+
+import android.graphics.BitmapFactory
+import android.graphics.pdf.PdfRenderer
+import android.os.ParcelFileDescriptor
+import android.util.Log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
+import java.io.File
+import java.nio.file.AtomicMoveNotSupportedException
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
+
+/**
+ * R04: SafeFileWriter guarantees that destination files are never truncated or corrupted
+ * when generating PDFs, JPEGs, or saving documents.
+ * It writes to a temporary file in the same directory, validates contents,
+ * and atomically replaces the destination file.
+ */
+object SafeFileWriter {
+
+    private const val TAG = "SafeFileWriter"
+    private val pathLocks = ConcurrentHashMap<String, Mutex>()
+
+    sealed class Result {
+        data class Success(val file: File) : Result()
+        data class Error(val message: String, val cause: Throwable? = null) : Result()
+    }
+
+    private fun getLock(file: File): Mutex {
+        val key = file.canonicalPath
+        return pathLocks.computeIfAbsent(key) { Mutex() }
+    }
+
+    /**
+     * Atomically and safely writes a file.
+     * @param destinationFile The target destination file.
+     * @param validator Optional validator run on temp file before replacing destination.
+     * @param writer Action that writes content into the provided temp file.
+     */
+    suspend fun writeSafely(
+        destinationFile: File,
+        validator: ((File) -> Boolean)? = null,
+        writer: suspend (File) -> Boolean
+    ): Result = withContext(Dispatchers.IO) {
+        val parentDir = destinationFile.parentFile ?: return@withContext Result.Error("Parent directory is null")
+        if (!parentDir.exists()) {
+            parentDir.mkdirs()
+        }
+
+        val mutex = getLock(destinationFile)
+        mutex.withLock {
+            val tempFile = File(parentDir, "safe_tmp_${System.currentTimeMillis()}_${UUID.randomUUID()}.tmp")
+            try {
+                val writeSuccess = writer(tempFile)
+                if (!writeSuccess || !tempFile.exists() || tempFile.length() == 0L) {
+                    tempFile.delete()
+                    return@withContext Result.Error("Writer returned false or created an empty file")
+                }
+
+                // Run validator if provided
+                if (validator != null && !validator(tempFile)) {
+                    tempFile.delete()
+                    return@withContext Result.Error("File validation failed for ${tempFile.name}")
+                }
+
+                // Atomic replacement
+                val commitSuccess = commitAtomic(tempFile, destinationFile)
+                if (commitSuccess) {
+                    Result.Success(destinationFile)
+                } else {
+                    tempFile.delete()
+                    Result.Error("Failed to atomically replace destination file ${destinationFile.absolutePath}")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "SafeFileWriter error writing to ${destinationFile.absolutePath}", e)
+                try { tempFile.delete() } catch (_: Exception) {}
+                Result.Error("Exception during safe write: ${e.message}", e)
+            }
+        }
+    }
+
+    private fun commitAtomic(sourceTemp: File, destination: File): Boolean {
+        return try {
+            try {
+                Files.move(
+                    sourceTemp.toPath(),
+                    destination.toPath(),
+                    StandardCopyOption.ATOMIC_MOVE,
+                    StandardCopyOption.REPLACE_EXISTING
+                )
+                true
+            } catch (e: AtomicMoveNotSupportedException) {
+                // Fallback within same directory if ATOMIC_MOVE not supported by filesystem
+                Files.move(
+                    sourceTemp.toPath(),
+                    destination.toPath(),
+                    StandardCopyOption.REPLACE_EXISTING
+                )
+                true
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "Files.move failed, falling back to renameTo: ${e.message}")
+            if (destination.exists()) {
+                destination.delete()
+            }
+            sourceTemp.renameTo(destination)
+        }
+    }
+
+    /**
+     * Helper to validate that a PDF file can be parsed and opened.
+     */
+    fun validatePdf(file: File, expectedMinPages: Int = 1): Boolean {
+        if (!file.exists() || file.length() < 32L) return false
+        var pfd: ParcelFileDescriptor? = null
+        var renderer: PdfRenderer? = null
+        return try {
+            pfd = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
+            renderer = PdfRenderer(pfd)
+            val pageCount = renderer.pageCount
+            pageCount >= expectedMinPages
+        } catch (e: Exception) {
+            Log.w(TAG, "PDF validation failed for ${file.name}: ${e.message}")
+            false
+        } finally {
+            try { renderer?.close() } catch (_: Exception) {}
+            try { pfd?.close() } catch (_: Exception) {}
+        }
+    }
+
+    /**
+     * Helper to validate that a JPEG/image file has valid dimensions and header.
+     */
+    fun validateImage(file: File): Boolean {
+        if (!file.exists() || file.length() < 16L) return false
+        return try {
+            val options = BitmapFactory.Options().apply {
+                inJustDecodeBounds = true
+            }
+            BitmapFactory.decodeFile(file.absolutePath, options)
+            options.outWidth > 0 && options.outHeight > 0
+        } catch (e: Exception) {
+            Log.w(TAG, "Image validation failed for ${file.name}: ${e.message}")
+            false
+        }
+    }
+}

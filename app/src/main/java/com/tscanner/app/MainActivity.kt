@@ -99,11 +99,10 @@ class MainActivity : AppCompatActivity() {
             scannerHelper.handleScanResult(
                 result = result,
                 onSuccess = { session ->
-                    if (session.tempPagePaths.isNotEmpty() || session.tempPdfPath != null) {
-                        PdfViewerActivity.startForNewScan(
+                    if (session.tempPagePaths.isNotEmpty()) {
+                        com.tscanner.app.ui.editor.PostScanEditorActivity.start(
                             context = this,
                             sessionId = session.sessionId,
-                            pdfPath = session.tempPdfPath,
                             pagePaths = session.tempPagePaths
                         )
                     } else {

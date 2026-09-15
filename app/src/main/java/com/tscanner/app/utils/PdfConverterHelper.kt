@@ -11,6 +11,7 @@ import android.graphics.pdf.PdfDocument
 import android.graphics.pdf.PdfRenderer
 import androidx.exifinterface.media.ExifInterface
 import android.os.ParcelFileDescriptor
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -40,82 +41,75 @@ object PdfConverterHelper {
             }
         }
 
-        val tempFile = File(parentDir, "tmp_${System.currentTimeMillis()}_${UUID.randomUUID()}.pdf")
-        val pdfDoc = PdfDocument()
-        var pagesAdded = 0
-
-        try {
-            for (path in imagePaths) {
-                val rawBitmap = BitmapFactory.decodeFile(path) ?: run {
-                    // Fail safe: If any image cannot be decoded, do NOT create an incomplete PDF
-                    pdfDoc.close()
-                    tempFile.delete()
-                    return@withContext false
-                }
-
-                val rotationDegrees = try {
-                    val exif = ExifInterface(path)
-                    when (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
-                        ExifInterface.ORIENTATION_ROTATE_90 -> 90f
-                        ExifInterface.ORIENTATION_ROTATE_180 -> 180f
-                        ExifInterface.ORIENTATION_ROTATE_270 -> 270f
-                        else -> 0f
+        val result = SafeFileWriter.writeSafely(
+            destinationFile = outputFile,
+            validator = { tempFile ->
+                SafeFileWriter.validatePdf(tempFile, expectedMinPages = imagePaths.size)
+            }
+        ) { tempFile ->
+            val pdfDoc = PdfDocument()
+            var pagesAdded = 0
+            try {
+                for (path in imagePaths) {
+                    val rawBitmap = BitmapFactory.decodeFile(path) ?: run {
+                        pdfDoc.close()
+                        return@writeSafely false
                     }
-                } catch (_: Exception) { 0f }
 
-                val bitmap = if (rotationDegrees != 0f) {
-                    val matrix = Matrix().apply { postRotate(rotationDegrees) }
-                    val rotated = Bitmap.createBitmap(rawBitmap, 0, 0, rawBitmap.width, rawBitmap.height, matrix, true)
-                    if (rotated != rawBitmap) rawBitmap.recycle()
-                    rotated
-                } else {
-                    rawBitmap
+                    val rotationDegrees = try {
+                        val exif = ExifInterface(path)
+                        when (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
+                            ExifInterface.ORIENTATION_ROTATE_90 -> 90f
+                            ExifInterface.ORIENTATION_ROTATE_180 -> 180f
+                            ExifInterface.ORIENTATION_ROTATE_270 -> 270f
+                            else -> 0f
+                        }
+                    } catch (_: Exception) { 0f }
+
+                    val bitmap = if (rotationDegrees != 0f) {
+                        val matrix = Matrix().apply { postRotate(rotationDegrees) }
+                        val rotated = Bitmap.createBitmap(rawBitmap, 0, 0, rawBitmap.width, rawBitmap.height, matrix, true)
+                        if (rotated != rawBitmap) rawBitmap.recycle()
+                        rotated
+                    } else {
+                        rawBitmap
+                    }
+                    val pageInfo = PdfDocument.PageInfo.Builder(bitmap.width, bitmap.height, pagesAdded + 1).create()
+                    val page = pdfDoc.startPage(pageInfo)
+                    val canvas = page.canvas
+                    val paint = Paint().apply { isFilterBitmap = true }
+                    canvas.drawBitmap(bitmap, 0f, 0f, paint)
+
+                    if (addWatermark) {
+                        WatermarkHelper.drawBottomRightWatermark(
+                            canvas = canvas,
+                            pageWidth = bitmap.width.toFloat(),
+                            pageHeight = bitmap.height.toFloat()
+                        )
+                    }
+
+                    pdfDoc.finishPage(page)
+                    bitmap.recycle()
+                    pagesAdded++
                 }
-                val pageInfo = PdfDocument.PageInfo.Builder(bitmap.width, bitmap.height, pagesAdded + 1).create()
-                val page = pdfDoc.startPage(pageInfo)
-                val canvas = page.canvas
-                val paint = Paint().apply { isFilterBitmap = true }
-                canvas.drawBitmap(bitmap, 0f, 0f, paint)
 
-                if (addWatermark) {
-                    WatermarkHelper.drawBottomRightWatermark(
-                        canvas = canvas,
-                        pageWidth = bitmap.width.toFloat(),
-                        pageHeight = bitmap.height.toFloat()
-                    )
+                if (pagesAdded != imagePaths.size) {
+                    pdfDoc.close()
+                    return@writeSafely false
                 }
 
-                pdfDoc.finishPage(page)
-                bitmap.recycle()
-                pagesAdded++
-            }
-
-            if (pagesAdded != imagePaths.size) {
+                FileOutputStream(tempFile).use { out ->
+                    pdfDoc.writeTo(out)
+                }
                 pdfDoc.close()
-                tempFile.delete()
-                return@withContext false
-            }
-
-            FileOutputStream(tempFile).use { out ->
-                pdfDoc.writeTo(out)
-            }
-            pdfDoc.close()
-
-            // Atomically replace target file only after the complete new PDF has been verified
-            if (tempFile.exists() && tempFile.length() > 0L) {
-                tempFile.copyTo(outputFile, overwrite = true)
-                tempFile.delete()
                 true
-            } else {
-                tempFile.delete()
+            } catch (e: Exception) {
+                Log.e("PdfConverterHelper", "Error writing PDF: ${e.message}", e)
+                try { pdfDoc.close() } catch (_: Exception) {}
                 false
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            try { pdfDoc.close() } catch (_: Exception) {}
-            try { tempFile.delete() } catch (_: Exception) {}
-            false
         }
+        result is SafeFileWriter.Result.Success
     }
 
     suspend fun convertPdfToImages(
@@ -133,8 +127,15 @@ object PdfConverterHelper {
 
             for (i in 0 until pageCount) {
                 val page = renderer.openPage(i)
-                val width = (page.width * 2.5).toInt() // 2.5x for crisp resolution and accurate diacritic OCR
-                val height = (page.height * 2.5).toInt()
+                val maxDim = 2048f
+                val pageMax = maxOf(page.width, page.height).toFloat()
+                val scale = if (pageMax > maxDim) {
+                    maxDim / pageMax
+                } else {
+                    (1800f / pageMax).coerceIn(1.0f, 2.5f)
+                }
+                val width = (page.width * scale).toInt().coerceAtLeast(1)
+                val height = (page.height * scale).toInt().coerceAtLeast(1)
                 val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
                 bitmap.eraseColor(Color.WHITE)
                 page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)

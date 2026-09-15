@@ -50,6 +50,12 @@
             android:screenOrientation="portrait" />
 
         <activity
+            android:name=".ui.editor.PostScanEditorActivity"
+            android:exported="false"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
+            android:windowSoftInputMode="adjustPan" />
+
+        <activity
             android:name=".ui.docmanagement.DocumentManagementActivity"
             android:exported="false"
             android:screenOrientation="portrait" />

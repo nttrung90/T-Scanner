@@ -141,6 +141,7 @@ class PdfViewerActivity : AppCompatActivity() {
         binding.tvViewerTitle.text = title
 
         if (isNewScan) {
+            binding.btnSaveViewerDoc.text = getString(R.string.btn_save_pdf)
             binding.btnSaveViewerDoc.visibility = View.VISIBLE
             binding.btnShareViewer.visibility = View.GONE
         } else {
@@ -506,19 +507,7 @@ class PdfViewerActivity : AppCompatActivity() {
     }
 
     private fun handleBackAction() {
-        if (isNewScan) {
-            MaterialAlertDialogBuilder(this)
-                .setTitle("Hủy tài liệu vừa quét?")
-                .setMessage("Tài liệu chưa được lưu vào máy. Bạn có chắc chắn muốn hủy và xóa các trang đã quét không?")
-                .setPositiveButton("Hủy tài liệu") { _, _ ->
-                    sessionId?.let { FileUtils.deleteTempSession(this, it) }
-                    finish()
-                }
-                .setNegativeButton("Tiếp tục xem", null)
-                .show()
-        } else {
-            finish()
-        }
+        finish()
     }
 
     private fun saveFinalDocument() {
@@ -611,10 +600,12 @@ class PdfViewerActivity : AppCompatActivity() {
                     // Clean up temporary camera capture session only after viewer has switched to persistent preview
                     sessionId?.let { sid ->
                         withContext(Dispatchers.IO) {
+                            com.tscanner.app.data.repository.PostScanSessionRepository.getInstance(this@PdfViewerActivity).completeSession(sid)
                             FileUtils.deleteTempSession(this@PdfViewerActivity, sid)
                         }
                     }
                     sessionId = null
+                    setResult(Activity.RESULT_OK)
 
                     // Update UI state to normal viewing mode
                     isNewScan = false
@@ -668,9 +659,6 @@ class PdfViewerActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         if (isFinishing) {
-            if (isNewScan && sessionId != null) {
-                FileUtils.deleteTempSession(this, sessionId!!)
-            }
             val previewDir = FileUtils.getPdfPreviewDir(this)
             FileUtils.deleteDirContents(previewDir)
         }
@@ -696,17 +684,26 @@ class PdfViewerActivity : AppCompatActivity() {
         }
 
         fun startForNewScan(context: Context, sessionId: String, pdfPath: String?, pagePaths: List<String>) {
-            val defaultTitle = "Tài liệu " + FileUtils.formatDate(System.currentTimeMillis()).replace('/', '-').replace(':', '-')
-            val intent = Intent(context, PdfViewerActivity::class.java).apply {
+            context.startActivity(createIntentForNewScan(context, sessionId, pdfPath, ArrayList(pagePaths)))
+        }
+
+        fun createIntentForNewScan(
+            context: Context,
+            sessionId: String,
+            pdfPath: String?,
+            pagePaths: ArrayList<String>,
+            title: String? = null
+        ): Intent {
+            val defaultTitle = title?.ifEmpty { null } ?: ("Tài liệu " + FileUtils.formatDate(System.currentTimeMillis()).replace('/', '-').replace(':', '-'))
+            return Intent(context, PdfViewerActivity::class.java).apply {
                 putExtra(EXTRA_IS_NEW_SCAN, true)
                 putExtra(EXTRA_SESSION_ID, sessionId)
                 putExtra(EXTRA_TITLE, defaultTitle)
                 if (pdfPath != null) {
                     putExtra(EXTRA_PDF_PATH, pdfPath)
                 }
-                putStringArrayListExtra(EXTRA_PAGE_PATHS, ArrayList(pagePaths))
+                putStringArrayListExtra(EXTRA_PAGE_PATHS, pagePaths)
             }
-            context.startActivity(intent)
         }
     }
 }

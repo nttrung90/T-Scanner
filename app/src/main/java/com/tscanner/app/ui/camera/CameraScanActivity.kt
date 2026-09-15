@@ -409,10 +409,9 @@ class CameraScanActivity : AppCompatActivity() {
                                 pagePaths = session.tempPagePaths
                             )
                         } else {
-                            PdfViewerActivity.startForNewScan(
+                            com.tscanner.app.ui.editor.PostScanEditorActivity.start(
                                 context = this@CameraScanActivity,
                                 sessionId = session.sessionId,
-                                pdfPath = session.tempPdfPath,
                                 pagePaths = session.tempPagePaths
                             )
                         }
@@ -477,10 +476,9 @@ class CameraScanActivity : AppCompatActivity() {
                 pagePaths = ArrayList(capturedPagePaths)
             )
         } else {
-            PdfViewerActivity.startForNewScan(
+            com.tscanner.app.ui.editor.PostScanEditorActivity.start(
                 context = this,
                 sessionId = sessionId,
-                pdfPath = null,
                 pagePaths = ArrayList(capturedPagePaths)
             )
         }
