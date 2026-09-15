@@ -233,6 +233,11 @@ object AppAuthManager {
                         onFallbackToIntent()
                     }
                 }
+            } catch (e: androidx.credentials.exceptions.NoCredentialException) {
+                Log.w(TAG, "No credentials found on device: ${e.message}. Triggering intent fallback.")
+                withContext(Dispatchers.Main) {
+                    onFallbackToIntent()
+                }
             } catch (e: GetCredentialCancellationException) {
                 Log.d(TAG, "User cancelled Google Sign-In")
             } catch (e: GetCredentialException) {

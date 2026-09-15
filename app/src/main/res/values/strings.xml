@@ -186,7 +186,7 @@
     <string name="ocr_engine_auto">Auto (Recommended) [Default]</string>
     <string name="ocr_engine_auto_desc">Auto selects: Vietnamese &amp; English use Tesseract v5; Asian languages use PaddleOCR v4; Latin uses ML Kit.</string>
     <string name="ocr_engine_tesseract">Tesseract OCR v5 (LSTM)</string>
-    <string name="ocr_engine_tesseract_desc">Best for: Vietnamese &amp; English. 100% full Vietnamese accents &amp; English vocabulary, fully offline.</string>
+    <string name="ocr_engine_tesseract_desc" formatted="false">Best for: Vietnamese &amp; English. 100% full Vietnamese accents &amp; English vocabulary, fully offline.</string>
     <string name="ocr_engine_paddle">PaddleOCR v4 Mobile (Baidu AI)</string>
     <string name="ocr_engine_paddle_desc">Best for: English, Chinese, Japanese, Korean. Skewed angles, tables &amp; fast text (no Vietnamese accents).</string>
     <string name="ocr_engine_mlkit">Google ML Kit (Offline)</string>

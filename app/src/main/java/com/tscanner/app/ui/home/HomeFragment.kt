@@ -309,8 +309,28 @@ class HomeFragment : Fragment() {
             DocumentAdapter.ActionType.CONVERT_WORD -> {
                 processDocumentOcr(doc, isWordExport = true)
             }
+            DocumentAdapter.ActionType.MOVE_FOLDER -> {
+                showMoveToFolderDialog(doc)
+            }
             else -> {}
         }
+    }
+
+    private fun showMoveToFolderDialog(doc: DocumentItem) {
+        val folders = repo.folders.value ?: emptyList()
+        val folderNames = mutableListOf("Thư mục gốc (Mặc định)")
+        folderNames.addAll(folders.map { it.name })
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Chuyển vào thư mục")
+            .setItems(folderNames.toTypedArray()) { _, which ->
+                val targetFolderId = if (which == 0) null else folders[which - 1].id
+                val targetName = folderNames[which]
+                repo.moveDocumentToFolder(doc.id, targetFolderId)
+                Toast.makeText(requireContext(), "Đã chuyển '${doc.title}' vào $targetName", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("Hủy", null)
+            .show()
     }
 
     private fun processDocumentOcr(doc: DocumentItem, isWordExport: Boolean) {

@@ -30,7 +30,7 @@ class DocumentAdapter(
 ) : ListAdapter<DocumentItem, DocumentAdapter.DocumentViewHolder>(DocDiffCallback()) {
 
     enum class ActionType {
-        SHARE, DELETE, RENAME, OCR, CONVERT_WORD, CONVERT_EXCEL
+        SHARE, DELETE, RENAME, OCR, CONVERT_WORD, CONVERT_EXCEL, MOVE_FOLDER
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DocumentViewHolder {
@@ -150,7 +150,8 @@ class DocumentAdapter(
                 popup.menu.add(0, 3, 2, "Đổi tên")
                 popup.menu.add(0, 4, 3, "Chia sẻ")
                 popup.menu.add(0, 5, 4, "Chuyển sang Word")
-                popup.menu.add(0, 6, 5, "Xóa")
+                popup.menu.add(0, 6, 5, "Chuyển vào thư mục...")
+                popup.menu.add(0, 7, 6, "Xóa")
 
                 popup.setOnMenuItemClickListener { menuItem ->
                     when (menuItem.itemId) {
@@ -159,7 +160,8 @@ class DocumentAdapter(
                         3 -> onActionClick(item, ActionType.RENAME)
                         4 -> onActionClick(item, ActionType.SHARE)
                         5 -> onActionClick(item, ActionType.CONVERT_WORD)
-                        6 -> onActionClick(item, ActionType.DELETE)
+                        6 -> onActionClick(item, ActionType.MOVE_FOLDER)
+                        7 -> onActionClick(item, ActionType.DELETE)
                     }
                     true
                 }

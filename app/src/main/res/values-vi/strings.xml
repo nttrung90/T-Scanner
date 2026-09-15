@@ -153,6 +153,7 @@
     <string name="vip_perk_3">✓ Chuyển đổi sang Word, Excel, PPT chính xác</string>
     <string name="vip_perk_4">✓ Không có hình mờ (Watermark) khi xuất file</string>
     <string name="vip_perk_5">✓ Tự động sao lưu &amp; đồng bộ Google Drive cá nhân (15GB)</string>
+    <string name="vip_price_monthly">99.000 đ / tháng</string>
     <string name="vip_price_yearly">20.000 đ / năm</string>
     <string name="vip_tier_pro_name">VIP PRO</string>
     <string name="vip_tier_promax_name">VIP PRO MAX</string>
