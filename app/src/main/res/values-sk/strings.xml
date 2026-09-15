@@ -70,7 +70,7 @@
     <string name="export_backup">Zálohovať všetky dokumenty</string>
     <string name="vip_coming_soon">Funkcia bude čoskoro k dispozícii</string>
     <string name="about_title">O aplikácii T-Scanner</string>
-    <string name="about_version">Verzia: 0.2.2 (Build 6)</string>
+    <string name="about_version">Verzia: 0.6.0 (Build 11)</string>
     <string name="about_sdk">Konfigurácia: SDK 36 (Android 16), od Android 8.0+</string>
     <string name="about_engine">Skenovací modul: Google Document Scanner | OCR: PaddleOCR v4 Mobile &amp; Tesseract OCR</string>
     <string name="about_copyright">© 2026 T-Scanner. Využíva pokročilú AI.</string>

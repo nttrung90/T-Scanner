@@ -173,7 +173,7 @@
 
     <!-- About Dialog -->
     <string name="about_title">About T-Scanner</string>
-    <string name="about_version">Version: 0.5.0 (Build 10)</string>
+    <string name="about_version">Version: 0.6.0 (Build 11)</string>
     <string name="about_sdk">Config: SDK 36 (Android 16), Android 8.0+ supported</string>
     <string name="about_engine">Scan Engine: Google Document Scanner | OCR: PaddleOCR v4 Mobile &amp; Tesseract OCR v5</string>
     <string name="about_copyright">© 2026 T-Scanner. Powered by advanced AI technology.</string>

@@ -70,7 +70,7 @@
     <string name="export_backup">نسخ احتياطي لجميع المستندات</string>
     <string name="vip_coming_soon">ستتوفر الميزة في الإصدار الرسمي</string>
     <string name="about_title">حول T-Scanner</string>
-    <string name="about_version">الإصدار: 0.2.2 (Build 6)</string>
+    <string name="about_version">الإصدار: 0.6.0 (Build 11)</string>
     <string name="about_sdk">التكوين: SDK 36 (Android 16)، يدعم Android 8.0+</string>
     <string name="about_engine">محرك المسح: Google Document Scanner | OCR: PaddleOCR v4 Mobile &amp; Tesseract OCR</string>
     <string name="about_copyright">© 2026 T-Scanner. مدعوم بتقنيات الذكاء الاصطناعي المتقدمة.</string>

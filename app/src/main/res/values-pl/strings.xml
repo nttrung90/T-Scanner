@@ -70,7 +70,7 @@
     <string name="export_backup">Kopia zapasowa dokumentów</string>
     <string name="vip_coming_soon">Funkcja wkrótce dostępna</string>
     <string name="about_title">O T-Scanner</string>
-    <string name="about_version">Wersja: 0.2.2 (Build 6)</string>
+    <string name="about_version">Wersja: 0.6.0 (Build 11)</string>
     <string name="about_sdk">Konfiguracja: SDK 36 (Android 16), od Android 8.0+</string>
     <string name="about_engine">Silnik: Google Document Scanner | OCR: PaddleOCR v4 Mobile &amp; Tesseract OCR</string>
     <string name="about_copyright">© 2026 T-Scanner. Oparty na zaawansowanej AI.</string>

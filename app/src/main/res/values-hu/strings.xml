@@ -70,7 +70,7 @@
     <string name="export_backup">Összes dokumentum biztonsági mentése</string>
     <string name="vip_coming_soon">Hamarosan elérhető</string>
     <string name="about_title">A T-Scannerről</string>
-    <string name="about_version">Verzió: 0.2.2 (Build 6)</string>
+    <string name="about_version">Verzió: 0.6.0 (Build 11)</string>
     <string name="about_sdk">Konfiguráció: SDK 36 (Android 16), Android 8.0+</string>
     <string name="about_engine">Motor: Google Document Scanner | OCR: PaddleOCR v4 Mobile &amp; Tesseract OCR</string>
     <string name="about_copyright">© 2026 T-Scanner. Fejlett mesterséges intelligencia hajtja.</string>

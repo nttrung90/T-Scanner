@@ -70,7 +70,7 @@
     <string name="export_backup">Varmuuskopioi kaikki asiakirjat</string>
     <string name="vip_coming_soon">Tulossa pian</string>
     <string name="about_title">Tietoja T-Scannerista</string>
-    <string name="about_version">Versio: 0.2.2 (Build 6)</string>
+    <string name="about_version">Versio: 0.6.0 (Build 11)</string>
     <string name="about_sdk">Kokoonpano: SDK 36 (Android 16), Android 8.0+</string>
     <string name="about_engine">Skannausmoottori: Google Document Scanner | OCR: PaddleOCR v4 Mobile &amp; Tesseract OCR</string>
     <string name="about_copyright">© 2026 T-Scanner. Tehokas tekoälyteknologia.</string>

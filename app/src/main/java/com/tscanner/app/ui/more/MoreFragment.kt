@@ -138,9 +138,9 @@ class MoreFragment : Fragment() {
     private fun setupVersionBadge() {
         val versionName = try {
             val pInfo = requireContext().packageManager.getPackageInfo(requireContext().packageName, 0)
-            pInfo.versionName ?: "0.5.0"
+            pInfo.versionName ?: "0.6.0"
         } catch (e: Exception) {
-            "0.5.0"
+            "0.6.0"
         }
         binding.tvCurrentVersionBadge.text = "v$versionName"
     }

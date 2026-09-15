@@ -70,7 +70,7 @@
     <string name="export_backup">I-backup ang lahat ng dokumento</string>
     <string name="vip_coming_soon">Paparating na</string>
     <string name="about_title">Tungkol sa T-Scanner</string>
-    <string name="about_version">Bersyon: 0.2.2 (Build 6)</string>
+    <string name="about_version">Bersyon: 0.6.0 (Build 11)</string>
     <string name="about_sdk">Config: SDK 36 (Android 16), Android 8.0+</string>
     <string name="about_engine">Scan Engine: Google Document Scanner | OCR: PaddleOCR v4 Mobile &amp; Tesseract OCR</string>
     <string name="about_copyright">© 2026 T-Scanner. Pinapagana ng advanced AI.</string>

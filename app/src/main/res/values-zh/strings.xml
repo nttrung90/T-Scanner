@@ -70,7 +70,7 @@
     <string name="export_backup">备份所有文档</string>
     <string name="vip_coming_soon">功能将在正式版本中开放</string>
     <string name="about_title">关于 T-Scanner</string>
-    <string name="about_version">版本: 0.2.2 (Build 6)</string>
+    <string name="about_version">版本: 0.6.0 (Build 11)</string>
     <string name="about_sdk">配置: SDK 36 (Android 16), 支持 Android 8.0+</string>
     <string name="about_engine">扫描引擎: Google Document Scanner | OCR: PaddleOCR v4 Mobile &amp; Tesseract OCR</string>
     <string name="about_copyright">© 2026 T-Scanner. 由先进 AI 技术驱动。</string>

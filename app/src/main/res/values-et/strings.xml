@@ -70,7 +70,7 @@
     <string name="export_backup">Varunda kõik dokumendid</string>
     <string name="vip_coming_soon">Peagi saadaval</string>
     <string name="about_title">T-Scannerist</string>
-    <string name="about_version">Versioon: 0.2.2 (Build 6)</string>
+    <string name="about_version">Versioon: 0.6.0 (Build 11)</string>
     <string name="about_sdk">Konfiguratsioon: SDK 36 (Android 16), Android 8.0+</string>
     <string name="about_engine">Skannimismootor: Google Document Scanner | OCR: PaddleOCR v4 Mobile &amp; Tesseract OCR</string>
     <string name="about_copyright">© 2026 T-Scanner. Toetab täiustatud tehisintellekt.</string>

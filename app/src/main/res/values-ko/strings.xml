@@ -70,7 +70,7 @@
     <string name="export_backup">전체 문서 백업</string>
     <string name="vip_coming_soon">정식 출시 버전에서 지원될 예정입니다</string>
     <string name="about_title">T-Scanner 소개</string>
-    <string name="about_version">버전: 0.2.2 (Build 6)</string>
+    <string name="about_version">버전: 0.6.0 (Build 11)</string>
     <string name="about_sdk">설정: SDK 36 (Android 16), Android 8.0 이상 지원</string>
     <string name="about_engine">스캔 엔진: Google Document Scanner | OCR: PaddleOCR v4 Mobile &amp; Tesseract OCR</string>
     <string name="about_copyright">© 2026 T-Scanner. 첨단 AI 기술 적용.</string>

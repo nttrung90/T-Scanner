@@ -70,7 +70,7 @@
     <string name="export_backup">सभी दस्तावेज़ बैकअप करें</string>
     <string name="vip_coming_soon">यह सुविधा आधिकारिक रिलीज में उपलब्ध होगी</string>
     <string name="about_title">T-Scanner के बारे में</string>
-    <string name="about_version">संस्करण: 0.2.2 (Build 6)</string>
+    <string name="about_version">संस्करण: 0.6.0 (Build 11)</string>
     <string name="about_sdk">कॉन्फ़िगरेशन: SDK 36 (Android 16), Android 8.0+ समर्थित</string>
     <string name="about_engine">स्कैन इंजन: Google Document Scanner | OCR: PaddleOCR v4 Mobile &amp; Tesseract OCR</string>
     <string name="about_copyright">© 2026 T-Scanner. उन्नत AI तकनीक द्वारा संचालित।</string>

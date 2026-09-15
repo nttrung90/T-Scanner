@@ -173,7 +173,7 @@
 
     <!-- About Dialog -->
     <string name="about_title">Giới thiệu T-Scanner</string>
-    <string name="about_version">Phiên bản: 0.5.0 (Build 10)</string>
+    <string name="about_version">Phiên bản: 0.6.0 (Build 11)</string>
     <string name="about_sdk">Cấu hình: SDK 36 (Android 16), hỗ trợ từ Android 8.0+</string>
     <string name="about_engine">Động cơ quét: Google Document Scanner | OCR: PaddleOCR v4 Mobile &amp; Tesseract OCR v5</string>
     <string name="about_copyright">© 2026 T-Scanner. Phát triển với công nghệ AI tiên tiến.</string>

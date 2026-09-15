@@ -70,7 +70,7 @@
     <string name="export_backup">Rugsteun alle dokumente</string>
     <string name="vip_coming_soon">Binnekort beskikbaar</string>
     <string name="about_title">Oor T-Scanner</string>
-    <string name="about_version">Weergawe: 0.2.2 (Build 6)</string>
+    <string name="about_version">Weergawe: 0.6.0 (Build 11)</string>
     <string name="about_sdk">Konfigurasie: SDK 36 (Android 16), Android 8.0+</string>
     <string name="about_engine">Skandeerenjin: Google Document Scanner | OCR: PaddleOCR v4 Mobile &amp; Tesseract OCR</string>
     <string name="about_copyright">© 2026 T-Scanner. Aangedryf deur gevorderde KI.</string>

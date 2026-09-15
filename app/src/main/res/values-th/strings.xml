@@ -70,7 +70,7 @@
     <string name="export_backup">สำรองข้อมูลเอกสารทั้งหมด</string>
     <string name="vip_coming_soon">ฟีเจอร์นี้จะพร้อมใช้งานในเวอร์ชันเต็ม</string>
     <string name="about_title">เกี่ยวกับ T-Scanner</string>
-    <string name="about_version">เวอร์ชัน: 0.2.2 (Build 6)</string>
+    <string name="about_version">เวอร์ชัน: 0.6.0 (Build 11)</string>
     <string name="about_sdk">การกำหนดค่า: SDK 36 (Android 16), รองรับ Android 8.0+</string>
     <string name="about_engine">Scan Engine: Google Document Scanner | OCR: PaddleOCR v4 Mobile &amp; Tesseract OCR</string>
     <string name="about_copyright">© 2026 T-Scanner. ขับเคลื่อนด้วยเทคโนโลยี AI ล้ำสมัย</string>
