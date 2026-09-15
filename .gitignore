@@ -3,6 +3,9 @@
 *.iml
 .gradle
 local.properties
+build/
+app/build/
+**/build/
 
 .project
 .settings

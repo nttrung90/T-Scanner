@@ -31,6 +31,7 @@ object AppAuthManager {
     private const val TAG = "AppAuthManager"
     private const val PREFS_NAME = "tscanner_auth_prefs"
     private const val KEY_USER_PROFILE = "key_user_profile"
+    private const val KEY_VIP_ACCOUNT_PREFIX = "vip_account_"
 
     /**
      * Web Client ID from Google Cloud Console (OAuth 2.0 Web Application Client ID, project: t-scanner-508413).
@@ -52,13 +53,16 @@ object AppAuthManager {
         if (!savedJson.isNullOrEmpty()) {
             try {
                 val profile = parseUserProfileFromJson(savedJson)
+                loadVipForUser(context, profile)
                 _currentUser.value = profile
-                Log.d(TAG, "Restored logged-in user: ${profile.email}")
+                Log.d(TAG, "Restored logged-in user: ${profile.email}, isVip=${profile.isVipActive}")
                 checkAndEnforceVipExpiration(context)
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to restore user profile", e)
             }
         }
+        // Clean any stale mock drive IDs
+        CloudBackupManager.cleanMockDriveBackups(context)
         isInitialized = true
     }
 
@@ -85,15 +89,18 @@ object AppAuthManager {
     }
 
     /**
-     * Checks if VIP 1-year subscription has expired. If expired, automatically downgrades to FREE.
+     * Checks if VIP subscription has expired. If expired, automatically downgrades to FREE.
      * Returns true if user was downgraded.
      */
     fun checkAndEnforceVipExpiration(context: Context): Boolean {
         val user = _currentUser.value ?: return false
         if (user.isVip && user.vipExpiresAt != null && System.currentTimeMillis() > user.vipExpiresAt!!) {
-            Log.d(TAG, "VIP subscription has expired after 365 days. Downgrading to FREE.")
+            Log.d(TAG, "VIP subscription has expired. Downgrading to FREE.")
             user.isVip = false
             user.tier = com.tscanner.app.data.model.VipTier.FREE
+            user.vipPurchasedAt = null
+            user.vipExpiresAt = null
+            saveVipForUser(context, user.id, user.tier, null, null)
             saveUser(context, user)
             _currentUser.postValue(user)
             return true
@@ -127,12 +134,6 @@ object AppAuthManager {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             val account = task.getResult(ApiException::class.java)
             if (account != null) {
-                val existingUser = _currentUser.value
-                val isVip = existingUser?.isVipActive == true
-                val tier = if (isVip) existingUser!!.tier else com.tscanner.app.data.model.VipTier.FREE
-                val vipPurchasedAt = existingUser?.vipPurchasedAt
-                val vipExpiresAt = existingUser?.vipExpiresAt
-
                 val profile = UserProfile(
                     id = account.id ?: account.email ?: "google_user",
                     email = account.email ?: "",
@@ -141,11 +142,11 @@ object AppAuthManager {
                     familyName = account.familyName,
                     photoUrl = account.photoUrl?.toString(),
                     idToken = account.idToken,
-                    isVip = isVip,
-                    tier = tier,
-                    vipPurchasedAt = vipPurchasedAt,
-                    vipExpiresAt = vipExpiresAt
+                    isVip = false,
+                    tier = com.tscanner.app.data.model.VipTier.FREE
                 )
+                // Load VIP status strictly bound to this account ID
+                loadVipForUser(context, profile)
                 saveUser(context, profile)
                 _currentUser.value = profile
                 onSuccess(profile)
@@ -217,9 +218,11 @@ object AppAuthManager {
                         familyName = googleIdTokenCredential.familyName,
                         photoUrl = googleIdTokenCredential.profilePictureUri?.toString(),
                         idToken = googleIdTokenCredential.idToken,
-                        isVip = false
+                        isVip = false,
+                        tier = com.tscanner.app.data.model.VipTier.FREE
                     )
 
+                    loadVipForUser(activity, profile)
                     saveUser(activity, profile)
                     withContext(Dispatchers.Main) {
                         _currentUser.value = profile
@@ -257,6 +260,12 @@ object AppAuthManager {
     ) {
         coroutineScope.launch {
             try {
+                // Cancel pending background backup jobs for this user to avoid leaking data
+                androidx.work.WorkManager.getInstance(context).cancelAllWork()
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to cancel work on sign out", e)
+            }
+            try {
                 val credentialManager = CredentialManager.create(context)
                 credentialManager.clearCredentialState(ClearCredentialStateRequest())
             } catch (e: Exception) {
@@ -279,6 +288,7 @@ object AppAuthManager {
 
     /**
      * Sets or updates VIP status and tier for the currently logged in user for a specific duration (default 365 days / 1 year).
+     * Properly extends existing valid subscription from its current expiry date.
      */
     fun setUserVipTier(context: Context, tier: com.tscanner.app.data.model.VipTier, durationDays: Int = 365) {
         val user = _currentUser.value ?: return
@@ -286,12 +296,15 @@ object AppAuthManager {
         user.tier = tier
         user.isVip = (tier != com.tscanner.app.data.model.VipTier.FREE)
         if (user.isVip) {
-            user.vipPurchasedAt = now
-            user.vipExpiresAt = now + (durationDays * 24 * 60 * 60 * 1000L)
+            user.vipPurchasedAt = user.vipPurchasedAt ?: now
+            val currentExpiry = user.vipExpiresAt ?: 0L
+            val baseTime = maxOf(now, currentExpiry)
+            user.vipExpiresAt = baseTime + (durationDays * 24 * 60 * 60 * 1000L)
         } else {
             user.vipPurchasedAt = null
             user.vipExpiresAt = null
         }
+        saveVipForUser(context, user.id, user.tier, user.vipPurchasedAt, user.vipExpiresAt)
         saveUser(context, user)
         _currentUser.postValue(user)
     }
@@ -319,9 +332,44 @@ object AppAuthManager {
             isVip = false,
             tier = com.tscanner.app.data.model.VipTier.FREE
         )
+        loadVipForUser(context, demoUser)
         saveUser(context, demoUser)
         _currentUser.value = demoUser
         onComplete(demoUser)
+    }
+
+    private fun loadVipForUser(context: Context, profile: UserProfile) {
+        val prefs = getPrefs(context)
+        val tierId = prefs.getString("${KEY_VIP_ACCOUNT_PREFIX}${profile.id}_tier", null)
+        val purchasedAt = prefs.getLong("${KEY_VIP_ACCOUNT_PREFIX}${profile.id}_purchased_at", -1L).takeIf { it > 0 }
+        val expiresAt = prefs.getLong("${KEY_VIP_ACCOUNT_PREFIX}${profile.id}_expires_at", -1L).takeIf { it > 0 }
+
+        if (tierId != null && expiresAt != null && System.currentTimeMillis() <= expiresAt) {
+            profile.tier = com.tscanner.app.data.model.VipTier.fromId(tierId)
+            profile.isVip = (profile.tier != com.tscanner.app.data.model.VipTier.FREE)
+            profile.vipPurchasedAt = purchasedAt
+            profile.vipExpiresAt = expiresAt
+        } else {
+            profile.tier = com.tscanner.app.data.model.VipTier.FREE
+            profile.isVip = false
+            profile.vipPurchasedAt = null
+            profile.vipExpiresAt = null
+        }
+    }
+
+    private fun saveVipForUser(
+        context: Context,
+        userId: String,
+        tier: com.tscanner.app.data.model.VipTier,
+        purchasedAt: Long?,
+        expiresAt: Long?
+    ) {
+        val prefs = getPrefs(context)
+        prefs.edit()
+            .putString("${KEY_VIP_ACCOUNT_PREFIX}${userId}_tier", tier.id)
+            .putLong("${KEY_VIP_ACCOUNT_PREFIX}${userId}_purchased_at", purchasedAt ?: -1L)
+            .putLong("${KEY_VIP_ACCOUNT_PREFIX}${userId}_expires_at", expiresAt ?: -1L)
+            .apply()
     }
 
     private fun getPrefs(context: Context): SharedPreferences {

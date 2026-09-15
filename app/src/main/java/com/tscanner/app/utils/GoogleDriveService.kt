@@ -192,42 +192,91 @@ object GoogleDriveService {
     }
 
     /**
-     * Queries files stored in the "T-Scanner Documents" folder for cross-device synchronization.
+     * Updates an existing PDF file on Google Drive (e.g. after crop / edit).
+     */
+    suspend fun updatePdfFile(
+        token: String,
+        driveFileId: String,
+        pdfFile: File
+    ): String? = withContext(Dispatchers.IO) {
+        if (!pdfFile.exists() || pdfFile.length() == 0L) {
+            Log.e(TAG, "PDF file does not exist or is empty: ${pdfFile.absolutePath}")
+            return@withContext null
+        }
+
+        try {
+            val filePart = pdfFile.asRequestBody("application/pdf".toMediaTypeOrNull())
+            val uploadUrl = "$DRIVE_UPLOAD_BASE/files/$driveFileId?uploadType=media"
+
+            val request = Request.Builder()
+                .url(uploadUrl)
+                .addHeader("Authorization", "Bearer $token")
+                .patch(filePart)
+                .build()
+
+            httpClient.newCall(request).execute().use { response ->
+                val bodyStr = response.body?.string() ?: ""
+                if (response.isSuccessful) {
+                    val resJson = JSONObject(bodyStr)
+                    val fileId = resJson.optString("id", driveFileId)
+                    Log.d(TAG, "Updated existing PDF successfully on Google Drive. FileId=$fileId")
+                    return@withContext fileId
+                } else {
+                    Log.e(TAG, "Drive update failed. Code: ${response.code}, Response: $bodyStr")
+                    return@withContext null
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception during PDF update on Drive: ${e.message}", e)
+            null
+        }
+    }
+
+    /**
+     * Queries files stored in the "T-Scanner Documents" folder for cross-device synchronization with pagination.
      */
     suspend fun queryFolderFiles(token: String, folderId: String): List<DriveFileMetadata> = withContext(Dispatchers.IO) {
         val list = mutableListOf<DriveFileMetadata>()
+        var pageToken: String? = null
         try {
-            val query = "'$folderId' in parents and trashed = false"
-            val url = "$DRIVE_API_BASE/files?q=${java.net.URLEncoder.encode(query, "UTF-8")}&fields=files(id,name,size,modifiedTime)&orderBy=modifiedTime desc"
+            val query = "'$folderId' in parents and trashed = false and mimeType = 'application/pdf'"
+            do {
+                val pageParam = if (pageToken != null) "&pageToken=${java.net.URLEncoder.encode(pageToken, "UTF-8")}" else ""
+                val url = "$DRIVE_API_BASE/files?q=${java.net.URLEncoder.encode(query, "UTF-8")}&fields=nextPageToken,files(id,name,size,modifiedTime)&orderBy=modifiedTime desc$pageParam"
 
-            val req = Request.Builder()
-                .url(url)
-                .addHeader("Authorization", "Bearer $token")
-                .get()
-                .build()
+                val req = Request.Builder()
+                    .url(url)
+                    .addHeader("Authorization", "Bearer $token")
+                    .get()
+                    .build()
 
-            httpClient.newCall(req).execute().use { response ->
-                if (response.isSuccessful) {
-                    val body = response.body?.string() ?: ""
-                    val json = JSONObject(body)
-                    val files = json.optJSONArray("files") ?: JSONArray()
-                    for (i in 0 until files.length()) {
-                        val f = files.getJSONObject(i)
-                        list.add(
-                            DriveFileMetadata(
-                                id = f.getString("id"),
-                                name = f.getString("name"),
-                                sizeBytes = f.optLong("size", 0L),
-                                modifiedTime = try {
-                                    java.time.Instant.parse(f.optString("modifiedTime")).toEpochMilli()
-                                } catch (e: Exception) {
-                                    System.currentTimeMillis()
-                                }
+                httpClient.newCall(req).execute().use { response ->
+                    if (response.isSuccessful) {
+                        val body = response.body?.string() ?: ""
+                        val json = JSONObject(body)
+                        val files = json.optJSONArray("files") ?: JSONArray()
+                        for (i in 0 until files.length()) {
+                            val f = files.getJSONObject(i)
+                            list.add(
+                                DriveFileMetadata(
+                                    id = f.getString("id"),
+                                    name = f.getString("name"),
+                                    sizeBytes = f.optLong("size", 0L),
+                                    modifiedTime = try {
+                                        java.time.Instant.parse(f.optString("modifiedTime")).toEpochMilli()
+                                    } catch (e: Exception) {
+                                        System.currentTimeMillis()
+                                    }
+                                )
                             )
-                        )
+                        }
+                        pageToken = json.optString("nextPageToken").takeIf { it.isNotEmpty() }
+                    } else {
+                        Log.e(TAG, "Failed to query files in folder: code=${response.code}")
+                        pageToken = null
                     }
                 }
-            }
+            } while (pageToken != null)
         } catch (e: Exception) {
             Log.e(TAG, "Error querying Drive folder files: ${e.message}", e)
         }

@@ -41,6 +41,9 @@ object CloudBackupManager {
             return
         }
 
+        val currentUser = AppAuthManager.getCurrentUser()
+        val ownerId = docItem.ownerId ?: currentUser?.id
+
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
@@ -49,6 +52,11 @@ object CloudBackupManager {
             .putString(GoogleDriveBackupWorker.KEY_DOC_ID, docItem.id)
             .putString(GoogleDriveBackupWorker.KEY_PDF_PATH, pdfPath)
             .putString(GoogleDriveBackupWorker.KEY_DOC_TITLE, docItem.title)
+            .apply {
+                if (ownerId != null) {
+                    putString(GoogleDriveBackupWorker.KEY_OWNER_ID, ownerId)
+                }
+            }
             .build()
 
         val backupWorkRequest = OneTimeWorkRequestBuilder<GoogleDriveBackupWorker>()
@@ -73,6 +81,19 @@ object CloudBackupManager {
         Log.i(TAG, "Enqueuing batch cloud backup for ${unsynced.size} documents")
         for (doc in unsynced) {
             enqueueBackup(context, doc)
+        }
+    }
+
+    /**
+     * Cleans up any mock drive IDs from past demo testing, resetting them to LOCAL_ONLY.
+     */
+    fun cleanMockDriveBackups(context: Context) {
+        val repo = DocumentRepo.getInstance(context)
+        val docs = repo.documents.value ?: return
+        for (doc in docs) {
+            if (doc.driveFileId?.startsWith("drive_mock_") == true) {
+                repo.updateSyncStatus(doc.id, SyncStatus.LOCAL_ONLY, null, null)
+            }
         }
     }
 
@@ -119,7 +140,8 @@ object CloudBackupManager {
                         isSynced = true,
                         driveFileId = df.id,
                         lastSyncedAt = df.modifiedTime,
-                        syncStatus = SyncStatus.SYNCED
+                        syncStatus = SyncStatus.SYNCED,
+                        ownerId = user.id
                     )
                     repo.addDocument(newDoc)
                     addedCount++
@@ -163,8 +185,7 @@ object CloudBackupManager {
             }
 
             val docDir = FileUtils.getDocumentsDir(context)
-            val sanitized = FileUtils.sanitizeFileName(docItem.title)
-            val destFile = File(docDir, "$sanitized.pdf")
+            val destFile = File(docDir, "doc_${docItem.id}.pdf")
 
             val success = GoogleDriveService.downloadPdfFile(token, driveId, destFile)
             if (success && destFile.exists()) {

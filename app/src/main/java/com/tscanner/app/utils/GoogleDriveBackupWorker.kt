@@ -19,12 +19,14 @@ class GoogleDriveBackupWorker(
         const val KEY_DOC_ID = "key_doc_id"
         const val KEY_PDF_PATH = "key_pdf_path"
         const val KEY_DOC_TITLE = "key_doc_title"
+        const val KEY_OWNER_ID = "key_owner_id"
     }
 
     override suspend fun doWork(): Result {
         val docId = inputData.getString(KEY_DOC_ID) ?: return Result.failure()
         val pdfPath = inputData.getString(KEY_PDF_PATH) ?: return Result.failure()
         val docTitle = inputData.getString(KEY_DOC_TITLE) ?: "Document"
+        val expectedOwnerId = inputData.getString(KEY_OWNER_ID)
 
         val repo = DocumentRepo.getInstance(applicationContext)
 
@@ -42,6 +44,18 @@ class GoogleDriveBackupWorker(
             return Result.failure()
         }
 
+        // Enforce owner binding: prevent backing up documents under another user's Google Drive
+        if (expectedOwnerId != null && expectedOwnerId != currentUser.id) {
+            Log.w(TAG, "Owner mismatch for docId=$docId: expected=$expectedOwnerId, current=${currentUser.id}. Aborting backup.")
+            return Result.failure()
+        }
+
+        val doc = repo.getDocument(docId)
+        if (doc?.ownerId != null && doc.ownerId != currentUser.id) {
+            Log.w(TAG, "Document owner mismatch for docId=$docId: doc.ownerId=${doc.ownerId}, current=${currentUser.id}. Aborting backup.")
+            return Result.failure()
+        }
+
         val pdfFile = File(pdfPath)
         if (!pdfFile.exists() || pdfFile.length() == 0L) {
             Log.e(TAG, "PDF file missing or empty: $pdfPath")
@@ -52,16 +66,7 @@ class GoogleDriveBackupWorker(
         // 2. Set status to SYNCING
         repo.updateSyncStatus(docId, SyncStatus.SYNCING)
 
-        // 3. Handle Demo Mode smoothly for testing without cloud credentials
-        if (currentUser.email.contains("demo") || currentUser.id.contains("demo")) {
-            Log.d(TAG, "Operating in Demo Mode: Simulating successful cloud backup")
-            kotlinx.coroutines.delay(1000)
-            val mockDriveId = "drive_mock_${UUID.randomUUID()}"
-            repo.updateSyncStatus(docId, SyncStatus.SYNCED, mockDriveId, System.currentTimeMillis())
-            return Result.success()
-        }
-
-        // 4. Real Google Account: Obtain OAuth Token
+        // 3. Obtain OAuth Token
         val token = GoogleDriveService.getAccessToken(applicationContext, currentUser.email)
         if (token.isNullOrEmpty()) {
             Log.e(TAG, "Failed to get Google Drive OAuth token for ${currentUser.email}")
@@ -69,7 +74,7 @@ class GoogleDriveBackupWorker(
             return if (runAttemptCount < 3) Result.retry() else Result.failure()
         }
 
-        // 5. Ensure "T-Scanner Documents" folder exists on Drive
+        // 4. Ensure "T-Scanner Documents" folder exists on Drive
         val folderId = GoogleDriveService.getOrCreateAppFolder(token)
         if (folderId.isNullOrEmpty()) {
             Log.e(TAG, "Failed to get or create folder on Google Drive")
@@ -77,8 +82,17 @@ class GoogleDriveBackupWorker(
             return if (runAttemptCount < 3) Result.retry() else Result.failure()
         }
 
-        // 6. Upload PDF file to Drive via REST API
-        val driveFileId = GoogleDriveService.uploadPdfFile(token, folderId, pdfFile, docTitle)
+        // 5. Upload or update PDF file on Drive via REST API
+        val existingDriveId = doc?.driveFileId
+        val isExistingValidDrive = existingDriveId != null && existingDriveId.isNotEmpty() && !existingDriveId.startsWith("drive_mock_")
+        val driveFileId = if (isExistingValidDrive) {
+            Log.d(TAG, "Updating existing PDF file on Google Drive: $existingDriveId")
+            val updatedId = GoogleDriveService.updatePdfFile(token, existingDriveId!!, pdfFile)
+            updatedId ?: GoogleDriveService.uploadPdfFile(token, folderId, pdfFile, docTitle)
+        } else {
+            GoogleDriveService.uploadPdfFile(token, folderId, pdfFile, docTitle)
+        }
+
         return if (!driveFileId.isNullOrEmpty()) {
             Log.i(TAG, "Successfully backed up document '$docTitle' ($docId) to Google Drive: $driveFileId")
             repo.updateSyncStatus(docId, SyncStatus.SYNCED, driveFileId, System.currentTimeMillis())

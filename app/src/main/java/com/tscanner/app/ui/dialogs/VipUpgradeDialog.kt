@@ -26,23 +26,30 @@ class VipUpgradeDialog(
         window?.setBackgroundDrawableResource(android.R.color.transparent)
         applyDialogWidth()
 
+        val currentUser = AppAuthManager.getCurrentUser()
+        if (currentUser != null && currentUser.email.isNotBlank()) {
+            binding.btnConfirmVipUpgrade.text = "Kích hoạt Dùng thử VIP (${currentUser.email})"
+        } else {
+            binding.btnConfirmVipUpgrade.text = "Đăng nhập để kích hoạt Dùng thử VIP"
+        }
+
         setupListeners()
     }
 
     private fun setupListeners() {
-        // Nâng cấp gói VIP (20.000 đ / năm)
+        // Kích hoạt dùng thử gói VIP (Thử nghiệm liên kết tài khoản)
         binding.btnConfirmVipUpgrade.setOnClickListener {
             val user = AppAuthManager.getCurrentUser()
-            if (user != null) {
+            if (user != null && user.email.isNotBlank()) {
                 AppAuthManager.setUserVipTier(context, VipTier.VIP, durationDays = 365)
                 Toast.makeText(
                     context,
-                    "🎉 Chúc mừng bạn đã nâng cấp thành công gói VIP (20.000 đ/năm)! Đã mở khóa tính năng sao lưu Google Drive cá nhân.",
+                    "🎉 Đã kích hoạt Chế độ Dùng thử VIP (Thử nghiệm) cho tài khoản ${user.email}!",
                     Toast.LENGTH_LONG
                 ).show()
 
                 val hasDrive = AppAuthManager.hasDrivePermission(context)
-                if (!hasDrive && !user.email.contains("demo")) {
+                if (!hasDrive) {
                     Toast.makeText(context, "Vui lòng cấp quyền Google Drive để bắt đầu tự động sao lưu tài liệu!", Toast.LENGTH_LONG).show()
                     if (onRequestDrivePermission != null) {
                         onRequestDrivePermission.invoke()

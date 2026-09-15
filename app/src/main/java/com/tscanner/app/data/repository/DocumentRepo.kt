@@ -358,6 +358,11 @@ class DocumentRepo private constructor(private val context: Context) {
     }
 
     @Synchronized
+    fun getDocument(docId: String): DocumentItem? {
+        return memoryDocs.find { it.id == docId }
+    }
+
+    @Synchronized
     fun getRecentDocuments(limit: Int = 10): List<DocumentItem> {
         return memoryDocs.take(limit)
     }
