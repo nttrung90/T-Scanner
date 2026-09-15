@@ -2,6 +2,8 @@ package com.tscanner.app.data.repository
 
 import android.content.Context
 import android.os.Looper
+import android.util.Log
+import androidx.core.util.AtomicFile
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.tscanner.app.data.model.DocumentItem
@@ -14,10 +16,12 @@ import com.tscanner.app.utils.FileUtils
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
+import java.io.FileOutputStream
 
 class DocumentRepo private constructor(private val context: Context) {
 
     private val dataFile = File(context.filesDir, "tscanner_data.json")
+    private val atomicDataFile = AtomicFile(dataFile)
 
     private val memoryDocs = mutableListOf<DocumentItem>()
     private val memoryFolders = mutableListOf<FolderItem>()
@@ -34,19 +38,22 @@ class DocumentRepo private constructor(private val context: Context) {
 
     @Synchronized
     private fun loadData() {
-        memoryDocs.clear()
-        memoryFolders.clear()
         var needsCleanup = false
+        val backupFile = File(dataFile.parentFile, "${dataFile.name}.bak")
+        val exists = dataFile.exists() || backupFile.exists()
 
-        if (dataFile.exists()) {
+        if (exists) {
             try {
-                val jsonStr = dataFile.readText()
+                val jsonStr = atomicDataFile.openRead().use { stream ->
+                    stream.bufferedReader(Charsets.UTF_8).readText()
+                }
                 val root = JSONObject(jsonStr)
 
+                val parsedFolders = mutableListOf<FolderItem>()
                 val foldersJson = root.optJSONArray("folders") ?: JSONArray()
                 for (i in 0 until foldersJson.length()) {
                     val f = foldersJson.getJSONObject(i)
-                    memoryFolders.add(
+                    parsedFolders.add(
                         FolderItem(
                             id = f.getString("id"),
                             name = f.getString("name"),
@@ -55,6 +62,7 @@ class DocumentRepo private constructor(private val context: Context) {
                     )
                 }
 
+                val parsedDocs = mutableListOf<DocumentItem>()
                 val docsJson = root.optJSONArray("documents") ?: JSONArray()
                 for (i in 0 until docsJson.length()) {
                     val d = docsJson.getJSONObject(i)
@@ -67,19 +75,24 @@ class DocumentRepo private constructor(private val context: Context) {
                     val pdfPath = if (d.has("pdfPath") && !d.isNull("pdfPath")) d.getString("pdfPath") else null
                     val thumbPath = if (d.has("thumbnailPath") && !d.isNull("thumbnailPath")) d.getString("thumbnailPath") else null
 
-                    // Verify if file still physically exists on disk. If all files are deleted, auto-purge this orphan record.
+                    // Verify if file physically exists on disk, or if it's a valid cloud document not yet downloaded
                     val pdfExists = pdfPath != null && File(pdfPath).exists()
                     val pagesExist = pages.any { File(it).exists() }
                     val thumbExists = thumbPath != null && File(thumbPath).exists()
 
                     val isSynced = d.optBoolean("isSynced", false)
                     val driveFileId = if (d.has("driveFileId") && !d.isNull("driveFileId")) d.getString("driveFileId") else null
+                    val isCloudOnly = !driveFileId.isNullOrEmpty()
+
                     val lastSyncedAt = if (d.has("lastSyncedAt") && !d.isNull("lastSyncedAt")) d.optLong("lastSyncedAt") else null
                     val syncStatusStr = d.optString("syncStatus", if (isSynced) "synced" else "local_only")
                     val syncStatus = com.tscanner.app.data.model.SyncStatus.fromId(syncStatusStr)
+                    val ownerId = if (d.has("ownerId") && !d.isNull("ownerId")) d.getString("ownerId") else null
+                    val revision = d.optLong("contentRevision", 0L)
+                    val mimeType = d.optString("mimeType", if (pdfPath != null) "application/pdf" else "image/jpeg")
 
-                    if (pdfExists || pagesExist || thumbExists) {
-                        memoryDocs.add(
+                    if (pdfExists || pagesExist || thumbExists || isCloudOnly) {
+                        parsedDocs.add(
                             DocumentItem(
                                 id = d.getString("id"),
                                 title = d.getString("title"),
@@ -93,20 +106,32 @@ class DocumentRepo private constructor(private val context: Context) {
                                 isSynced = isSynced,
                                 driveFileId = driveFileId,
                                 lastSyncedAt = if (lastSyncedAt != null && lastSyncedAt > 0) lastSyncedAt else null,
-                                syncStatus = syncStatus
+                                syncStatus = syncStatus,
+                                ownerId = ownerId,
+                                contentRevision = revision,
+                                mimeType = mimeType
                             )
                         )
                     } else {
-                        // Orphaned document record whose files no longer exist
+                        // Orphaned document record whose local files no longer exist AND has no cloud backup
                         needsCleanup = true
                     }
                 }
+
+                memoryFolders.clear()
+                memoryFolders.addAll(parsedFolders)
+
+                memoryDocs.clear()
+                memoryDocs.addAll(parsedDocs)
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e(TAG, "Error parsing document catalog JSON; keeping existing state", e)
             }
         }
 
         memoryDocs.sortByDescending { it.createdAt }
+
+        // Migrate any duplicate physical PDF paths from older app versions
+        migrateDuplicateFilePaths()
 
         if (needsCleanup) {
             saveData()
@@ -117,7 +142,43 @@ class DocumentRepo private constructor(private val context: Context) {
     }
 
     @Synchronized
+    private fun migrateDuplicateFilePaths() {
+        val pathCounts = memoryDocs.mapNotNull { it.pdfPath }.groupingBy { it }.eachCount()
+        var migrated = false
+        val docDir = FileUtils.getDocumentsDir(context)
+
+        for (i in memoryDocs.indices) {
+            val doc = memoryDocs[i]
+            val path = doc.pdfPath
+            if (path != null && (pathCounts[path] ?: 0) > 1) {
+                val sourceFile = File(path)
+                if (sourceFile.exists()) {
+                    val uniqueFile = File(docDir, "doc_${doc.id}.pdf")
+                    if (!uniqueFile.exists()) {
+                        try {
+                            sourceFile.copyTo(uniqueFile, overwrite = false)
+                            memoryDocs[i] = doc.copy(pdfPath = uniqueFile.absolutePath)
+                            migrated = true
+                            Log.i(TAG, "Migrated duplicated path for doc '${doc.title}' to ${uniqueFile.name}")
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Failed to copy duplicate file for doc ${doc.id}", e)
+                        }
+                    } else if (path != uniqueFile.absolutePath) {
+                        memoryDocs[i] = doc.copy(pdfPath = uniqueFile.absolutePath)
+                        migrated = true
+                    }
+                }
+            }
+        }
+
+        if (migrated) {
+            saveData()
+        }
+    }
+
+    @Synchronized
     private fun saveData() {
+        var fos: FileOutputStream? = null
         try {
             val root = JSONObject()
 
@@ -147,6 +208,9 @@ class DocumentRepo private constructor(private val context: Context) {
                     put("driveFileId", d.driveFileId)
                     put("lastSyncedAt", d.lastSyncedAt ?: -1L)
                     put("syncStatus", d.syncStatus.id)
+                    put("ownerId", d.ownerId)
+                    put("contentRevision", d.contentRevision)
+                    put("mimeType", d.mimeType)
                     val pagesArr = JSONArray()
                     d.pagePaths.forEach { pagesArr.put(it) }
                     put("pagePaths", pagesArr)
@@ -155,9 +219,14 @@ class DocumentRepo private constructor(private val context: Context) {
             }
             root.put("documents", docsJson)
 
-            dataFile.writeText(root.toString())
+            fos = atomicDataFile.startWrite()
+            fos.write(root.toString().toByteArray(Charsets.UTF_8))
+            atomicDataFile.finishWrite(fos)
         } catch (e: Exception) {
-            e.printStackTrace()
+            if (fos != null) {
+                atomicDataFile.failWrite(fos)
+            }
+            Log.e(TAG, "Failed to atomically save document repository", e)
         }
     }
 
@@ -181,7 +250,12 @@ class DocumentRepo private constructor(private val context: Context) {
 
     @Synchronized
     fun addDocument(doc: DocumentItem) {
-        memoryDocs.add(0, doc)
+        val existingIndex = memoryDocs.indexOfFirst { it.id == doc.id }
+        if (existingIndex != -1) {
+            memoryDocs[existingIndex] = doc
+        } else {
+            memoryDocs.add(0, doc)
+        }
         saveData()
         publishDocuments()
 
@@ -200,19 +274,28 @@ class DocumentRepo private constructor(private val context: Context) {
         if (index != -1) {
             val doc = memoryDocs.removeAt(index)
 
-            // Delete associated physical files safely
+            // Delete associated physical files safely ONLY if no other document in memoryDocs references them
             try {
                 doc.pdfPath?.let { path ->
-                    val f = File(path)
-                    if (f.exists()) f.delete()
+                    val stillReferenced = memoryDocs.any { it.pdfPath == path }
+                    if (!stillReferenced) {
+                        val f = File(path)
+                        if (f.exists()) f.delete()
+                    }
                 }
                 doc.thumbnailPath?.let { path ->
-                    val f = File(path)
-                    if (f.exists()) f.delete()
+                    val stillReferenced = memoryDocs.any { it.thumbnailPath == path }
+                    if (!stillReferenced) {
+                        val f = File(path)
+                        if (f.exists()) f.delete()
+                    }
                 }
                 doc.pagePaths.forEach { path ->
-                    val f = File(path)
-                    if (f.exists()) f.delete()
+                    val stillReferenced = memoryDocs.any { other -> other.pagePaths.contains(path) }
+                    if (!stillReferenced) {
+                        val f = File(path)
+                        if (f.exists()) f.delete()
+                    }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -300,16 +383,37 @@ class DocumentRepo private constructor(private val context: Context) {
         val index = memoryDocs.indexOfFirst { it.id == docId }
         if (index != -1) {
             val doc = memoryDocs[index]
-            doc.syncStatus = status
-            if (driveFileId != null) {
-                doc.driveFileId = driveFileId
-            }
-            if (status == com.tscanner.app.data.model.SyncStatus.SYNCED) {
-                doc.isSynced = true
-                doc.lastSyncedAt = syncedAt ?: System.currentTimeMillis()
-            }
+            val isSynced = (status == com.tscanner.app.data.model.SyncStatus.SYNCED)
+            memoryDocs[index] = doc.copy(
+                syncStatus = status,
+                driveFileId = driveFileId ?: doc.driveFileId,
+                isSynced = isSynced || doc.isSynced,
+                lastSyncedAt = if (isSynced) (syncedAt ?: System.currentTimeMillis()) else doc.lastSyncedAt
+            )
             saveData()
             publishDocuments()
+        }
+    }
+
+    @Synchronized
+    fun markDocumentModified(docId: String, newSizeBytes: Long? = null, newThumbnailPath: String? = null) {
+        val index = memoryDocs.indexOfFirst { it.id == docId }
+        if (index != -1) {
+            val doc = memoryDocs[index]
+            val updated = doc.copy(
+                isSynced = false,
+                syncStatus = com.tscanner.app.data.model.SyncStatus.LOCAL_ONLY,
+                contentRevision = doc.contentRevision + 1L,
+                sizeBytes = newSizeBytes ?: doc.sizeBytes,
+                thumbnailPath = newThumbnailPath ?: doc.thumbnailPath
+            )
+            memoryDocs[index] = updated
+            saveData()
+            publishDocuments()
+
+            if (com.tscanner.app.utils.AppAuthManager.isUserVip() && updated.pdfPath != null) {
+                com.tscanner.app.utils.CloudBackupManager.enqueueBackup(context, updated)
+            }
         }
     }
 
@@ -447,26 +551,36 @@ class DocumentRepo private constructor(private val context: Context) {
         val path = file.absolutePath
         var fileDeleted = false
         try {
-            if (file.exists()) {
-                fileDeleted = file.delete()
-            }
+            fileDeleted = if (file.exists()) file.delete() else true
         } catch (e: Exception) {
             e.printStackTrace()
         }
 
-        // Also check if any memoryDocs reference this file
+        if (!fileDeleted) {
+            return false
+        }
+
         var repoModified = false
         val toRemove = mutableListOf<DocumentItem>()
-        for (doc in memoryDocs) {
+        for (i in memoryDocs.indices) {
+            val doc = memoryDocs[i]
             if (doc.pdfPath == path) {
-                doc.thumbnailPath?.let { File(it).delete() }
+                doc.thumbnailPath?.let { thumb ->
+                    val stillReferenced = memoryDocs.any { other -> other.id != doc.id && other.thumbnailPath == thumb }
+                    if (!stillReferenced) File(thumb).delete()
+                }
                 toRemove.add(doc)
                 repoModified = true
             } else if (doc.pagePaths.contains(path)) {
                 val newPages = doc.pagePaths.filter { it != path }
                 if (newPages.isEmpty() && doc.pdfPath == null) {
-                    doc.thumbnailPath?.let { File(it).delete() }
+                    doc.thumbnailPath?.let { thumb ->
+                        val stillReferenced = memoryDocs.any { other -> other.id != doc.id && other.thumbnailPath == thumb }
+                        if (!stillReferenced) File(thumb).delete()
+                    }
                     toRemove.add(doc)
+                } else {
+                    memoryDocs[i] = doc.copy(pagePaths = newPages, pageCount = maxOf(1, newPages.size))
                 }
                 repoModified = true
             }
@@ -481,10 +595,12 @@ class DocumentRepo private constructor(private val context: Context) {
             publishDocuments()
         }
 
-        return fileDeleted || repoModified
+        return true
     }
 
     companion object {
+        private const val TAG = "DocumentRepo"
+
         @Volatile
         private var INSTANCE: DocumentRepo? = null
 

@@ -68,19 +68,33 @@ class PdfViewerActivity : AppCompatActivity() {
 
                     // Asynchronously update the PDF file with the newly cropped page
                     val currentPdf = pdfPath?.let { File(it) }
+                    var updateSuccess = false
                     if (currentPdf != null && currentPdf.exists()) {
-                        withContext(Dispatchers.IO) {
-                            PdfConverterHelper.createPdfFromImages(
+                        updateSuccess = withContext(Dispatchers.IO) {
+                            val ok = PdfConverterHelper.createPdfFromImages(
                                 imagePaths = renderedPagePaths,
                                 outputFile = currentPdf,
                                 addWatermark = !isWatermarkRemoved
                             )
-                            // Regenerate thumbnail in .thumbnails directory
-                            val thumbFile = File(FileUtils.getThumbnailsDir(this@PdfViewerActivity), "thumb_${currentPdf.nameWithoutExtension}.jpg")
-                            PdfConverterHelper.renderPdfFirstPage(currentPdf, thumbFile)
+                            if (ok) {
+                                // Regenerate thumbnail in .thumbnails directory
+                                val thumbFile = File(FileUtils.getThumbnailsDir(this@PdfViewerActivity), "thumb_${currentPdf.nameWithoutExtension}.jpg")
+                                PdfConverterHelper.renderPdfFirstPage(currentPdf, thumbFile)
+                                val repo = DocumentRepo.getInstance(this@PdfViewerActivity)
+                                val docId = currentPdf.nameWithoutExtension.removePrefix("doc_")
+                                repo.markDocumentModified(docId, currentPdf.length(), thumbFile.absolutePath)
+                                true
+                            } else {
+                                false
+                            }
                         }
                     }
-                    Toast.makeText(this@PdfViewerActivity, "Đã cập nhật trang ${pageIndex + 1}!", Toast.LENGTH_SHORT).show()
+
+                    if (updateSuccess) {
+                        Toast.makeText(this@PdfViewerActivity, "Đã cập nhật trang ${pageIndex + 1}!", Toast.LENGTH_SHORT).show()
+                    } else if (currentPdf != null) {
+                        Toast.makeText(this@PdfViewerActivity, "Không thể cập nhật trang vào PDF", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
@@ -196,7 +210,7 @@ class PdfViewerActivity : AppCompatActivity() {
         setupRecyclerView()
 
         val initialPages = intent.getStringArrayListExtra(EXTRA_PAGE_PATHS)
-        if (!initialPages.isNullOrEmpty()) {
+        if (isNewScan && !initialPages.isNullOrEmpty()) {
             renderedPagePaths.clear()
             renderedPagePaths.addAll(initialPages)
             pageAdapter = PdfPageAdapter(renderedPagePaths) { position, pagePath ->
@@ -294,8 +308,9 @@ class PdfViewerActivity : AppCompatActivity() {
             val fullTextBuilder = StringBuilder()
 
             try {
-                // If pages haven't finished rendering yet, render them now on the fly
-                if (renderedPagePaths.isEmpty()) {
+                // If pages haven't finished rendering yet, or preview files were cleaned up, render them now on the fly
+                val anyPageMissing = renderedPagePaths.isEmpty() || renderedPagePaths.any { !File(it).exists() }
+                if (anyPageMissing) {
                     val path = pdfPath
                     if (path != null && File(path).exists()) {
                         progressDialog.setMessage("Đang kết xuất trang từ tài liệu PDF...")
@@ -463,24 +478,26 @@ class PdfViewerActivity : AppCompatActivity() {
 
                     // Lưu vào DocumentRepo để quản lý trong danh sách tài liệu
                     val newDocId = UUID.randomUUID().toString()
+                    val userTitle = sanitized.ifEmpty { outputFile.nameWithoutExtension }
                     val thumb = renderedPagePaths.firstOrNull() ?: run {
                         val thumbFile = File(FileUtils.getThumbnailsDir(this@PdfViewerActivity), "thumb_${newDocId}.jpg")
                         if (PdfConverterHelper.renderPdfFirstPage(outputFile, thumbFile)) thumbFile.absolutePath else null
                     }
                     val docItem = DocumentItem(
                         id = newDocId,
-                        title = outputFile.nameWithoutExtension,
+                        title = userTitle,
                         pdfPath = outputFile.absolutePath,
                         thumbnailPath = thumb,
-                        pagePaths = renderedPagePaths.toList(),
+                        pagePaths = emptyList(),
                         pageCount = if (renderedPagePaths.isNotEmpty()) renderedPagePaths.size else 1,
                         sizeBytes = outputFile.length(),
-                        createdAt = System.currentTimeMillis()
+                        createdAt = System.currentTimeMillis(),
+                        ownerId = AppAuthManager.getCurrentUser()?.id
                     )
                     DocumentRepo.getInstance(this@PdfViewerActivity).addDocument(docItem)
 
                     // Hiển thị dialog chia sẻ / mở file
-                    showPdfSuccessDialog(outputFile)
+                    showPdfSuccessDialog(outputFile, userTitle)
                 } else {
                     Toast.makeText(this@PdfViewerActivity, "Không thể tạo file PDF", Toast.LENGTH_SHORT).show()
                 }
@@ -524,9 +541,10 @@ class PdfViewerActivity : AppCompatActivity() {
             }
         ) { fileName ->
             val sanitized = FileUtils.sanitizeFileName(fileName.removeSuffix(".pdf"))
-            val cleanName = "$sanitized.pdf"
+            val newDocId = UUID.randomUUID().toString()
+            val userEnteredTitle = sanitized.ifEmpty { "Tài liệu " + FileUtils.formatDate(System.currentTimeMillis()).replace('/', '-').replace(':', '-') }
             val docDir = FileUtils.getDocumentsDir(this)
-            val finalPdfFile = File(docDir, cleanName)
+            val finalPdfFile = File(docDir, "doc_${newDocId}.pdf")
 
             Toast.makeText(this, "Đang lưu tài liệu vào máy...", Toast.LENGTH_SHORT).show()
 
@@ -553,7 +571,6 @@ class PdfViewerActivity : AppCompatActivity() {
 
                 if (success && finalPdfFile.exists()) {
                     // Create thumbnail in .thumbnails folder
-                    val newDocId = UUID.randomUUID().toString()
                     val thumbsDir = FileUtils.getThumbnailsDir(this@PdfViewerActivity)
                     val thumbFile = File(thumbsDir, "thumb_${newDocId}.jpg")
                     val thumbPath = withContext(Dispatchers.IO) {
@@ -562,30 +579,47 @@ class PdfViewerActivity : AppCompatActivity() {
                         } else null
                     }
 
-                    // Save to DocumentRepo (Only the final PDF file is saved!)
+                    // Save to DocumentRepo (Unique internal file doc_${newDocId}.pdf, user's chosen title)
                     val docItem = DocumentItem(
                         id = newDocId,
-                        title = finalPdfFile.nameWithoutExtension,
+                        title = userEnteredTitle,
                         pdfPath = finalPdfFile.absolutePath,
                         thumbnailPath = thumbPath,
-                        pagePaths = emptyList(), // Page images were temporary in cache, not kept
+                        pagePaths = emptyList(), // Physical pages are stored inside the PDF
                         pageCount = if (renderedPagePaths.isNotEmpty()) renderedPagePaths.size else 1,
                         sizeBytes = finalPdfFile.length(),
-                        createdAt = System.currentTimeMillis()
+                        createdAt = System.currentTimeMillis(),
+                        ownerId = AppAuthManager.getCurrentUser()?.id
                     )
                     DocumentRepo.getInstance(this@PdfViewerActivity).addDocument(docItem)
 
-                    // Clean up temporary scan session!
+                    // Switch viewer to new saved PDF source and create dedicated preview BEFORE cleaning session (A03)
+                    val previewDir = FileUtils.getPdfPreviewDir(this@PdfViewerActivity)
+                    val newPreviewPages = withContext(Dispatchers.IO) {
+                        PdfConverterHelper.convertPdfToImages(this@PdfViewerActivity, finalPdfFile, previewDir)
+                    }
+                    if (newPreviewPages.isNotEmpty()) {
+                        renderedPagePaths.clear()
+                        renderedPagePaths.addAll(newPreviewPages)
+                        pageAdapter = PdfPageAdapter(renderedPagePaths) { position, pagePath ->
+                            val intent = CropRotateActivity.createIntent(this@PdfViewerActivity, pagePath, position)
+                            cropLauncher.launch(intent)
+                        }
+                        binding.rvPdfPages.adapter = pageAdapter
+                    }
+
+                    // Clean up temporary camera capture session only after viewer has switched to persistent preview
                     sessionId?.let { sid ->
                         withContext(Dispatchers.IO) {
                             FileUtils.deleteTempSession(this@PdfViewerActivity, sid)
                         }
                     }
+                    sessionId = null
 
                     // Update UI state to normal viewing mode
                     isNewScan = false
                     pdfPath = finalPdfFile.absolutePath
-                    binding.tvViewerTitle.text = finalPdfFile.nameWithoutExtension
+                    binding.tvViewerTitle.text = userEnteredTitle
                     binding.btnSaveViewerDoc.visibility = View.GONE
                     binding.btnShareViewer.visibility = View.VISIBLE
 
@@ -595,7 +629,7 @@ class PdfViewerActivity : AppCompatActivity() {
                         "Đã lưu vào Quản lý tài liệu!"
                     }
                     Toast.makeText(this@PdfViewerActivity, saveMsg, Toast.LENGTH_SHORT).show()
-                    showPdfSuccessDialog(finalPdfFile)
+                    showPdfSuccessDialog(finalPdfFile, userEnteredTitle)
                 } else {
                     Toast.makeText(this@PdfViewerActivity, "Lỗi khi lưu tài liệu", Toast.LENGTH_SHORT).show()
                 }
@@ -603,11 +637,11 @@ class PdfViewerActivity : AppCompatActivity() {
         }.show()
     }
 
-    private fun showPdfSuccessDialog(pdfFile: File) {
+    private fun showPdfSuccessDialog(pdfFile: File, displayTitle: String = pdfFile.name) {
         val uri = FileProvider.getUriForFile(this, "$packageName.provider", pdfFile)
         MaterialAlertDialogBuilder(this)
             .setTitle("Tạo file PDF thành công")
-            .setMessage("Tập tin đã được lưu:\n${pdfFile.name}\n\nBạn có muốn chia sẻ hoặc mở tập tin không?")
+            .setMessage("Tập tin đã được lưu:\n$displayTitle\n\nBạn có muốn chia sẻ hoặc mở tập tin không?")
             .setPositiveButton("Chia sẻ") { _, _ ->
                 val shareIntent = Intent(Intent.ACTION_SEND).apply {
                     type = "application/pdf"
@@ -633,11 +667,13 @@ class PdfViewerActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (isNewScan && sessionId != null) {
-            FileUtils.deleteTempSession(this, sessionId!!)
+        if (isFinishing) {
+            if (isNewScan && sessionId != null) {
+                FileUtils.deleteTempSession(this, sessionId!!)
+            }
+            val previewDir = FileUtils.getPdfPreviewDir(this)
+            FileUtils.deleteDirContents(previewDir)
         }
-        val previewDir = FileUtils.getPdfPreviewDir(this)
-        FileUtils.deleteDirContents(previewDir)
     }
 
     companion object {

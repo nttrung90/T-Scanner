@@ -525,8 +525,9 @@ class IdCardComposeActivity : AppCompatActivity() {
         binding.pbComposeLoading.visibility = View.VISIBLE
         lifecycleScope.launch {
             val docDir = FileUtils.getDocumentsDir(this@IdCardComposeActivity)
-            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmm", Locale.getDefault()).format(Date())
-            val pdfFile = File(docDir, "The_ID_$timeStamp.pdf")
+            val newDocId = UUID.randomUUID().toString()
+            val timeStamp = SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault()).format(Date())
+            val pdfFile = File(docDir, "doc_${newDocId}.pdf")
 
             val success = IdCardComposerHelper.createA4Pdf(
                 frontBmp = frontBitmap,
@@ -539,25 +540,26 @@ class IdCardComposeActivity : AppCompatActivity() {
 
             if (success && pdfFile.exists()) {
                 val thumbsDir = FileUtils.getThumbnailsDir(this@IdCardComposeActivity)
-                val thumbFile = File(thumbsDir, "thumb_${pdfFile.nameWithoutExtension}.jpg")
+                val thumbFile = File(thumbsDir, "thumb_${newDocId}.jpg")
                 val thumbPath = if (PdfConverterHelper.renderPdfFirstPage(pdfFile, thumbFile)) {
                     thumbFile.absolutePath
                 } else null
 
                 val docItem = DocumentItem(
-                    id = UUID.randomUUID().toString(),
+                    id = newDocId,
                     title = "Thẻ ID $timeStamp",
                     pdfPath = pdfFile.absolutePath,
                     thumbnailPath = thumbPath,
-                    pagePaths = listOfNotNull(frontImagePath, backImagePath),
+                    pagePaths = emptyList(), // A4 composed page is in the PDF
                     pageCount = 1,
                     sizeBytes = pdfFile.length(),
-                    createdAt = System.currentTimeMillis()
+                    createdAt = System.currentTimeMillis(),
+                    ownerId = AppAuthManager.getCurrentUser()?.id
                 )
                 DocumentRepo.getInstance(this@IdCardComposeActivity).addDocument(docItem)
 
                 Toast.makeText(this@IdCardComposeActivity, getString(R.string.id_card_saved_success), Toast.LENGTH_SHORT).show()
-                PdfViewerActivity.start(this@IdCardComposeActivity, pdfFile.absolutePath, docItem.title, docItem.pagePaths)
+                PdfViewerActivity.start(this@IdCardComposeActivity, pdfFile.absolutePath, docItem.title, emptyList())
                 finish()
             } else {
                 Toast.makeText(this@IdCardComposeActivity, "Không thể tạo file PDF", Toast.LENGTH_SHORT).show()

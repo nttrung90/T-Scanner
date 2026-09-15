@@ -42,13 +42,18 @@ import com.tscanner.app.utils.DocumentEdgeDetector
 import com.tscanner.app.utils.DocumentScannerHelper
 import com.tscanner.app.utils.FileUtils
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentSkipListMap
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
 
 class CameraScanActivity : AppCompatActivity() {
 
@@ -59,6 +64,9 @@ class CameraScanActivity : AppCompatActivity() {
 
     private val sessionId = UUID.randomUUID().toString()
     private val capturedPagePaths = mutableListOf<String>()
+    private val captureSequence = AtomicInteger(0)
+    private val activeCropJobs = ConcurrentHashMap<Int, Job>()
+    private val orderedPageMap = ConcurrentSkipListMap<Int, String>()
 
     private var flashMode = ImageCapture.FLASH_MODE_OFF
     private var isAutoCropEnabled = true
@@ -238,7 +246,7 @@ class CameraScanActivity : AppCompatActivity() {
         triggerShutterFeedback()
 
         val tempDir = FileUtils.getTempScanSessionDir(this, sessionId)
-        val photoIndex = capturedPagePaths.size + 1
+        val photoIndex = captureSequence.incrementAndGet()
         val rawFile = File(tempDir, "raw_${System.currentTimeMillis()}_$photoIndex.jpg")
         val outputOptions = ImageCapture.OutputFileOptions.Builder(rawFile).build()
 
@@ -250,22 +258,41 @@ class CameraScanActivity : AppCompatActivity() {
                     // Mở khóa shutter ngay khi ảnh đã được lưu vào buffer để người dùng có thể chụp tiếp
                     isCapturing = false
 
-                    lifecycleScope.launch {
-                        val finalPageFile = File(tempDir, "page_${photoIndex}.jpg")
+                    val job = lifecycleScope.launch {
+                        val finalPageFile = File(tempDir, "page_${photoIndex}_${System.currentTimeMillis()}.jpg")
 
                         // 2. Tự động nhận diện & cắt viền ngầm trong luồng nền
                         withContext(Dispatchers.IO) {
-                            if (isAutoCropEnabled) {
-                                DocumentEdgeDetector.detectAndCrop(rawFile, finalPageFile)
-                            } else {
-                                DocumentEdgeDetector.normalizeImageOrientation(rawFile, finalPageFile)
+                            try {
+                                if (isAutoCropEnabled) {
+                                    val cropped = DocumentEdgeDetector.detectAndCrop(rawFile, finalPageFile)
+                                    if (!cropped || !finalPageFile.exists() || finalPageFile.length() == 0L) {
+                                        DocumentEdgeDetector.normalizeImageOrientation(rawFile, finalPageFile)
+                                    }
+                                } else {
+                                    DocumentEdgeDetector.normalizeImageOrientation(rawFile, finalPageFile)
+                                }
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                                try {
+                                    rawFile.copyTo(finalPageFile, overwrite = true)
+                                } catch (_: Exception) {}
+                            } finally {
+                                try { rawFile.delete() } catch (_: Exception) {}
                             }
-                            try { rawFile.delete() } catch (_: Exception) {}
                         }
 
-                        capturedPagePaths.add(finalPageFile.absolutePath)
-                        updateCapturedPagesUI(finalPageFile.absolutePath)
+                        if (finalPageFile.exists() && finalPageFile.length() > 0L) {
+                            orderedPageMap[photoIndex] = finalPageFile.absolutePath
+                            synchronized(capturedPagePaths) {
+                                capturedPagePaths.clear()
+                                capturedPagePaths.addAll(orderedPageMap.values)
+                            }
+                            updateCapturedPagesUI(finalPageFile.absolutePath)
+                        }
+                        activeCropJobs.remove(photoIndex)
                     }
+                    activeCropJobs[photoIndex] = job
                 }
 
                 override fun onError(exception: ImageCaptureException) {
@@ -415,6 +442,30 @@ class CameraScanActivity : AppCompatActivity() {
     }
 
     private fun finishScanningSession() {
+        if (activeCropJobs.isNotEmpty()) {
+            val progressDialog = MaterialAlertDialogBuilder(this)
+                .setTitle("Đang xử lý tài liệu")
+                .setMessage("Đang hoàn tất xử lý các trang vừa chụp...")
+                .setCancelable(false)
+                .create()
+            progressDialog.show()
+
+            lifecycleScope.launch {
+                activeCropJobs.values.toList().joinAll()
+                progressDialog.dismiss()
+                proceedToNextScreen()
+            }
+        } else {
+            proceedToNextScreen()
+        }
+    }
+
+    private fun proceedToNextScreen() {
+        synchronized(capturedPagePaths) {
+            capturedPagePaths.clear()
+            capturedPagePaths.addAll(orderedPageMap.values)
+        }
+
         if (capturedPagePaths.isEmpty()) {
             Toast.makeText(this, "Chưa có trang tài liệu nào được chụp", Toast.LENGTH_SHORT).show()
             return
@@ -423,14 +474,14 @@ class CameraScanActivity : AppCompatActivity() {
         if (isIdCardMode) {
             IdCardComposeActivity.start(
                 context = this,
-                pagePaths = capturedPagePaths
+                pagePaths = ArrayList(capturedPagePaths)
             )
         } else {
             PdfViewerActivity.startForNewScan(
                 context = this,
                 sessionId = sessionId,
                 pdfPath = null,
-                pagePaths = capturedPagePaths
+                pagePaths = ArrayList(capturedPagePaths)
             )
         }
         finish()

@@ -25,17 +25,34 @@ object PdfConverterHelper {
         outputFile: File,
         addWatermark: Boolean = false
     ): Boolean = withContext(Dispatchers.IO) {
-        try {
-            outputFile.parentFile?.mkdirs()
-            if (outputFile.exists()) {
-                outputFile.delete()
+        if (imagePaths.isEmpty()) {
+            return@withContext false
+        }
+
+        val parentDir = outputFile.parentFile ?: return@withContext false
+        parentDir.mkdirs()
+
+        // 1. Pre-validation: Verify all image files exist before starting
+        for (path in imagePaths) {
+            val f = File(path)
+            if (!f.exists() || f.length() == 0L) {
+                return@withContext false
             }
+        }
 
-            val pdfDoc = PdfDocument()
-            var pagesAdded = 0
+        val tempFile = File(parentDir, "tmp_${System.currentTimeMillis()}_${UUID.randomUUID()}.pdf")
+        val pdfDoc = PdfDocument()
+        var pagesAdded = 0
 
+        try {
             for (path in imagePaths) {
-                val rawBitmap = BitmapFactory.decodeFile(path) ?: continue
+                val rawBitmap = BitmapFactory.decodeFile(path) ?: run {
+                    // Fail safe: If any image cannot be decoded, do NOT create an incomplete PDF
+                    pdfDoc.close()
+                    tempFile.delete()
+                    return@withContext false
+                }
+
                 val rotationDegrees = try {
                     val exif = ExifInterface(path)
                     when (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
@@ -73,18 +90,30 @@ object PdfConverterHelper {
                 pagesAdded++
             }
 
-            if (pagesAdded == 0) {
+            if (pagesAdded != imagePaths.size) {
                 pdfDoc.close()
+                tempFile.delete()
                 return@withContext false
             }
 
-            FileOutputStream(outputFile).use { out ->
+            FileOutputStream(tempFile).use { out ->
                 pdfDoc.writeTo(out)
             }
             pdfDoc.close()
-            true
+
+            // Atomically replace target file only after the complete new PDF has been verified
+            if (tempFile.exists() && tempFile.length() > 0L) {
+                tempFile.copyTo(outputFile, overwrite = true)
+                tempFile.delete()
+                true
+            } else {
+                tempFile.delete()
+                false
+            }
         } catch (e: Exception) {
             e.printStackTrace()
+            try { pdfDoc.close() } catch (_: Exception) {}
+            try { tempFile.delete() } catch (_: Exception) {}
             false
         }
     }
