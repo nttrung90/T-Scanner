@@ -1,0 +1,53 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-parcelize'
+
+android {
+    namespace "com.google.mlkit.samples.nl.entityextraction"
+    compileSdkVersion 34
+
+    defaultConfig {
+        applicationId "com.google.mlkit.samples.nl.entityextraction"
+        minSdkVersion 26
+        targetSdkVersion 34
+        multiDexEnabled true
+        versionCode 1
+        versionName "1.0"
+        setProperty("archivesBaseName", "nl-entity-extraction")
+    }
+
+    buildTypes {
+        proguard {
+            debuggable false
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard.cfg'
+            testProguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguardTest-rules.pro', 'proguard.cfg'
+        }
+        testBuildType "proguard"
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
+    }
+    lintOptions {
+        disable "Instantiatable"
+    }
+    viewBinding {
+        enabled = true
+    }
+}
+
+dependencies {
+    implementation project(':internal:chooserx')
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.google.mlkit:entity-extraction:16.0.0-beta6'
+
+    // Optional dependency used for the Snackbar
+    implementation 'com.google.android.material:material:1.2.0'
+}

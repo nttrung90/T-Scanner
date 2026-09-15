@@ -1,0 +1,126 @@
+[
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/dialog_confirm_delete.xml",
+        "source": "com.tscanner.app-main-54:/layout/dialog_confirm_delete.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/fragment_files.xml",
+        "source": "com.tscanner.app-main-54:/layout/fragment_files.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/dialog_doc_management.xml",
+        "source": "com.tscanner.app-main-54:/layout/dialog_doc_management.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/dialog_save_export.xml",
+        "source": "com.tscanner.app-main-54:/layout/dialog_save_export.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/dialog_qr_result.xml",
+        "source": "com.tscanner.app-main-54:/layout/dialog_qr_result.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/activity_main.xml",
+        "source": "com.tscanner.app-main-54:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/item_managed_file.xml",
+        "source": "com.tscanner.app-main-54:/layout/item_managed_file.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/item_pdf_page.xml",
+        "source": "com.tscanner.app-main-54:/layout/item_pdf_page.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/dialog_language_selection.xml",
+        "source": "com.tscanner.app-main-54:/layout/dialog_language_selection.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/dialog_qr_options.xml",
+        "source": "com.tscanner.app-main-54:/layout/dialog_qr_options.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/fragment_tools.xml",
+        "source": "com.tscanner.app-main-54:/layout/fragment_tools.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/activity_pdf_viewer.xml",
+        "source": "com.tscanner.app-main-54:/layout/activity_pdf_viewer.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/dialog_account_detail.xml",
+        "source": "com.tscanner.app-main-54:/layout/dialog_account_detail.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/activity_document_management.xml",
+        "source": "com.tscanner.app-main-54:/layout/activity_document_management.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/item_document.xml",
+        "source": "com.tscanner.app-main-54:/layout/item_document.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/dialog_vip_upgrade.xml",
+        "source": "com.tscanner.app-main-54:/layout/dialog_vip_upgrade.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/dialog_id_card_options.xml",
+        "source": "com.tscanner.app-main-54:/layout/dialog_id_card_options.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/fragment_home.xml",
+        "source": "com.tscanner.app-main-54:/layout/fragment_home.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/item_folder.xml",
+        "source": "com.tscanner.app-main-54:/layout/item_folder.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/dialog_rename_document.xml",
+        "source": "com.tscanner.app-main-54:/layout/dialog_rename_document.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/dialog_about.xml",
+        "source": "com.tscanner.app-main-54:/layout/dialog_about.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/dialog_check_update.xml",
+        "source": "com.tscanner.app-main-54:/layout/dialog_check_update.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/fragment_more.xml",
+        "source": "com.tscanner.app-main-54:/layout/fragment_more.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/dialog_create_folder.xml",
+        "source": "com.tscanner.app-main-54:/layout/dialog_create_folder.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/dialog_ocr_engine_selection.xml",
+        "source": "com.tscanner.app-main-54:/layout/dialog_ocr_engine_selection.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/activity_crop_rotate.xml",
+        "source": "com.tscanner.app-main-54:/layout/activity_crop_rotate.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/activity_id_card_compose.xml",
+        "source": "com.tscanner.app-main-54:/layout/activity_id_card_compose.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/activity_ocr_result.xml",
+        "source": "com.tscanner.app-main-54:/layout/activity_ocr_result.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/item_language_selection.xml",
+        "source": "com.tscanner.app-main-54:/layout/item_language_selection.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/dialog_create_pdf.xml",
+        "source": "com.tscanner.app-main-54:/layout/dialog_create_pdf.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeReleaseResources-52:/layout/dialog_export_doc.xml",
+        "source": "com.tscanner.app-main-54:/layout/dialog_export_doc.xml"
+    }
+]

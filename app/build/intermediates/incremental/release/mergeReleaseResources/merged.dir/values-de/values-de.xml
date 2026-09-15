@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:ns1="urn:oasis:names:tc:xliff:document:1.2" xmlns:ns2="http://schemas.android.com/tools">
+    <plurals name="mtrl_badge_content_description">
+    <item quantity="one">%d neue Benachrichtigung</item>
+    <item quantity="other">%d neue Benachrichtigungen</item>
+  </plurals>
+    <string msgid="5976598919945601918" name="abc_action_bar_home_description">"Zur Startseite"</string>
+    <string msgid="8388173803310557296" name="abc_action_bar_up_description">"Nach oben"</string>
+    <string msgid="3937310113216875497" name="abc_action_menu_overflow_description">"Weitere Optionen"</string>
+    <string msgid="4692188335987374352" name="abc_action_mode_done">"Fertig"</string>
+    <string msgid="1189761859438369441" name="abc_activity_chooser_view_see_all">"Alle anzeigen"</string>
+    <string msgid="2165779757652331008" name="abc_activitychooserview_choose_application">"App auswählen"</string>
+    <string msgid="4215997306490295099" name="abc_capital_off">"AUS"</string>
+    <string msgid="884982626291842264" name="abc_capital_on">"AN"</string>
+    <string msgid="8833365367933412986" name="abc_menu_alt_shortcut_label">"Alt +"</string>
+    <string msgid="2223301931652355242" name="abc_menu_ctrl_shortcut_label">"Strg +"</string>
+    <string msgid="838001238306846836" name="abc_menu_delete_shortcut_label">"Löschen"</string>
+    <string msgid="7986526966204849475" name="abc_menu_enter_shortcut_label">"Eingabetaste"</string>
+    <string msgid="375214403600139847" name="abc_menu_function_shortcut_label">"Funktionstaste +"</string>
+    <string msgid="4192209724446364286" name="abc_menu_meta_shortcut_label">"Meta-Taste +"</string>
+    <string msgid="4741552369836443843" name="abc_menu_shift_shortcut_label">"Umschalttaste +"</string>
+    <string msgid="5473865519181928982" name="abc_menu_space_shortcut_label">"Leertaste"</string>
+    <string msgid="6180552449598693998" name="abc_menu_sym_shortcut_label">"Sym-Taste +"</string>
+    <string msgid="5520303668377388990" name="abc_prepend_shortcut_label">"Menütaste +"</string>
+    <string msgid="7208076849092622260" name="abc_search_hint">"Suchen…"</string>
+    <string msgid="3741173234950517107" name="abc_searchview_description_clear">"Suchanfrage löschen"</string>
+    <string msgid="693312494995508443" name="abc_searchview_description_query">"Suchanfrage"</string>
+    <string msgid="3417662926640357176" name="abc_searchview_description_search">"Suche"</string>
+    <string msgid="1486535517437947103" name="abc_searchview_description_submit">"Anfrage senden"</string>
+    <string msgid="2293578557972875415" name="abc_searchview_description_voice">"Sprachsuche"</string>
+    <string msgid="8875138169939072951" name="abc_shareactionprovider_share_with">"Teilen mit"</string>
+    <string msgid="9055268688411532828" name="abc_shareactionprovider_share_with_application">"Mit <ns1:g id="APPLICATION_NAME">%s</ns1:g> teilen"</string>
+    <string msgid="1656852541809559762" name="abc_toolbar_collapse_description">"Minimieren"</string>
+    <string name="about_copyright">© 2026 T-Scanner. Powered by KI-Technologie.</string>
+    <string name="about_engine">Scan-Engine: Google Document Scanner | OCR: PaddleOCR v4 Mobile &amp; Tesseract OCR</string>
+    <string name="about_sdk">Konfiguration: SDK 36 (Android 16), ab Android 8.0+</string>
+    <string name="about_title">Über T-Scanner</string>
+    <string name="about_version">Version: 0.2.2 (Build 6)</string>
+    <string name="action_create_folder">Neuer Ordner</string>
+    <string name="action_create_pdf">PDF erstellen</string>
+    <string name="action_import_file">Datei importieren</string>
+    <string name="action_import_image">Bild importieren</string>
+    <string name="action_ocr">Text erkennen</string>
+    <string name="action_pdf_tools">PDF-Tools</string>
+    <string name="action_scan">Scannen</string>
+    <string msgid="8397015543330865059" name="android.credentials.TYPE_PASSWORD_CREDENTIAL">"Passwort"</string>
+    <string msgid="3929015085059320822" name="androidx.credentials.TYPE_PUBLIC_KEY_CREDENTIAL">"Passkey"</string>
+    <string name="app_name">T-Scanner</string>
+    <string name="bottomsheet_action_collapse">Ansicht am unteren Rand minimieren</string>
+    <string name="bottomsheet_action_expand">Ansicht am unteren Rand maximieren</string>
+    <string name="bottomsheet_action_expand_halfway">Zur Hälfte maximieren</string>
+    <string name="bottomsheet_drag_handle_clicked">Auf Ziehpunkt doppelt getippt</string>
+    <string name="bottomsheet_drag_handle_content_description">Ziehpunkt</string>
+    <string name="btn_create_pdf">PDF erstellen</string>
+    <string name="btn_documents">Dokumente</string>
+    <string name="btn_understood">Verstanden</string>
+    <string name="cache_cleared">Cache erfolgreich geleert</string>
+    <string msgid="881409763997275156" name="call_notification_answer_action">"Annehmen"</string>
+    <string msgid="8793775615905189152" name="call_notification_answer_video_action">"Video"</string>
+    <string msgid="3229508546291798546" name="call_notification_decline_action">"Ablehnen"</string>
+    <string msgid="2659457946726154263" name="call_notification_hang_up_action">"Auflegen"</string>
+    <string msgid="6107532579223922871" name="call_notification_incoming_text">"Eingehender Anruf"</string>
+    <string msgid="8623827134497363134" name="call_notification_ongoing_text">"Aktueller Anruf"</string>
+    <string msgid="59049573811482460" name="call_notification_screening_text">"Filter für eingehenden Anruf"</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="character_counter_content_description">Eingegebene Zeichen: %1$d von %2$d</string>
+    <string name="character_counter_overflowed_content_description">Zeichenbeschränkung überschritten: %1$d/%2$d</string>
+    <string name="check_update_action_later">Später</string>
+    <string name="check_update_action_update">Jetzt aktualisieren</string>
+    <string name="check_update_available_desc">Eine neue Version ist im Google Play Store verfügbar.</string>
+    <string name="check_update_available_title">Neues Update verfügbar!</string>
+    <string name="check_update_checking">Prüfe Google Play auf Updates...</string>
+    <string name="check_update_close">Schließen</string>
+    <string name="check_update_error_desc">Automatisches Update-Prüfen fehlgeschlagen.</string>
+    <string name="check_update_latest_desc">Sie verwenden die neueste Version (%1$s).</string>
+    <string name="check_update_latest_title">App ist aktuell</string>
+    <string name="check_update_open_store">Google Play Store öffnen</string>
+    <string name="check_update_title">Nach Updates suchen</string>
+    <string name="clear_cache">Cache leeren</string>
+    <string name="clear_text_end_icon_content_description">Text löschen</string>
+    <string name="close">Schließen</string>
+    <string msgid="2523291102206661146" name="common_google_play_services_enable_button">Aktivieren</string>
+    <string msgid="227660514972886228" name="common_google_play_services_enable_text">%1$s funktioniert erst nach der Aktivierung der Google Play-Dienste.</string>
+    <string msgid="5122002158466380389" name="common_google_play_services_enable_title">Google Play-Dienste aktivieren</string>
+    <string msgid="7153882981874058840" name="common_google_play_services_install_button">Installieren</string>
+    <string name="common_google_play_services_install_text">Zur Nutzung von %1$s sind die Google Play-Dienste erforderlich, die auf deinem Gerät nicht installiert sind.</string>
+    <string msgid="7215213145546190223" name="common_google_play_services_install_title">Google Play-Dienste installieren</string>
+    <string name="common_google_play_services_notification_channel_name">Verfügbarkeit von Google Play-Diensten</string>
+    <string name="common_google_play_services_notification_ticker">Fehler bei Zugriff auf Google Play-Dienste</string>
+    <string name="common_google_play_services_unknown_issue">%1$s hat Probleme mit Google Play-Diensten. Bitte versuche es noch einmal.</string>
+    <string name="common_google_play_services_unsupported_text">Zur Nutzung von %1$s sind Google Play-Dienste erforderlich, die auf deinem Gerät nicht unterstützt werden.</string>
+    <string msgid="6556509956452265614" name="common_google_play_services_update_button">Aktualisieren</string>
+    <string msgid="9053896323427875356" name="common_google_play_services_update_text">%1$s wird nur ausgeführt, wenn du die Google Play-Dienste aktualisierst.</string>
+    <string msgid="6006316683626838685" name="common_google_play_services_update_title">Google Play-Dienste aktualisieren</string>
+    <string name="common_google_play_services_updating_text">Zur Nutzung von %1$s sind Google Play-Dienste erforderlich, die gerade aktualisiert werden.</string>
+    <string name="common_google_play_services_wear_update_text">Eine neue Version der Google Play-Dienste wird benötigt. Diese wird in Kürze automatisch aktualisiert.</string>
+    <string name="common_open_on_phone">Auf Smartphone öffnen</string>
+    <string name="common_signin_button_text">Anmelden</string>
+    <string name="common_signin_button_text_long">Über Google anmelden</string>
+    <string name="confirm">Bestätigen</string>
+    <string name="conversion_success">Konvertierung abgeschlossen!</string>
+    <string name="convert_pdf_to_images">PDF in Bilder</string>
+    <string name="convert_pdf_to_long_image">PDF in langes Bild</string>
+    <string name="convert_to_excel">In Excel</string>
+    <string name="convert_to_ppt">In PPT</string>
+    <string name="convert_to_word">In Word</string>
+    <string name="converting_pdf">PDF-Konvertierung läuft...</string>
+    <string name="copied">In die Zwischenablage kopiert</string>
+    <string name="copy">Kopieren</string>
+    <string name="create">Erstellen</string>
+    <string name="create_folder_title">Neuen Ordner erstellen</string>
+    <string name="create_pdf_desc">Alle gescannten Seiten als vollständige PDF-Datei exportieren</string>
+    <string name="create_pdf_hint">PDF-Dateiname...</string>
+    <string name="create_pdf_title">PDF-Datei erstellen</string>
+    <string name="crop_rotate_title">Zuschneiden und drehen</string>
+    <string name="delete">Löschen</string>
+    <string name="delete_document_message">Möchten Sie dieses Dokument wirklich löschen?</string>
+    <string name="delete_document_title">Dokument löschen</string>
+    <string name="error_a11y_label">Fehler: ungültig</string>
+    <string name="error_icon_content_description">Fehler</string>
+    <string name="export_backup">Alle Dokumente sichern</string>
+    <string name="export_excel">Excel exportieren</string>
+    <string name="export_file">Datei exportieren</string>
+    <string name="export_file_desc">Auf dem Gerät speichern oder nach der Erkennung teilen</string>
+    <string name="export_word">Word exportieren</string>
+    <string name="exposed_dropdown_menu_content_description">Drop-down-Menü anzeigen</string>
+    <string name="file_imported">Dokument erfolgreich importiert: %1$s</string>
+    <string name="file_name_hint">Dateiname...</string>
+    <string name="files_empty_desc">Scannen oder importieren Sie Dokumente zur einfachen Verwaltung.</string>
+    <string name="folder_created">Ordner erfolgreich erstellt</string>
+    <string name="folder_name_hint">Ordnername eingeben</string>
+    <string name="get_benefits">Vorteile sichern</string>
+    <string name="icon_content_description">Dialogfeldsymbol</string>
+    <string name="item_about">Über die App</string>
+    <string name="item_check_update">Nach Updates suchen</string>
+    <string name="item_doc_management">Dokumentenverwaltung</string>
+    <string name="item_language">Sprache</string>
+    <string name="item_view_role_description">Tab</string>
+    <string name="item_vip_upgrade">VIP-Upgrade</string>
+    <string name="items_count">%1$d Elemente</string>
+    <string name="language_english">English</string>
+    <string name="language_english_sub">Englisch</string>
+    <string name="language_subtitle">Wählen Sie Ihre bevorzugte Sprache</string>
+    <string name="language_system_default">Systemstandard</string>
+    <string name="language_system_default_desc">Folgt automatisch der Gerätesprache</string>
+    <string name="language_title">Sprache</string>
+    <string name="language_vietnamese">Tiếng Việt</string>
+    <string name="language_vietnamese_sub">Vietnamesisch</string>
+    <string name="material_clock_toggle_content_description">Vormittags oder Nachmittags auswählen</string>
+    <string name="material_hour_24h_suffix">%1$s Stunden</string>
+    <string name="material_hour_selection">Stunde auswählen</string>
+    <string name="material_hour_suffix">%1$s Uhr</string>
+    <string name="material_minute_selection">Minuten auswählen</string>
+    <string name="material_minute_suffix">%1$s Minuten</string>
+    <string name="material_timepicker_am">AM</string>
+    <string name="material_timepicker_clock_mode_description">In den Uhrzeitmodus wechseln, um die Uhrzeit einzugeben.</string>
+    <string name="material_timepicker_hour">Stunde</string>
+    <string name="material_timepicker_minute">Minute</string>
+    <string name="material_timepicker_pm">PM</string>
+    <string name="material_timepicker_select_time">Uhrzeit auswählen</string>
+    <string name="material_timepicker_text_input_mode_description">In den Texteingabemodus wechseln, um die Uhrzeit einzugeben.</string>
+    <string name="mtrl_badge_numberless_content_description">Neue Benachrichtigung</string>
+    <string name="mtrl_checkbox_state_description_checked">Aktiviert</string>
+    <string name="mtrl_checkbox_state_description_indeterminate">Teilweise aktiviert</string>
+    <string name="mtrl_checkbox_state_description_unchecked">Nicht aktiviert</string>
+    <string name="mtrl_chip_close_icon_content_description">%1$s entfernen</string>
+    <string name="mtrl_exceed_max_badge_number_content_description" ns2:ignore="PluralsCandidate">Mehr als %1$d neue Benachrichtigungen</string>
+    <string name="mtrl_picker_a11y_next_month">Zum nächsten Monat wechseln</string>
+    <string name="mtrl_picker_a11y_prev_month">Zum vorherigen Monat wechseln</string>
+    <string name="mtrl_picker_announce_current_range_selection">Ausgewähltes Startdatum: %1$s – Ausgewähltes Enddatum: %2$s</string>
+    <string name="mtrl_picker_announce_current_selection">Aktuelle Auswahl: %1$s</string>
+    <string name="mtrl_picker_announce_current_selection_none">Keines</string>
+    <string name="mtrl_picker_cancel">Abbrechen</string>
+    <string name="mtrl_picker_confirm">OK</string>
+    <string name="mtrl_picker_date_header_selected">%1$s</string>
+    <string name="mtrl_picker_date_header_title">Datum auswählen</string>
+    <string name="mtrl_picker_date_header_unselected">Ausgewähltes Datum</string>
+    <string name="mtrl_picker_day_of_week_column_header">%1$s</string>
+    <string name="mtrl_picker_end_date_description">Enddatum %1$s</string>
+    <string name="mtrl_picker_invalid_format">Ungültiges Format.</string>
+    <string name="mtrl_picker_invalid_format_example">Beispiel: %1$s</string>
+    <string name="mtrl_picker_invalid_format_use">Format: %1$s</string>
+    <string name="mtrl_picker_invalid_range">Ungültiger Bereich.</string>
+    <string name="mtrl_picker_navigate_to_current_year_description">Zum aktuellen Jahr %1$d wechseln</string>
+    <string name="mtrl_picker_navigate_to_year_description">Zum Jahr %1$d wechseln</string>
+    <string name="mtrl_picker_out_of_range">Außerhalb des Bereichs: %1$s</string>
+    <string name="mtrl_picker_range_header_only_end_selected">Startdatum – %1$s</string>
+    <string name="mtrl_picker_range_header_only_start_selected">%1$s – Enddatum</string>
+    <string name="mtrl_picker_range_header_selected">%1$s – %2$s</string>
+    <string name="mtrl_picker_range_header_title">Zeitraum auswählen</string>
+    <string name="mtrl_picker_range_header_unselected">Startdatum – Enddatum</string>
+    <string name="mtrl_picker_save">Speichern</string>
+    <string name="mtrl_picker_start_date_description">Startdatum %1$s</string>
+    <string name="mtrl_picker_text_input_date_hint">Datum</string>
+    <string name="mtrl_picker_text_input_date_range_end_hint">Enddatum</string>
+    <string name="mtrl_picker_text_input_date_range_start_hint">Startdatum</string>
+    <string name="mtrl_picker_text_input_day_abbr">T</string>
+    <string name="mtrl_picker_text_input_month_abbr">M</string>
+    <string name="mtrl_picker_text_input_year_abbr">J</string>
+    <string name="mtrl_picker_today_description">Heute %1$s</string>
+    <string name="mtrl_picker_toggle_to_calendar_input_mode">In den Kalendereingabemodus wechseln</string>
+    <string name="mtrl_picker_toggle_to_day_selection">Tippen, um zur Kalenderansicht zu wechseln</string>
+    <string name="mtrl_picker_toggle_to_text_input_mode">In den Texteingabemodus wechseln</string>
+    <string name="mtrl_picker_toggle_to_year_selection">Tippen, um zur Jahresansicht zu wechseln</string>
+    <string name="mtrl_timepicker_cancel">Abbrechen</string>
+    <string name="mtrl_timepicker_confirm">OK</string>
+    <string name="new_features">Neue Funktionen</string>
+    <string name="no_recent_files">Keine aktuellen Dateien</string>
+    <string name="no_text_found">Kein Text im Bild gefunden</string>
+    <string name="ocr_processing">Texterkennung läuft...</string>
+    <string name="ocr_result_title">Ergebnis der Texterkennung</string>
+    <string name="ok">OK</string>
+    <string name="password_toggle_content_description">Passwort anzeigen</string>
+    <string name="recent_header">Zuletzt verwendet</string>
+    <string name="rename">Umbenennen</string>
+    <string name="rename_document_hint">Neuen Dokumentnamen eingeben...</string>
+    <string name="rename_document_title">Dokument umbenennen</string>
+    <string name="rotate_left">Nach links drehen</string>
+    <string name="rotate_right">Nach rechts drehen</string>
+    <string name="save">Speichern</string>
+    <string name="save_to_device">Auf Gerät speichern</string>
+    <string name="scan_new_document">Neues Dokument scannen</string>
+    <string name="scanner_cancelled">Scannen abgebrochen</string>
+    <string name="scanner_error">Dokumentenscanner konnte nicht gestartet werden: %1$s</string>
+    <string name="search_hint">Suchen</string>
+    <string msgid="6264217191555673260" name="search_menu_title">"Suche"</string>
+    <string name="searchview_clear_text_content_description">Text löschen</string>
+    <string name="searchview_navigation_content_description">Zurück</string>
+    <string name="section_convert">Konvertieren</string>
+    <string name="section_import">Importieren</string>
+    <string name="see_all">Alle ansehen ></string>
+    <string name="select_all">Alle auswählen</string>
+    <string name="share">Teilen</string>
+    <string name="side_sheet_accessibility_pane_title">Seitenblatt</string>
+    <string msgid="6277540029070332960" name="status_bar_notification_info_overflow">"999+"</string>
+    <string name="storage_stats_title">Dokumentenverwaltung</string>
+    <string name="storage_used">Belegter Speicher: %1$s</string>
+    <string name="tab_files">Dateien</string>
+    <string name="tab_home">Startseite</string>
+    <string name="tab_more">Mehr</string>
+    <string name="tab_tools">Werkzeuge</string>
+    <string name="tools_title">Werkzeuge</string>
+    <string name="total_documents">Dokumente insgesamt: %1$d</string>
+    <string name="total_pdfs">PDF-Dateien: %1$d</string>
+    <string name="vip_banner_btn">Jetzt upgraden</string>
+    <string name="vip_banner_desc">Über 20 Premium-Vorteile freischalten</string>
+    <string name="vip_banner_title">Konto auf VIP upgraden</string>
+    <string name="vip_coming_soon">Funktion bald verfügbar</string>
+    <string name="vip_perk_1">✓ Unbegrenztes HD-Dokumentenscannen</string>
+    <string name="vip_perk_2">✓ Unbegrenzte OCR-Texterkennung</string>
+    <string name="vip_perk_3">✓ Präzise Word-, Excel- und PPT-Konvertierung</string>
+    <string name="vip_perk_4">✓ Keine Wasserzeichen auf Exportdateien</string>
+    <string name="vip_perk_5">✓ 10 GB sicherer Cloud-Speicher</string>
+    <string name="vip_perks_title">T-Scanner Premium-Vorteile</string>
+    <string name="vip_price_monthly">99.000 VND / Monat</string>
+    <string name="vip_price_yearly">699.000 VND / Jahr (40% sparen)</string>
+</resources>

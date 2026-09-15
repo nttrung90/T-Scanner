@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="24dp">
+
+        <!-- Top Search Bar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="12dp">
+
+            <!-- Search input bar -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_search_bar"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="12dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_search"
+                    android:contentDescription="@string/search_hint" />
+
+                <EditText
+                    android:id="@+id/et_search_files"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="8dp"
+                    android:background="@null"
+                    android:hint="@string/search_hint"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_hint"
+                    android:textSize="13sp"
+                    android:singleLine="true"
+                    android:imeOptions="actionSearch" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 3 Horizontal Action Cards: Nhập tập tin | Nhập ảnh | Tạo thư mục -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="16dp">
+
+            <!-- Card 1: Nhập tập tin -->
+            <LinearLayout
+                android:id="@+id/card_import_file"
+                android:layout_width="0dp"
+                android:layout_height="96dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/bg_card_rounded"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/ic_file"
+                    android:contentDescription="@string/action_import_file" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/action_import_file"
+                    android:textColor="@color/text_primary"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <!-- Card 2: Nhập ảnh -->
+            <LinearLayout
+                android:id="@+id/card_import_image"
+                android:layout_width="0dp"
+                android:layout_height="96dp"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="3dp"
+                android:background="@drawable/bg_card_rounded"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/ic_image"
+                    android:contentDescription="@string/action_import_image" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/action_import_image"
+                    android:textColor="@color/text_primary"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <!-- Card 3: Tạo thư mục -->
+            <LinearLayout
+                android:id="@+id/card_create_folder"
+                android:layout_width="0dp"
+                android:layout_height="96dp"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/bg_card_rounded"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/ic_folder_add"
+                    android:contentDescription="@string/action_create_folder" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/action_create_folder"
+                    android:textColor="@color/text_primary"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Folder Navigation Breadcrumbs Header (shown if inside folder) -->
+        <LinearLayout
+            android:id="@+id/layout_folder_breadcrumb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="8dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/btn_back_to_root"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="← Thư mục gốc"
+                android:textColor="@color/primary_teal"
+                android:textSize="14sp"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <TextView
+                android:id="@+id/tv_current_folder_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Empty State Card (Exact replica of Screenshot 2) -->
+        <LinearLayout
+            android:id="@+id/layout_empty_files"
+            android:layout_width="match_parent"
+            android:layout_height="320dp"
+            android:layout_marginHorizontal="16dp"
+            android:background="@drawable/bg_card_rounded"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <!-- Empty Document Graphic with True Dashed Border -->
+            <FrameLayout
+                android:layout_width="92dp"
+                android:layout_height="110dp"
+                android:background="@drawable/bg_dashed_document_border"
+                android:padding="7dp">
+
+                <!-- White Paper Sheet -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_document_paper"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="16dp"
+                    android:paddingHorizontal="10dp">
+
+                    <View
+                        android:layout_width="34dp"
+                        android:layout_height="2.5dp"
+                        android:background="#4A7C77" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2.5dp"
+                        android:layout_marginTop="10dp"
+                        android:background="#4A7C77" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2.5dp"
+                        android:layout_marginTop="10dp"
+                        android:background="#4A7C77" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2.5dp"
+                        android:layout_marginTop="10dp"
+                        android:background="#4A7C77" />
+
+                    <View
+                        android:layout_width="36dp"
+                        android:layout_height="2.5dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_gravity="start"
+                        android:background="#3D5A56" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:text="@string/files_empty_desc"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/btn_tab_documents"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:background="@drawable/btn_outline_teal"
+                android:paddingHorizontal="32dp"
+                android:paddingVertical="10dp"
+                android:text="@string/btn_documents"
+                android:textColor="@color/primary_teal"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:focusable="true" />
+        </LinearLayout>
+
+        <!-- Folders RecyclerView -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_folders"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:nestedScrollingEnabled="false"
+            android:visibility="gone" />
+
+        <!-- Documents in Files Tab RecyclerView -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_files_docs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"
+            android:nestedScrollingEnabled="false"
+            android:visibility="gone" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

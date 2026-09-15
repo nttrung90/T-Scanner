@@ -1,0 +1,8 @@
+com.tscanner.app-pngs-0 E:\DU AN AI\T-Scanner\app\build\generated\res\pngs\release
+com.tscanner.app-updated_navigation_xml-1 E:\DU AN AI\T-Scanner\app\build\generated\updated_navigation_xml\release
+com.tscanner.app-packageReleaseResources-2 E:\DU AN AI\T-Scanner\app\build\intermediates\incremental\release\packageReleaseResources\merged.dir
+com.tscanner.app-packageReleaseResources-3 E:\DU AN AI\T-Scanner\app\build\intermediates\incremental\release\packageReleaseResources\stripped.dir
+com.tscanner.app-release-4 E:\DU AN AI\T-Scanner\app\build\intermediates\merged_res\release\mergeReleaseResources
+com.tscanner.app-main-5 E:\DU AN AI\T-Scanner\app\src\main\res
+com.tscanner.app-release-6 E:\DU AN AI\T-Scanner\app\src\release\res
+gradleHome-0 C:\Users\nguye\.gradle

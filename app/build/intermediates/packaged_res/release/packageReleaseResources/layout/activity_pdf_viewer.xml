@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark"
+    android:orientation="vertical">
+
+    <!-- Toolbar -->
+    <LinearLayout
+        android:id="@+id/layout_viewer_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="56dp"
+        android:background="@color/bg_dark_header"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp">
+
+        <ImageView
+            android:id="@+id/btn_back_viewer"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:padding="6dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_chevron_right"
+            android:rotation="180"
+            app:tint="@color/text_primary"
+            android:contentDescription="Back" />
+
+        <TextView
+            android:id="@+id/tv_viewer_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:textColor="@color/text_primary"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:singleLine="true"
+            android:ellipsize="end" />
+
+        <LinearLayout
+            android:id="@+id/btn_vip_watermark_viewer"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:background="@drawable/bg_chip_unselected"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="8dp"
+            android:layout_marginEnd="6dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:id="@+id/iv_watermark_crown"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:src="@drawable/ic_crown"
+                app:tint="@color/vip_gold" />
+
+            <TextView
+                android:id="@+id/tv_watermark_viewer_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="@string/watermark_btn_remove_vip"
+                android:textColor="@color/vip_gold"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/btn_save_viewer_doc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_solid_teal"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="7dp"
+            android:text="LƯU"
+            android:textColor="@color/bg_dark"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            android:layout_marginEnd="6dp"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <ImageView
+            android:id="@+id/btn_share_viewer"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:padding="6dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_share"
+            app:tint="@color/text_primary"
+            android:contentDescription="@string/share" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/pb_loading_viewer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="24dp"
+        android:visibility="gone" />
+
+    <!-- RecyclerView rendering each page of the PDF -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_pdf_pages"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingVertical="8dp" />
+
+    <!-- Bottom Actions Toolbar -->
+    <LinearLayout
+        android:id="@+id/layout_viewer_bottom_actions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bg_dark_header"
+        android:padding="12dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/btn_create_pdf_from_viewer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="4dp"
+            android:background="@drawable/btn_outline_teal"
+            android:gravity="center"
+            android:paddingVertical="10dp"
+            android:paddingHorizontal="2dp"
+            android:text="@string/action_create_pdf"
+            android:textColor="@color/primary_teal"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <TextView
+            android:id="@+id/btn_convert_long_img_from_pdf"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.8"
+            android:layout_marginHorizontal="4dp"
+            android:background="@drawable/btn_outline_teal"
+            android:gravity="center"
+            android:paddingVertical="10dp"
+            android:paddingHorizontal="2dp"
+            android:text="@string/action_long_image"
+            android:textColor="@color/primary_teal"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <TextView
+            android:id="@+id/btn_ocr_from_pdf"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="4dp"
+            android:background="@drawable/btn_outline_teal"
+            android:gravity="center"
+            android:paddingVertical="10dp"
+            android:paddingHorizontal="2dp"
+            android:text="@string/action_ocr"
+            android:textColor="@color/primary_teal"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:clickable="true"
+            android:focusable="true" />
+    </LinearLayout>
+</LinearLayout>

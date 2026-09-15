@@ -1,0 +1,49 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme -->
+    <style name="Theme.TScanner" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color -->
+        <item name="colorPrimary">@color/primary_teal</item>
+        <item name="colorPrimaryVariant">@color/primary_teal_dark</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorSecondary">@color/primary_teal</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        
+        <!-- Status bar and nav bar for Edge-to-Edge -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        
+        <!-- Backgrounds -->
+        <item name="android:windowBackground">@color/bg_dark</item>
+        <item name="colorSurface">@color/card_dark</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+
+        <!-- Dialog themes -->
+        <item name="alertDialogTheme">@style/ThemeOverlay.TScanner.Dialog</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.TScanner.Dialog</item>
+    </style>
+
+    <style name="TextAppearance.TScanner.BottomNav.Active" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textSize">11sp</item>
+        <item name="android:textColor">@color/primary_teal</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="TextAppearance.TScanner.BottomNav.Inactive" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textSize">11sp</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="ThemeOverlay.TScanner.Dialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="colorSurface">@color/card_dark_elevated</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorPrimary">@color/primary_teal</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+    </style>
+
+    <style name="ShapeAppearance.Circle" parent="">
+        <item name="cornerSize">50%</item>
+    </style>
+</resources>

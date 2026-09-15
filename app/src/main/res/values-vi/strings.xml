@@ -1,0 +1,258 @@
+<resources>
+    <string name="app_name">T-Scanner</string>
+    
+    <!-- Navigation Tabs -->
+    <string name="tab_home">Trang chủ</string>
+    <string name="tab_files">Tập tin</string>
+    <string name="tab_tools">Công cụ</string>
+    <string name="tab_more">Mở rộng</string>
+
+    <!-- General -->
+    <string name="search_hint">Tìm kiếm</string>
+    <string name="cancel">Hủy</string>
+    <string name="ok">OK</string>
+    <string name="confirm">Xác nhận</string>
+    <string name="delete">Xóa</string>
+    <string name="share">Chia sẻ</string>
+    <string name="rename">Đổi tên</string>
+    <string name="save">Lưu</string>
+    <string name="copy">Sao chép</string>
+    <string name="copied">Đã sao chép vào bộ nhớ tạm</string>
+    <string name="close">Đóng</string>
+    <string name="btn_understood">Đã hiểu</string>
+
+    <!-- Home Tab -->
+    <string name="action_scan">Quét</string>
+    <string name="action_id_card">Quét thẻ</string>
+    <string name="action_qr_scan">Quét QR</string>
+    <string name="action_pdf_tools">Công cụ PDF</string>
+    <string name="action_import_image">Nhập ảnh</string>
+    <string name="action_import_file">Nhập tập tin</string>
+    <string name="action_ocr">Trích xuất văn bản</string>
+    <string name="action_create_pdf">Tạo file PDF</string>
+    <string name="action_long_image">Ảnh dài</string>
+    <string name="recent_header">Gần đây</string>
+    <string name="see_all">Xem tất cả ></string>
+    <string name="no_recent_files">Không có tệp gần đây</string>
+    <string name="scan_new_document">Quét tài liệu mới</string>
+
+    <!-- QR Code Scan -->
+    <string name="qr_scan_title">Quét mã QR</string>
+    <string name="qr_scan_subtitle">Nhận diện tức thì bằng AI từ Máy ảnh hoặc Thư viện</string>
+    <string name="qr_scan_camera">Quét bằng Máy ảnh</string>
+    <string name="qr_scan_camera_desc">Quét trực tiếp mã QR qua ống kính máy ảnh</string>
+    <string name="qr_scan_gallery">Chọn từ Bộ sưu tập</string>
+    <string name="qr_scan_gallery_desc">Nhận diện mã QR trong ảnh hoặc ảnh chụp màn hình</string>
+    <string name="qr_scan_tip">Mẹo: Căn chỉnh mã QR nằm trọn trong khung hình để nhận diện nhanh nhất.</string>
+    <string name="qr_result_title">Kết quả quét mã QR</string>
+    <string name="qr_type_url">Đường liên kết</string>
+    <string name="qr_type_wifi">Mạng Wi-Fi</string>
+    <string name="qr_type_text">Nội dung văn bản</string>
+    <string name="qr_type_phone">Số điện thoại</string>
+    <string name="qr_type_email">Hộp thư Email</string>
+    <string name="qr_type_sms">Tin nhắn SMS</string>
+    <string name="qr_type_contact">Thông tin liên hệ</string>
+    <string name="qr_open_url">Mở liên kết</string>
+    <string name="qr_copy_wifi_password">Sao chép mật khẩu</string>
+    <string name="qr_call_phone">Gọi điện</string>
+    <string name="qr_send_email">Gửi Email</string>
+    <string name="qr_rescan">Quét lại</string>
+    <string name="qr_no_code_found">Không tìm thấy mã QR trong ảnh đã chọn</string>
+
+    <!-- ID Card Scan & A4 Composer -->
+    <string name="id_card_scan_title">Quét thẻ CCCD / Bằng lái xe</string>
+    <string name="id_card_scan_subtitle">Tự động ghép 2 mặt thẻ lên 1 trang A4 để in ấn hoặc làm hồ sơ</string>
+    <string name="id_card_capture_camera">Chụp 2 mặt bằng Máy ảnh</string>
+    <string name="id_card_pick_gallery">Chọn từ Bộ sưu tập</string>
+    <string name="id_card_composer_title">Ghép thẻ lên trang A4</string>
+    <string name="id_card_layout_portrait">A4 Dọc</string>
+    <string name="id_card_layout_landscape">A4 Ngang</string>
+    <string name="id_card_layout_single">1 Mặt</string>
+    <string name="id_card_scale_actual">Chuẩn 1:1 (Thật)</string>
+    <string name="id_card_scale_fit">Vừa trang (Lớn)</string>
+    <string name="id_card_swap_sides">Đổi 2 mặt</string>
+    <string name="id_card_crop_front">Cắt mặt trước</string>
+    <string name="id_card_crop_back">Cắt mặt sau</string>
+    <string name="id_card_border_toggle">Khung viền</string>
+    <string name="id_card_watermark_free_text">BẢN SAO T-Scanner</string>
+    <string name="id_card_remove_watermark_vip">Bỏ đóng dấu 👑 VIP</string>
+    <string name="id_card_watermark_unlocked_vip">Đã tắt đóng dấu (VIP)</string>
+    <string name="id_card_print">In ấn</string>
+    <string name="id_card_save_pdf">Lưu file PDF (A4)</string>
+    <string name="id_card_save_image">Lưu ảnh A4 HD</string>
+    <string name="id_card_front">Mặt trước</string>
+    <string name="id_card_back">Mặt sau</string>
+    <string name="id_card_add_back">Chạm để thêm Mặt sau</string>
+    <string name="id_card_tip">Mẹo: Đặt thẻ trên nền tương phản (mặt bàn tối màu) để máy ảnh tự bắt góc chuẩn nhất.</string>
+    <string name="id_card_saved_success">Đã lưu tài liệu thẻ thành công</string>
+
+    <!-- General Document Watermark -->
+    <string name="watermark_btn_remove_vip">Bỏ đóng dấu 👑 VIP</string>
+    <string name="watermark_btn_removed_vip">Đã xóa đóng dấu (VIP)</string>
+    <string name="watermark_status_free">Đóng dấu: \'T-Scanner\' góc dưới phải • Nâng cấp VIP để xóa</string>
+    <string name="watermark_status_vip">Đóng dấu: Đã xóa (Tài khoản VIP)</string>
+    <string name="watermark_toggled_on">Đã bật đóng dấu</string>
+    <string name="watermark_toggled_off">Đã tắt đóng dấu</string>
+
+    <!-- Files Tab -->
+    <string name="get_benefits">Nhận lợi ích</string>
+    <string name="action_create_folder">Tạo thư mục</string>
+    <string name="files_empty_desc">Quét hoặc nhập để quản lý tài liệu đơn giản.</string>
+    <string name="btn_documents">Tài liệu</string>
+    <string name="create_folder_title">Tạo thư mục mới</string>
+    <string name="folder_name_hint">Nhập tên thư mục</string>
+    <string name="create">Tạo</string>
+    <string name="folder_created">Đã tạo thư mục thành công</string>
+    <string name="items_count">%1$d mục</string>
+
+    <!-- Tools Tab -->
+    <string name="tools_title">Công cụ</string>
+    <string name="new_features">Tính năng mới</string>
+    <string name="section_import">Nhập</string>
+    <string name="section_convert">Chuyển đổi</string>
+    <string name="convert_to_word">Thành Word</string>
+    <string name="convert_to_excel">Thành Excel</string>
+    <string name="convert_to_ppt">Thành PPT</string>
+    <string name="convert_pdf_to_images">PDF thành ảnh</string>
+    <string name="convert_pdf_to_long_image">PDF thành ảnh dài</string>
+
+    <!-- More Tab -->
+    <string name="vip_banner_title">Nâng cấp tài khoản của bạn</string>
+    <string name="vip_banner_desc">Mở khóa các tính năng AI nâng cao, chính xác; Người dùng cơ bản không cần nâng cấp VIP mà vẫn sử dụng đầy đủ các tính năng</string>
+    <string name="vip_banner_btn">Nâng cấp ngay</string>
+    <string name="item_vip_upgrade">Nâng cấp Vip</string>
+    <string name="item_account">Tài khoản Google</string>
+    <string name="item_doc_management">Quản lý tài liệu</string>
+    <string name="item_language">Ngôn ngữ</string>
+    <string name="item_check_update">Kiểm tra cập nhật</string>
+    <string name="item_about">Giới thiệu</string>
+
+    <!-- Google Account & Auth -->
+    <string name="account_title">Tài khoản Google</string>
+    <string name="account_sign_in_title">Đăng nhập tài khoản Google</string>
+    <string name="account_sign_in_desc">Đồng bộ &amp; sao lưu tài liệu an toàn</string>
+    <string name="account_signed_in_desc">Đã liên kết tài khoản Google</string>
+    <string name="account_detail_title">Thông tin tài khoản</string>
+    <string name="account_status_free">Thành viên Miễn phí (Lưu tại máy)</string>
+    <string name="account_status_vip">Thành viên VIP</string>
+    <string name="account_cloud_sync">Sao lưu Google Drive</string>
+    <string name="account_cloud_sync_desc">Đã kích hoạt sao lưu tự động Google Drive (15GB)</string>
+    <string name="account_cloud_sync_desc_free">Nâng cấp VIP (20.000 đ/năm) để mở khóa sao lưu Google Drive cá nhân</string>
+    <string name="btn_sign_in">Đăng nhập</string>
+    <string name="btn_sign_out">Đăng xuất</string>
+    <string name="sign_out_confirm_title">Đăng xuất tài khoản</string>
+    <string name="sign_out_confirm_desc">Bạn có chắc chắn muốn đăng xuất khỏi tài khoản Google này không?</string>
+    <string name="sign_in_success">Đăng nhập thành công</string>
+    <string name="sign_in_failed">Đăng nhập thất bại: %1$s</string>
+    <string name="sign_out_success">Đã đăng xuất tài khoản thành công</string>
+
+    <!-- VIP Dialog -->
+    <string name="vip_perks_title">Đặc quyền VIP T-Scanner</string>
+    <string name="vip_perk_1">✓ Quét tài liệu chuẩn HD không giới hạn</string>
+    <string name="vip_perk_2">✓ Trích xuất văn bản (OCR) không giới hạn trang</string>
+    <string name="vip_perk_3">✓ Chuyển đổi sang Word, Excel, PPT chính xác</string>
+    <string name="vip_perk_4">✓ Không có hình mờ (Watermark) khi xuất file</string>
+    <string name="vip_perk_5">✓ Tự động sao lưu &amp; đồng bộ Google Drive cá nhân (15GB)</string>
+    <string name="vip_price_yearly">20.000 đ / năm</string>
+    <string name="vip_tier_pro_name">VIP PRO</string>
+    <string name="vip_tier_promax_name">VIP PRO MAX</string>
+    <string name="vip_tier_coming_soon">Sắp ra mắt</string>
+    <string name="vip_upgrade_btn_action">Nâng cấp VIP • 20.000 đ/năm</string>
+
+    <!-- Storage Management Dialog -->
+    <string name="storage_stats_title">Quản lý tài liệu</string>
+    <string name="total_documents">Tổng số tài liệu: %1$d</string>
+    <string name="total_pdfs">Tập tin PDF: %1$d</string>
+    <string name="storage_used">Dung lượng sử dụng: %1$s</string>
+    <string name="clear_cache">Dọn dẹp bộ nhớ đệm</string>
+    <string name="cache_cleared">Đã dọn dẹp bộ nhớ đệm thành công</string>
+    <string name="export_backup">Sao lưu tất cả tài liệu</string>
+
+    <string name="vip_coming_soon">Tính năng sẽ có ở bản chính thức</string>
+
+    <!-- About Dialog -->
+    <string name="about_title">Giới thiệu T-Scanner</string>
+    <string name="about_version">Phiên bản: 0.5.0 (Build 10)</string>
+    <string name="about_sdk">Cấu hình: SDK 36 (Android 16), hỗ trợ từ Android 8.0+</string>
+    <string name="about_engine">Động cơ quét: Google Document Scanner | OCR: PaddleOCR v4 Mobile &amp; Tesseract OCR v5</string>
+    <string name="about_copyright">© 2026 T-Scanner. Phát triển với công nghệ AI tiên tiến.</string>
+
+    <!-- Settings & OCR Engine Selection -->
+    <string name="item_settings">Cài đặt</string>
+    <string name="item_ocr_engine">Cài đặt động cơ OCR</string>
+    <string name="ocr_engine_title">Cài đặt động cơ OCR</string>
+    <string name="ocr_engine_subtitle">Tùy chọn công nghệ trích xuất văn bản (Mặc định: Tự động)</string>
+    <string name="ocr_engine_auto">Tự động (Khuyên dùng) [Mặc định]</string>
+    <string name="ocr_engine_auto_desc">Tự động tối ưu theo ngôn ngữ: Tiếng Việt &amp; Tiếng Anh dùng Tesseract v5; Tiếng Trung/Nhật/Hàn dùng PaddleOCR v4; các tiếng Latin dùng ML Kit.</string>
+    <string name="ocr_engine_tesseract">Tesseract OCR v5 (LSTM)</string>
+    <string name="ocr_engine_tesseract_desc">Phù hợp: Tiếng Việt &amp; Tiếng Anh. Nhận diện chuẩn 100% đầy đủ dấu thanh tiếng Việt và từ vựng tiếng Anh, offline hoàn toàn.</string>
+    <string name="ocr_engine_paddle">PaddleOCR v4 Mobile (Baidu AI)</string>
+    <string name="ocr_engine_paddle_desc">Phù hợp: Tiếng Anh, Tiếng Trung, Tiếng Nhật, Tiếng Hàn. Xử lý ảnh xoay nghiêng, bảng biểu siêu tốc (chưa hỗ trợ dấu tiếng Việt).</string>
+    <string name="ocr_engine_mlkit">Google ML Kit (Offline)</string>
+    <string name="ocr_engine_mlkit_desc">Phù hợp: 29 ngôn ngữ bảng chữ cái Latin (Pháp, Đức, Tây Ban Nha, Ý...). Công nghệ chuẩn Google.</string>
+
+    <!-- Error & Success messages -->
+    <string name="scanner_error">Không thể khởi chạy trình quét tài liệu: %1$s</string>
+    <string name="scanner_cancelled">Đã hủy quét tài liệu</string>
+    <string name="ocr_processing">Đang trích xuất văn bản...</string>
+    <string name="ocr_result_title">Kết quả trích xuất văn bản</string>
+    <string name="no_text_found">Không tìm thấy văn bản trong hình ảnh</string>
+    <string name="converting_pdf">Đang xử lý chuyển đổi PDF...</string>
+    <string name="conversion_success">Chuyển đổi hoàn tất!</string>
+    <string name="file_imported">Đã nhập tài liệu thành công: %1$s</string>
+
+    <!-- Check Update Dialog -->
+    <string name="check_update_title">Kiểm tra cập nhật</string>
+    <string name="check_update_checking">Đang kiểm tra cập nhật trên Google Play...</string>
+    <string name="check_update_latest_title">Đã là phiên bản mới nhất</string>
+    <string name="check_update_latest_desc">Bạn đang sử dụng phiên bản mới nhất (%1$s). Chưa có bản cập nhật mới trên Google Play Store.</string>
+    <string name="check_update_available_title">Có bản cập nhật mới!</string>
+    <string name="check_update_available_desc">Đã có phiên bản mới trên Google Play Store. Hãy cập nhật để trải nghiệm những tính năng và cải tiến mới nhất.</string>
+    <string name="check_update_action_update">Cập nhật ngay</string>
+    <string name="check_update_action_later">Để sau</string>
+    <string name="check_update_open_store">Mở Google Play Store</string>
+    <string name="check_update_close">Đóng</string>
+    <string name="check_update_error_desc">Không thể kiểm tra tự động qua Google Play (do ứng dụng chưa cài đặt qua Store hoặc lỗi kết nối mạng). Bạn có thể mở trực tiếp Google Play Store để kiểm tra.</string>
+
+    <!-- Language Selection Dialog -->
+    <string name="language_title">Ngôn ngữ</string>
+    <string name="language_subtitle">Chọn ngôn ngữ hiển thị cho ứng dụng</string>
+    <string name="language_system_default">Theo hệ thống</string>
+    <string name="language_system_default_desc">Tự động theo ngôn ngữ máy</string>
+    <string name="language_vietnamese">Tiếng Việt</string>
+    <string name="language_vietnamese_sub">Việt Nam</string>
+    <string name="language_english">English</string>
+    <string name="language_english_sub">Tiếng Anh</string>
+
+    <!-- Dialogs & Activity Strings -->
+    <string name="export_file">Xuất tập tin</string>
+    <string name="export_file_desc">Chọn lưu trữ vào máy hoặc chia sẻ tập tin sau khi nhận diện</string>
+    <string name="file_name_hint">Tên tập tin...</string>
+    <string name="save_to_device">Lưu vào máy</string>
+    <string name="delete_document_title">Xóa tài liệu</string>
+    <string name="delete_document_message">Bạn có chắc chắn muốn xóa tài liệu này?</string>
+    <string name="create_pdf_title">Tạo file PDF</string>
+    <string name="create_pdf_desc">Xuất tất cả các trang đã quét thành tập tin PDF hoàn chỉnh</string>
+    <string name="create_pdf_hint">Tên tập tin PDF...</string>
+    <string name="btn_create_pdf">Tạo PDF</string>
+    <string name="rename_document_title">Đổi tên tài liệu</string>
+    <string name="rename_document_hint">Nhập tên tài liệu mới...</string>
+    <string name="crop_rotate_title">Cắt &amp; Xoay trang</string>
+    <string name="rotate_left">Xoay trái</string>
+    <string name="rotate_right">Xoay phải</string>
+    <string name="select_all">Chọn tất cả</string>
+    <string name="export_word">Xuất Word</string>
+    <string name="export_excel">Xuất Excel</string>
+    <string name="choose_save_folder">Chọn thư mục lưu...</string>
+    <string name="save_to_downloads">Lưu vào Tải về (Downloads)</string>
+    <string name="convert_success">Chuyển đổi hoàn tất</string>
+    <string name="save_file_success">Lưu tập tin thành công</string>
+    <string name="saved_to_folder">Đã lưu vào thư mục: %1$s</string>
+    <string name="saved_to_downloads_desc">Đã lưu vào thư mục Tải về (Downloads)</string>
+    <string name="open_file">Mở file</string>
+    <string name="open_folder">Mở thư mục</string>
+    <string name="cancel_save">Đã hủy lưu tập tin</string>
+    <string name="converting_wait">Đang chuyển đổi, vui lòng đợi...</string>
+    <string name="extracted_images_count">Đã trích xuất %1$d hình ảnh từ PDF</string>
+    <string name="presentation_created">Đã tạo bài thuyết trình với %1$d trang</string>
+</resources>

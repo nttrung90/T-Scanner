@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark">
+
+    <!-- Fragment Container -->
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="64dp" />
+
+    <!-- Camera Floating Action Button -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="18dp"
+        android:layout_marginBottom="84dp"
+        android:contentDescription="@string/action_scan"
+        app:backgroundTint="@color/primary_teal"
+        app:tint="#FFFFFF"
+        app:elevation="8dp"
+        app:fabSize="normal"
+        app:srcCompat="@drawable/ic_camera" />
+
+    <!-- Robust Custom Bottom Navigation Bar: Guaranteed No Overlap & Exact Replica of Screenshot 1 -->
+    <LinearLayout
+        android:id="@+id/custom_bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/bottom_nav_bg"
+        android:elevation="12dp"
+        android:orientation="horizontal"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
+        <!-- Tab 1: Trang chủ -->
+        <LinearLayout
+            android:id="@+id/btn_nav_home"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless">
+
+            <ImageView
+                android:id="@+id/iv_nav_home"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:src="@drawable/ic_tab_home"
+                app:tint="@color/primary_teal"
+                android:contentDescription="@string/tab_home" />
+
+            <TextView
+                android:id="@+id/tv_nav_home"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="@string/tab_home"
+                android:textColor="@color/primary_teal"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Tab 2: Tập tin -->
+        <LinearLayout
+            android:id="@+id/btn_nav_files"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless">
+
+            <ImageView
+                android:id="@+id/iv_nav_files"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:src="@drawable/ic_tab_files"
+                app:tint="@color/text_secondary"
+                android:contentDescription="@string/tab_files" />
+
+            <TextView
+                android:id="@+id/tv_nav_files"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="@string/tab_files"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <!-- Tab 3: Công cụ -->
+        <LinearLayout
+            android:id="@+id/btn_nav_tools"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless">
+
+            <ImageView
+                android:id="@+id/iv_nav_tools"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:src="@drawable/ic_tab_tools"
+                app:tint="@color/text_secondary"
+                android:contentDescription="@string/tab_tools" />
+
+            <TextView
+                android:id="@+id/tv_nav_tools"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="@string/tab_tools"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <!-- Tab 4: Mở rộng -->
+        <LinearLayout
+            android:id="@+id/btn_nav_more"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless">
+
+            <!-- Icon Container with EDU Badge on Top Right (Exact match to Screenshot 1) -->
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/iv_nav_more"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_tab_more"
+                    app:tint="@color/text_secondary"
+                    android:contentDescription="@string/tab_more" />
+
+                <!-- EDU Badge -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|end"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginTop="-4dp"
+                    android:background="@drawable/badge_edu"
+                    android:paddingHorizontal="3dp"
+                    android:paddingVertical="1dp"
+                    android:text="EDU"
+                    android:textColor="#FFFFFF"
+                    android:textSize="8sp"
+                    android:textStyle="bold" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tv_nav_more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="@string/tab_more"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

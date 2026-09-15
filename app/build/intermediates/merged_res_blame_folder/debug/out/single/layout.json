@@ -1,0 +1,66 @@
+[
+    {
+        "merged": "C:\\Users\\nguye\\.gradle\\daemon\\8.8\\com.tscanner.app-mergeDebugResources-41:\\layout\\activity_pdf_viewer.xml",
+        "source": "C:\\Users\\nguye\\.gradle\\daemon\\8.8\\com.tscanner.app-main-44:\\layout\\activity_pdf_viewer.xml"
+    },
+    {
+        "merged": "C:\\Users\\nguye\\.gradle\\daemon\\8.8\\com.tscanner.app-mergeDebugResources-41:\\layout\\fragment_more.xml",
+        "source": "C:\\Users\\nguye\\.gradle\\daemon\\8.8\\com.tscanner.app-main-44:\\layout\\fragment_more.xml"
+    },
+    {
+        "merged": "C:\\Users\\nguye\\.gradle\\daemon\\8.8\\com.tscanner.app-mergeDebugResources-41:\\layout\\item_pdf_page.xml",
+        "source": "C:\\Users\\nguye\\.gradle\\daemon\\8.8\\com.tscanner.app-main-44:\\layout\\item_pdf_page.xml"
+    },
+    {
+        "merged": "C:\\Users\\nguye\\.gradle\\daemon\\8.8\\com.tscanner.app-mergeDebugResources-41:\\layout\\dialog_create_folder.xml",
+        "source": "C:\\Users\\nguye\\.gradle\\daemon\\8.8\\com.tscanner.app-main-44:\\layout\\dialog_create_folder.xml"
+    },
+    {
+        "merged": "C:\\Users\\nguye\\.gradle\\daemon\\8.8\\com.tscanner.app-mergeDebugResources-41:\\layout\\dialog_vip_upgrade.xml",
+        "source": "C:\\Users\\nguye\\.gradle\\daemon\\8.8\\com.tscanner.app-main-44:\\layout\\dialog_vip_upgrade.xml"
+    },
+    {
+        "merged": "C:\\Users\\nguye\\.gradle\\daemon\\8.8\\com.tscanner.app-mergeDebugResources-41:\\layout\\fragment_tools.xml",
+        "source": "C:\\Users\\nguye\\.gradle\\daemon\\8.8\\com.tscanner.app-main-44:\\layout\\fragment_tools.xml"
+    },
+    {
+        "merged": "C:\\Users\\nguye\\.gradle\\daemon\\8.8\\com.tscanner.app-mergeDebugResources-41:\\layout\\activity_ocr_result.xml",
+        "source": "C:\\Users\\nguye\\.gradle\\daemon\\8.8\\com.tscanner.app-main-44:\\layout\\activity_ocr_result.xml"
+    },
+    {
+        "merged": "C:\\Users\\nguye\\.gradle\\daemon\\8.8\\com.tscanner.app-mergeDebugResources-41:\\layout\\item_folder.xml",
+        "source": "C:\\Users\\nguye\\.gradle\\daemon\\8.8\\com.tscanner.app-main-44:\\layout\\item_folder.xml"
+    },
+    {
+        "merged": "C:\\Users\\nguye\\.gradle\\daemon\\8.8\\com.tscanner.app-mergeDebugResources-41:\\layout\\item_document.xml",
+        "source": "C:\\Users\\nguye\\.gradle\\daemon\\8.8\\com.tscanner.app-main-44:\\layout\\item_document.xml"
+    },
+    {
+        "merged": "C:\\Users\\nguye\\.gradle\\daemon\\8.8\\com.tscanner.app-mergeDebugResources-41:\\layout\\fragment_home.xml",
+        "source": "C:\\Users\\nguye\\.gradle\\daemon\\8.8\\com.tscanner.app-main-44:\\layout\\fragment_home.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeDebugResources-41:/layout/dialog_confirm_delete.xml",
+        "source": "com.tscanner.app-main-44:/layout/dialog_confirm_delete.xml"
+    },
+    {
+        "merged": "C:\\Users\\nguye\\.gradle\\daemon\\8.8\\com.tscanner.app-mergeDebugResources-41:\\layout\\dialog_about.xml",
+        "source": "C:\\Users\\nguye\\.gradle\\daemon\\8.8\\com.tscanner.app-main-44:\\layout\\dialog_about.xml"
+    },
+    {
+        "merged": "C:\\Users\\nguye\\.gradle\\daemon\\8.8\\com.tscanner.app-mergeDebugResources-41:\\layout\\fragment_files.xml",
+        "source": "C:\\Users\\nguye\\.gradle\\daemon\\8.8\\com.tscanner.app-main-44:\\layout\\fragment_files.xml"
+    },
+    {
+        "merged": "com.tscanner.app-mergeDebugResources-41:/layout/dialog_rename_document.xml",
+        "source": "com.tscanner.app-main-44:/layout/dialog_rename_document.xml"
+    },
+    {
+        "merged": "C:\\Users\\nguye\\.gradle\\daemon\\8.8\\com.tscanner.app-mergeDebugResources-41:\\layout\\activity_main.xml",
+        "source": "C:\\Users\\nguye\\.gradle\\daemon\\8.8\\com.tscanner.app-main-44:\\layout\\activity_main.xml"
+    },
+    {
+        "merged": "C:\\Users\\nguye\\.gradle\\daemon\\8.8\\com.tscanner.app-mergeDebugResources-41:\\layout\\dialog_doc_management.xml",
+        "source": "C:\\Users\\nguye\\.gradle\\daemon\\8.8\\com.tscanner.app-main-44:\\layout\\dialog_doc_management.xml"
+    }
+]

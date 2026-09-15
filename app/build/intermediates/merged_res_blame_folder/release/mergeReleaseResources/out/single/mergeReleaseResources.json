@@ -1,0 +1,526 @@
+[
+    {
+        "merged": "com.tscanner.app-release-53:/layout_dialog_account_detail.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/dialog_account_detail.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/xml_backup_rules.xml.flat",
+        "source": "com.tscanner.app-main-54:/xml/backup_rules.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable-xhdpi_ic_vip.png.flat",
+        "source": "com.tscanner.app-main-54:/drawable-xhdpi/ic_vip.png"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_dialog_qr_options.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/dialog_qr_options.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_dialog_doc_management.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/dialog_doc_management.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_activity_id_card_compose.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/activity_id_card_compose.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_word.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_word.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_bg_action_image.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/bg_action_image.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_dialog_language_selection.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/dialog_language_selection.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_bg_action_scan.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/bg_action_scan.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_activity_main.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_file.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_file.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_update.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_update.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_activity_pdf_viewer.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/activity_pdf_viewer.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_ocr.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_ocr.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "com.tscanner.app-main-54:/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_btn_outline_teal.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/btn_outline_teal.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_bg_card_rounded.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/bg_card_rounded.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_dialog_create_folder.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/dialog_create_folder.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "com.tscanner.app-main-54:/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/mipmap-hdpi_ic_launcher_round.png.flat",
+        "source": "com.tscanner.app-main-54:/mipmap-hdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_qr_code.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_qr_code.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_badge_new.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/badge_new.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_pdf_to_img.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_pdf_to_img.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.tscanner.app-main-54:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_account_circle.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_account_circle.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/mipmap-xxxhdpi_ic_launcher_foreground.png.flat",
+        "source": "com.tscanner.app-main-54:/mipmap-xxxhdpi/ic_launcher_foreground.png"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_bg_action_file.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/bg_action_file.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_dialog_vip_upgrade.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/dialog_vip_upgrade.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_bg_vip_banner.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/bg_vip_banner.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_btn_vip_gold.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/btn_vip_gold.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/xml_locales_config.xml.flat",
+        "source": "com.tscanner.app-main-54:/xml/locales_config.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_check.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_check.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_dialog_create_pdf.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/dialog_create_pdf.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/mipmap-mdpi_ic_launcher_foreground.png.flat",
+        "source": "com.tscanner.app-main-54:/mipmap-mdpi/ic_launcher_foreground.png"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_folder.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_folder.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_google.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_google.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/xml_file_paths.xml.flat",
+        "source": "com.tscanner.app-main-54:/xml/file_paths.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable-mdpi_ic_vip.png.flat",
+        "source": "com.tscanner.app-main-54:/drawable-mdpi/ic_vip.png"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_bg_chip_selected.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/bg_chip_selected.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_bg_action_ocr.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/bg_action_ocr.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_bg_action_idcard.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/bg_action_idcard.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_badge_red_dot.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/badge_red_dot.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_scan.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_scan.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_share.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_share.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_item_pdf_page.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/item_pdf_page.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/xml_data_extraction_rules.xml.flat",
+        "source": "com.tscanner.app-main-54:/xml/data_extraction_rules.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_cloud_done.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_cloud_done.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_cloud_sync.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_cloud_sync.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_bg_action_qr.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/bg_action_qr.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/color_nav_item_color.xml.flat",
+        "source": "com.tscanner.app-main-54:/color/nav_item_color.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_search.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_search.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_dialog_save_export.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/dialog_save_export.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_bg_action_pdf.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/bg_action_pdf.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/mipmap-xxhdpi_ic_launcher_foreground.png.flat",
+        "source": "com.tscanner.app-main-54:/mipmap-xxhdpi/ic_launcher_foreground.png"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_item_document.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/item_document.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_rotate_right.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_rotate_right.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_activity_ocr_result.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/activity_ocr_result.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_activity_document_management.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/activity_document_management.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_logout.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_logout.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_excel.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_excel.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_pdf_to_long_img.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_pdf_to_long_img.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_cloud.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_cloud.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/mipmap-mdpi_ic_launcher_round.png.flat",
+        "source": "com.tscanner.app-main-54:/mipmap-mdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "com.tscanner.app-main-54:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/mipmap-hdpi_ic_launcher_foreground.png.flat",
+        "source": "com.tscanner.app-main-54:/mipmap-hdpi/ic_launcher_foreground.png"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/mipmap-xhdpi_ic_launcher_round.png.flat",
+        "source": "com.tscanner.app-main-54:/mipmap-xhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_dialog_rename_document.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/dialog_rename_document.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/mipmap-xxxhdpi_ic_launcher_round.png.flat",
+        "source": "com.tscanner.app-main-54:/mipmap-xxxhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_reset.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_reset.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/mipmap-xhdpi_ic_launcher_foreground.png.flat",
+        "source": "com.tscanner.app-main-54:/mipmap-xhdpi/ic_launcher_foreground.png"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_item_managed_file.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/item_managed_file.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_delete.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_delete.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_activity_crop_rotate.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/activity_crop_rotate.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_bg_action_circle.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/bg_action_circle.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_image.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_image.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_bg_dashed_document_border.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/bg_dashed_document_border.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_dialog_id_card_options.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/dialog_id_card_options.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_settings.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_settings.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_badge_edu.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/badge_edu.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_vip.png.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_vip.png"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/mipmap-xxhdpi_ic_launcher_round.png.flat",
+        "source": "com.tscanner.app-main-54:/mipmap-xxhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_fragment_tools.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/fragment_tools.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_fragment_home.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/fragment_home.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_bg_search_bar.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/bg_search_bar.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_camera.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_camera.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_cloud_alert.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_cloud_alert.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_language.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_language.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_about.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_about.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable-xxxhdpi_ic_vip.png.flat",
+        "source": "com.tscanner.app-main-54:/drawable-xxxhdpi/ic_vip.png"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_chevron_right.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_chevron_right.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_copy.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_copy.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "com.tscanner.app-main-54:/mipmap-mdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_print.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_print.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "com.tscanner.app-main-54:/mipmap-xhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_item_folder.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/item_folder.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_id_card.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_id_card.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_tab_more.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_tab_more.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_btn_solid_teal.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/btn_solid_teal.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/menu_bottom_nav_menu.xml.flat",
+        "source": "com.tscanner.app-main-54:/menu/bottom_nav_menu.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_bg_chip_unselected.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/bg_chip_unselected.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable-hdpi_ic_vip.png.flat",
+        "source": "com.tscanner.app-main-54:/drawable-hdpi/ic_vip.png"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_dialog_qr_result.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/dialog_qr_result.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_btn_delete_confirm.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/btn_delete_confirm.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_dialog_ocr_engine_selection.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/dialog_ocr_engine_selection.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_bg_action_folder.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/bg_action_folder.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_dialog_check_update.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/dialog_check_update.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_pdf.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_pdf.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_fragment_files.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/fragment_files.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_folder_add.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_folder_add.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_bg_document_paper.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/bg_document_paper.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_fragment_more.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/fragment_more.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_tab_files.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_tab_files.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_check_circle.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_check_circle.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.tscanner.app-main-54:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_empty_document_illustration.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/empty_document_illustration.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_dialog_confirm_delete.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/dialog_confirm_delete.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_tab_home.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_tab_home.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_crown.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_crown.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_item_language_selection.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/item_language_selection.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_dialog_export_doc.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/dialog_export_doc.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_crop.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_crop.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_bg_cloud_pill.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/bg_cloud_pill.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable-xxhdpi_ic_vip.png.flat",
+        "source": "com.tscanner.app-main-54:/drawable-xxhdpi/ic_vip.png"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_tab_tools.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_tab_tools.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_ppt.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_ppt.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_close.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_close.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_app_icon.png.flat",
+        "source": "com.tscanner.app-main-54:/drawable/app_icon.png"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_storage.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_storage.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/layout_dialog_about.xml.flat",
+        "source": "com.tscanner.app-main-54:/layout/dialog_about.xml"
+    },
+    {
+        "merged": "com.tscanner.app-release-53:/drawable_ic_more_vert.xml.flat",
+        "source": "com.tscanner.app-main-54:/drawable/ic_more_vert.xml"
+    }
+]

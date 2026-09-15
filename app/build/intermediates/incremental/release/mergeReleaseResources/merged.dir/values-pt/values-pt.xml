@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:ns1="urn:oasis:names:tc:xliff:document:1.2">
+    <string msgid="5976598919945601918" name="abc_action_bar_home_description">"Navegar para a página inicial"</string>
+    <string msgid="8388173803310557296" name="abc_action_bar_up_description">"Navegar para cima"</string>
+    <string msgid="3937310113216875497" name="abc_action_menu_overflow_description">"Mais opções"</string>
+    <string msgid="4692188335987374352" name="abc_action_mode_done">"Concluído"</string>
+    <string msgid="1189761859438369441" name="abc_activity_chooser_view_see_all">"Ver tudo"</string>
+    <string msgid="2165779757652331008" name="abc_activitychooserview_choose_application">"Selecionar um app"</string>
+    <string msgid="4215997306490295099" name="abc_capital_off">"DESATIVADO"</string>
+    <string msgid="884982626291842264" name="abc_capital_on">"ATIVADO"</string>
+    <string msgid="8833365367933412986" name="abc_menu_alt_shortcut_label">"Alt+"</string>
+    <string msgid="2223301931652355242" name="abc_menu_ctrl_shortcut_label">"Ctrl+"</string>
+    <string msgid="838001238306846836" name="abc_menu_delete_shortcut_label">"delete"</string>
+    <string msgid="7986526966204849475" name="abc_menu_enter_shortcut_label">"enter"</string>
+    <string msgid="375214403600139847" name="abc_menu_function_shortcut_label">"Function+"</string>
+    <string msgid="4192209724446364286" name="abc_menu_meta_shortcut_label">"Meta+"</string>
+    <string msgid="4741552369836443843" name="abc_menu_shift_shortcut_label">"Shift+"</string>
+    <string msgid="5473865519181928982" name="abc_menu_space_shortcut_label">"espaço"</string>
+    <string msgid="6180552449598693998" name="abc_menu_sym_shortcut_label">"Sym+"</string>
+    <string msgid="5520303668377388990" name="abc_prepend_shortcut_label">"Menu+"</string>
+    <string msgid="7208076849092622260" name="abc_search_hint">"Pesquisar…"</string>
+    <string msgid="3741173234950517107" name="abc_searchview_description_clear">"Limpar consulta"</string>
+    <string msgid="693312494995508443" name="abc_searchview_description_query">"Consulta de pesquisa"</string>
+    <string msgid="3417662926640357176" name="abc_searchview_description_search">"Pesquisar"</string>
+    <string msgid="1486535517437947103" name="abc_searchview_description_submit">"Enviar consulta"</string>
+    <string msgid="2293578557972875415" name="abc_searchview_description_voice">"Pesquisa por voz"</string>
+    <string msgid="8875138169939072951" name="abc_shareactionprovider_share_with">"Compartilhar com"</string>
+    <string msgid="9055268688411532828" name="abc_shareactionprovider_share_with_application">"Compartilhar com <ns1:g id="APPLICATION_NAME">%s</ns1:g>"</string>
+    <string msgid="1656852541809559762" name="abc_toolbar_collapse_description">"Recolher"</string>
+    <string name="about_copyright">© 2026 T-Scanner. Desenvolvido com IA avançada.</string>
+    <string name="about_engine">Mecanismo: Google Document Scanner | OCR: PaddleOCR v4 Mobile &amp; Tesseract OCR</string>
+    <string name="about_sdk">Configuração: SDK 36 (Android 16), suporta Android 8.0+</string>
+    <string name="about_title">Sobre o T-Scanner</string>
+    <string name="about_version">Versão: 0.2.2 (Build 6)</string>
+    <string name="action_create_folder">Nova pasta</string>
+    <string name="action_create_pdf">Criar PDF</string>
+    <string name="action_import_file">Importar arquivo</string>
+    <string name="action_import_image">Importar imagem</string>
+    <string name="action_ocr">Extrair texto</string>
+    <string name="action_pdf_tools">Ferramentas PDF</string>
+    <string name="action_scan">Digitalizar</string>
+    <string msgid="8397015543330865059" name="android.credentials.TYPE_PASSWORD_CREDENTIAL">"Senha"</string>
+    <string msgid="3929015085059320822" name="androidx.credentials.TYPE_PUBLIC_KEY_CREDENTIAL">"Chave de acesso"</string>
+    <string name="app_name">T-Scanner</string>
+    <string name="btn_create_pdf">Criar PDF</string>
+    <string name="btn_documents">Documentos</string>
+    <string name="btn_understood">Entendi</string>
+    <string name="cache_cleared">Cache limpo com sucesso</string>
+    <string msgid="881409763997275156" name="call_notification_answer_action">"Atender"</string>
+    <string msgid="8793775615905189152" name="call_notification_answer_video_action">"Vídeo"</string>
+    <string msgid="3229508546291798546" name="call_notification_decline_action">"Recusar"</string>
+    <string msgid="2659457946726154263" name="call_notification_hang_up_action">"Desligar"</string>
+    <string msgid="6107532579223922871" name="call_notification_incoming_text">"Alguém está ligando"</string>
+    <string msgid="8623827134497363134" name="call_notification_ongoing_text">"Chamada em andamento"</string>
+    <string msgid="59049573811482460" name="call_notification_screening_text">"Filtrando uma ligação recebida"</string>
+    <string name="cancel">Cancelar</string>
+    <string name="check_update_action_later">Mais tarde</string>
+    <string name="check_update_action_update">Atualizar agora</string>
+    <string name="check_update_available_desc">Uma nova versão está disponível na Google Play Store.</string>
+    <string name="check_update_available_title">Nova versão disponível!</string>
+    <string name="check_update_checking">Procurando atualizações no Google Play...</string>
+    <string name="check_update_close">Fechar</string>
+    <string name="check_update_error_desc">Não foi possível verificar atualizações automaticamente.</string>
+    <string name="check_update_latest_desc">Você está usando a versão mais recente (%1$s).</string>
+    <string name="check_update_latest_title">Aplicativo atualizado</string>
+    <string name="check_update_open_store">Abrir Google Play Store</string>
+    <string name="check_update_title">Verificar atualizações</string>
+    <string name="clear_cache">Limpar cache</string>
+    <string name="close">Fechar</string>
+    <string name="confirm">Confirmar</string>
+    <string name="conversion_success">Conversão concluída!</string>
+    <string name="convert_pdf_to_images">PDF para imagens</string>
+    <string name="convert_pdf_to_long_image">PDF para imagem longa</string>
+    <string name="convert_to_excel">Para Excel</string>
+    <string name="convert_to_ppt">Para PPT</string>
+    <string name="convert_to_word">Para Word</string>
+    <string name="converting_pdf">Processando conversão de PDF...</string>
+    <string name="copied">Copiado para a área de transferência</string>
+    <string name="copy">Copiar</string>
+    <string name="create">Criar</string>
+    <string name="create_folder_title">Criar nova pasta</string>
+    <string name="create_pdf_desc">Exportar todas as páginas digitalizadas para um arquivo PDF</string>
+    <string name="create_pdf_hint">Nome do arquivo PDF...</string>
+    <string name="create_pdf_title">Criar arquivo PDF</string>
+    <string name="crop_rotate_title">Recortar e girar</string>
+    <string name="delete">Excluir</string>
+    <string name="delete_document_message">Tem certeza de que deseja excluir este documento?</string>
+    <string name="delete_document_title">Excluir documento</string>
+    <string name="export_backup">Backup de todos os documentos</string>
+    <string name="export_excel">Exportar Excel</string>
+    <string name="export_file">Exportar arquivo</string>
+    <string name="export_file_desc">Salvar no dispositivo ou compartilhar após o reconhecimento</string>
+    <string name="export_word">Exportar Word</string>
+    <string name="file_imported">Documento importado com sucesso: %1$s</string>
+    <string name="file_name_hint">Nome do arquivo...</string>
+    <string name="files_empty_desc">Digitalize ou importe para gerenciar facilmente seus documentos.</string>
+    <string name="folder_created">Pasta criada com sucesso</string>
+    <string name="folder_name_hint">Nome da pasta</string>
+    <string name="get_benefits">Ver benefícios</string>
+    <string name="item_about">Sobre</string>
+    <string name="item_check_update">Verificar atualizações</string>
+    <string name="item_doc_management">Gerenciamento de documentos</string>
+    <string name="item_language">Idioma</string>
+    <string name="item_vip_upgrade">Passe VIP</string>
+    <string name="items_count">%1$d itens</string>
+    <string name="language_english">English</string>
+    <string name="language_english_sub">Inglês</string>
+    <string name="language_subtitle">Selecione o idioma desejado</string>
+    <string name="language_system_default">Padrão do sistema</string>
+    <string name="language_system_default_desc">Segue o idioma do dispositivo automaticamente</string>
+    <string name="language_title">Idioma</string>
+    <string name="language_vietnamese">Tiếng Việt</string>
+    <string name="language_vietnamese_sub">Vietnamita</string>
+    <string name="new_features">Novidades</string>
+    <string name="no_recent_files">Nenhum arquivo recente</string>
+    <string name="no_text_found">Nenhum texto encontrado na imagem</string>
+    <string name="ocr_processing">Extraindo texto com OCR...</string>
+    <string name="ocr_result_title">Resultado da extração de texto</string>
+    <string name="ok">OK</string>
+    <string name="recent_header">Recentes</string>
+    <string name="rename">Renomear</string>
+    <string name="rename_document_hint">Digite o novo nome...</string>
+    <string name="rename_document_title">Renomear documento</string>
+    <string name="rotate_left">Girar para esquerda</string>
+    <string name="rotate_right">Girar para direita</string>
+    <string name="save">Salvar</string>
+    <string name="save_to_device">Salvar no dispositivo</string>
+    <string name="scan_new_document">Digitalizar novo documento</string>
+    <string name="scanner_cancelled">Digitalização cancelada</string>
+    <string name="scanner_error">Não foi possível abrir o scanner: %1$s</string>
+    <string name="search_hint">Pesquisar</string>
+    <string msgid="6264217191555673260" name="search_menu_title">"Pesquisar"</string>
+    <string name="section_convert">Converter</string>
+    <string name="section_import">Importar</string>
+    <string name="see_all">Ver tudo ></string>
+    <string name="select_all">Selecionar tudo</string>
+    <string name="share">Compartilhar</string>
+    <string msgid="6277540029070332960" name="status_bar_notification_info_overflow">"999+"</string>
+    <string name="storage_stats_title">Gerenciamento de documentos</string>
+    <string name="storage_used">Espaço utilizado: %1$s</string>
+    <string name="tab_files">Arquivos</string>
+    <string name="tab_home">Início</string>
+    <string name="tab_more">Mais</string>
+    <string name="tab_tools">Ferramentas</string>
+    <string name="tools_title">Ferramentas</string>
+    <string name="total_documents">Total de documentos: %1$d</string>
+    <string name="total_pdfs">Arquivos PDF: %1$d</string>
+    <string name="vip_banner_btn">Atualizar agora</string>
+    <string name="vip_banner_desc">Desbloqueie mais de 20 privilégios Premium</string>
+    <string name="vip_banner_title">Atualizar conta para VIP</string>
+    <string name="vip_coming_soon">Disponível na versão final</string>
+    <string name="vip_perk_1">✓ Digitalização HD ilimitada de documentos</string>
+    <string name="vip_perk_2">✓ Extração de texto OCR ilimitada</string>
+    <string name="vip_perk_3">✓ Conversão precisa para Word, Excel e PPT</string>
+    <string name="vip_perk_4">✓ Sem marca d\'água nos arquivos exportados</string>
+    <string name="vip_perk_5">✓ 10 GB de armazenamento em nuvem seguro</string>
+    <string name="vip_perks_title">Vantagens T-Scanner Premium</string>
+    <string name="vip_price_monthly">99.000 VND / mês</string>
+    <string name="vip_price_yearly">699.000 VND / ano (Economize 40%)</string>
+</resources>

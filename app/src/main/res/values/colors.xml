@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand / Accent -->
+    <color name="primary_teal">#00C28E</color>
+    <color name="primary_teal_dark">#00966D</color>
+    <color name="primary_teal_light">#33CEA5</color>
+    <color name="teal_bg">#143834</color>
+    <color name="app_icon_bg">#0A78F2</color>
+    
+    <!-- Backgrounds Dark Theme -->
+    <color name="bg_dark">#131418</color>
+    <color name="bg_dark_header">#191A20</color>
+    <color name="card_dark">#222329</color>
+    <color name="card_dark_elevated">#282A32</color>
+    <color name="search_bg">#25262D</color>
+    <color name="bottom_nav_bg">#18191E</color>
+    <color name="divider_dark">#2B2D37</color>
+
+    <!-- Text -->
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#8E909A</color>
+    <color name="text_muted">#5C5E68</color>
+    <color name="text_hint">#6F717C</color>
+
+    <!-- Quick action badges -->
+    <color name="icon_scan_bg">#133834</color>
+    <color name="icon_scan_fg">#00C28E</color>
+    <color name="icon_pdf_bg">#3D1E22</color>
+    <color name="icon_pdf_fg">#FF5252</color>
+    <color name="icon_image_bg">#152F48</color>
+    <color name="icon_image_fg">#29B6F6</color>
+    <color name="icon_file_bg">#1C2344</color>
+    <color name="icon_file_fg">#5C6BC0</color>
+    <color name="icon_ocr_bg">#123733</color>
+    <color name="icon_ocr_fg">#00C28E</color>
+    <color name="icon_idcard_bg">#2E2316</color>
+    <color name="icon_idcard_fg">#FFB300</color>
+    <color name="icon_qr_bg">#2A1D3D</color>
+    <color name="icon_qr_fg">#B388FF</color>
+    <color name="icon_folder_bg">#172948</color>
+    <color name="icon_folder_fg">#29B6F6</color>
+
+    <!-- Convert Action Badges -->
+    <color name="icon_word_bg">#1B2E52</color>
+    <color name="icon_word_fg">#4285F4</color>
+    <color name="icon_excel_bg">#143B2A</color>
+    <color name="icon_excel_fg">#34A853</color>
+    <color name="icon_ppt_bg">#43281E</color>
+    <color name="icon_ppt_fg">#FB8C00</color>
+    <color name="icon_pdf_img_bg">#133837</color>
+    <color name="icon_pdf_img_fg">#00B4D8</color>
+    <color name="icon_pdf_long_bg">#133834</color>
+    <color name="icon_pdf_long_fg">#00C28E</color>
+
+    <!-- VIP Colors -->
+    <color name="vip_gold">#FFD54F</color>
+    <color name="vip_gold_dark">#FFB300</color>
+    <color name="vip_banner_bg">#232128</color>
+    <color name="vip_btn_bg">#FFE082</color>
+    <color name="vip_btn_text">#1A1708</color>
+
+    <!-- Cloud & Notification -->
+    <color name="cloud_blue">#42A5F5</color>
+    <color name="cloud_badge_bg">#FFFFFF</color>
+    <color name="cloud_badge_text">#1A1B20</color>
+    <color name="badge_red">#FF5252</color>
+</resources>
