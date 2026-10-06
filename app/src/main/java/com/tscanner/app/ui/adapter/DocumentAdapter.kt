@@ -47,8 +47,16 @@ class DocumentAdapter(
 
         fun bind(item: DocumentItem) {
             binding.tvDocTitle.text = item.title
-            binding.tvDocDate.text = FileUtils.formatDate(item.createdAt)
-            binding.tvDocPages.text = "${item.pageCount} trang"
+            binding.tvDocDate.text = FileUtils.formatDate(item.createdAt, binding.root.context)
+            binding.tvDocPages.text = if (item.pageCount > 0) {
+                binding.root.context.resources.getQuantityString(
+                    R.plurals.pages_count_plurals,
+                    item.pageCount,
+                    item.pageCount
+                )
+            } else {
+                binding.root.context.getString(R.string.page_count_unknown)
+            }
             binding.tvDocSize.text = FileUtils.formatFileSize(item.sizeBytes)
 
             // Bind cloud sync status icon
@@ -57,14 +65,14 @@ class DocumentAdapter(
                     binding.ivDocSyncStatus.visibility = View.VISIBLE
                     binding.ivDocSyncStatus.setImageResource(R.drawable.ic_cloud_done)
                     binding.ivDocSyncStatus.setOnClickListener {
-                        Toast.makeText(binding.root.context, "Tài liệu đã sao lưu trên Google Drive cá nhân", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(binding.root.context, binding.root.context.getString(R.string.sync_status_synced), Toast.LENGTH_SHORT).show()
                     }
                 }
                 SyncStatus.SYNCING -> {
                     binding.ivDocSyncStatus.visibility = View.VISIBLE
                     binding.ivDocSyncStatus.setImageResource(R.drawable.ic_cloud_sync)
                     binding.ivDocSyncStatus.setOnClickListener {
-                        Toast.makeText(binding.root.context, "Đang đồng bộ tài liệu lên Google Drive...", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(binding.root.context, binding.root.context.getString(R.string.sync_status_syncing), Toast.LENGTH_SHORT).show()
                     }
                 }
                 SyncStatus.FAILED -> {
@@ -75,10 +83,10 @@ class DocumentAdapter(
                         if (!errMsg.isNullOrEmpty()) {
                             Toast.makeText(binding.root.context, errMsg, Toast.LENGTH_LONG).show()
                         } else if (AppAuthManager.isUserVip()) {
-                            CloudBackupManager.enqueueBackup(binding.root.context, item)
-                            Toast.makeText(binding.root.context, "Đang thử sao lưu lại lên Google Drive...", Toast.LENGTH_SHORT).show()
+                            CloudBackupManager.enqueueBackupAsync(binding.root.context, item)
+                            Toast.makeText(binding.root.context, binding.root.context.getString(R.string.sync_status_retrying), Toast.LENGTH_SHORT).show()
                         } else {
-                            Toast.makeText(binding.root.context, "Nâng cấp VIP để sao lưu tài liệu lên Google Drive", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(binding.root.context, binding.root.context.getString(R.string.sync_status_vip_required), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -145,13 +153,13 @@ class DocumentAdapter(
 
             binding.btnDocMore.setOnClickListener { v ->
                 val popup = PopupMenu(v.context, v)
-                popup.menu.add(0, 1, 0, "Mở / Xem PDF")
-                popup.menu.add(0, 2, 1, "Trích xuất văn bản (OCR)")
-                popup.menu.add(0, 3, 2, "Đổi tên")
-                popup.menu.add(0, 4, 3, "Chia sẻ")
-                popup.menu.add(0, 5, 4, "Chuyển sang Word")
-                popup.menu.add(0, 6, 5, "Chuyển vào thư mục...")
-                popup.menu.add(0, 7, 6, "Xóa")
+                popup.menu.add(0, 1, 0, v.context.getString(R.string.menu_open_view_pdf))
+                popup.menu.add(0, 2, 1, v.context.getString(R.string.menu_ocr_extract))
+                popup.menu.add(0, 3, 2, v.context.getString(R.string.menu_rename))
+                popup.menu.add(0, 4, 3, v.context.getString(R.string.share))
+                popup.menu.add(0, 5, 4, v.context.getString(R.string.menu_convert_word))
+                popup.menu.add(0, 6, 5, v.context.getString(R.string.menu_move_to_folder))
+                popup.menu.add(0, 7, 6, v.context.getString(R.string.delete))
 
                 popup.setOnMenuItemClickListener { menuItem ->
                     when (menuItem.itemId) {

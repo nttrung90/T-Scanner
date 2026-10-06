@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tscanner.app.VipPurchaseAuthConsumerTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-10-06T03:37:16.700Z" hostname="NTT-LAPTOPACER" time="0.009">
+  <properties/>
+  <testcase name="release_doesNotTriggerCommitAttempt" classname="com.tscanner.app.VipPurchaseAuthConsumerTest" time="0.001"/>
+  <testcase name="ownerMismatch_ignoresAndReleasesAttempt" classname="com.tscanner.app.VipPurchaseAuthConsumerTest" time="0.002"/>
+  <testcase name="sessionGenMismatch_ignoresAndReleasesAttempt" classname="com.tscanner.app.VipPurchaseAuthConsumerTest" time="0.001"/>
+  <testcase name="newOperation_getsFreshReservationEvenForSameReceipt" classname="com.tscanner.app.VipPurchaseAuthConsumerTest" time="0.0"/>
+  <testcase name="inactiveUi_defersAndReleasesAttempt" classname="com.tscanner.app.VipPurchaseAuthConsumerTest" time="0.001"/>
+  <testcase name="confirmStarted_triggersCommitAttemptAndUpdatesLedger" classname="com.tscanner.app.VipPurchaseAuthConsumerTest" time="0.001"/>
+  <testcase name="atomicClaim_secondConsumerGetsIgnored" classname="com.tscanner.app.VipPurchaseAuthConsumerTest" time="0.0"/>
+  <testcase name="releaseReservation_allowsNextConsumerToClaim" classname="com.tscanner.app.VipPurchaseAuthConsumerTest" time="0.0"/>
+  <testcase name="confirmStarted_blocksSubsequentAttemptsForSameOperation" classname="com.tscanner.app.VipPurchaseAuthConsumerTest" time="0.0"/>
+  <testcase name="staleToken_cannotCorruptNewReservation" classname="com.tscanner.app.VipPurchaseAuthConsumerTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

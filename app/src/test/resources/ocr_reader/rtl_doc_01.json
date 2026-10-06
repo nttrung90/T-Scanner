@@ -1,0 +1,63 @@
+{
+  "id": "doc_rtl_01",
+  "documentId": "doc_rtl_01",
+  "title": "RTL Arabic Hebrew Sample",
+  "sourceLanguage": "ar",
+  "totalPages": 1,
+  "pages": [
+    {
+      "pageId": "p_rtl_1",
+      "pageIndex": 1,
+      "status": "SUCCESS",
+      "sourceLanguage": "ar",
+      "imageInfo": {
+        "imagePath": "/storage/emulated/0/sample_rtl.jpg",
+        "width": 1000,
+        "height": 1400,
+        "rotationDegrees": 0
+      },
+      "sourceBlocks": [
+        {
+          "blockId": "b1",
+          "boundingBox": { "left": 100, "top": 100, "right": 900, "bottom": 250 },
+          "lines": [
+            {
+              "lineId": "l1",
+              "text": "مرحبا بك في نظام ماسح المستندات",
+              "confidence": 0.96,
+              "boundingBox": { "left": 100, "top": 100, "right": 900, "bottom": 160 },
+              "tokens": [
+                {
+                  "tokenId": "t1",
+                  "text": "مرحبا",
+                  "confidence": 0.96,
+                  "boundingBox": { "left": 800, "top": 100, "right": 900, "bottom": 160 }
+                },
+                {
+                  "tokenId": "t2",
+                  "text": "بك",
+                  "confidence": 0.96,
+                  "boundingBox": { "left": 700, "top": 100, "right": 780, "bottom": 160 }
+                }
+              ]
+            },
+            {
+              "lineId": "l2",
+              "text": "שלום עולם ומסמכים סרוקים",
+              "confidence": 0.95,
+              "boundingBox": { "left": 100, "top": 180, "right": 850, "bottom": 240 },
+              "tokens": [
+                {
+                  "tokenId": "t3",
+                  "text": "שלום",
+                  "confidence": 0.95,
+                  "boundingBox": { "left": 750, "top": 180, "right": 850, "bottom": 240 }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

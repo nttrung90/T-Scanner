@@ -51,7 +51,7 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- 3 Horizontal Action Cards: Nhập tập tin | Nhập ảnh | Tạo thư mục -->
+        <!-- 4 Horizontal Action Cards: Nhập tập tin | Nhập ảnh | Tạo thư mục | Quản lý tài liệu -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -64,12 +64,15 @@
             <LinearLayout
                 android:id="@+id/card_import_file"
                 android:layout_width="0dp"
-                android:layout_height="96dp"
+                android:layout_height="wrap_content"
+                android:minHeight="96dp"
                 android:layout_weight="1"
-                android:layout_marginEnd="6dp"
+                android:layout_marginEnd="3dp"
                 android:background="@drawable/bg_card_rounded"
                 android:gravity="center"
                 android:orientation="vertical"
+                android:paddingHorizontal="4dp"
+                android:paddingVertical="8dp"
                 android:clickable="true"
                 android:focusable="true">
 
@@ -80,9 +83,11 @@
                     android:contentDescription="@string/action_import_file" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:textAlignment="center"
                     android:text="@string/action_import_file"
                     android:textColor="@color/text_primary"
                     android:textSize="12sp" />
@@ -92,12 +97,15 @@
             <LinearLayout
                 android:id="@+id/card_import_image"
                 android:layout_width="0dp"
-                android:layout_height="96dp"
+                android:layout_height="wrap_content"
+                android:minHeight="96dp"
                 android:layout_weight="1"
                 android:layout_marginHorizontal="3dp"
                 android:background="@drawable/bg_card_rounded"
                 android:gravity="center"
                 android:orientation="vertical"
+                android:paddingHorizontal="4dp"
+                android:paddingVertical="8dp"
                 android:clickable="true"
                 android:focusable="true">
 
@@ -108,9 +116,11 @@
                     android:contentDescription="@string/action_import_image" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:textAlignment="center"
                     android:text="@string/action_import_image"
                     android:textColor="@color/text_primary"
                     android:textSize="12sp" />
@@ -120,12 +130,15 @@
             <LinearLayout
                 android:id="@+id/card_create_folder"
                 android:layout_width="0dp"
-                android:layout_height="96dp"
+                android:layout_height="wrap_content"
+                android:minHeight="96dp"
                 android:layout_weight="1"
-                android:layout_marginStart="6dp"
+                android:layout_marginHorizontal="3dp"
                 android:background="@drawable/bg_card_rounded"
                 android:gravity="center"
                 android:orientation="vertical"
+                android:paddingHorizontal="4dp"
+                android:paddingVertical="8dp"
                 android:clickable="true"
                 android:focusable="true">
 
@@ -136,10 +149,46 @@
                     android:contentDescription="@string/action_create_folder" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:textAlignment="center"
                     android:text="@string/action_create_folder"
+                    android:textColor="@color/text_primary"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <!-- Card 4: Quản lý tài liệu -->
+            <LinearLayout
+                android:id="@+id/card_doc_management"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:minHeight="96dp"
+                android:layout_weight="1"
+                android:layout_marginStart="3dp"
+                android:background="@drawable/bg_card_rounded"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingHorizontal="4dp"
+                android:paddingVertical="8dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/ic_storage"
+                    app:tint="@color/text_primary"
+                    android:contentDescription="@string/item_doc_management" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:textAlignment="center"
+                    android:text="@string/item_doc_management"
                     android:textColor="@color/text_primary"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -160,7 +209,11 @@
                 android:id="@+id/btn_back_to_root"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="← Thư mục gốc"
+                android:drawableStart="@drawable/ic_arrow_back"
+                android:drawableTint="@color/primary_teal"
+                android:drawablePadding="4dp"
+                android:gravity="center_vertical"
+                android:text="@string/back_to_root_folder"
                 android:textColor="@color/primary_teal"
                 android:textSize="14sp"
                 android:clickable="true"

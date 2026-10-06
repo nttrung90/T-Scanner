@@ -1,12 +1,14 @@
 package com.tscanner.app.utils
 
 import android.app.Activity
+import android.util.Log
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanning
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
+import com.tscanner.app.R
 import java.io.File
 import java.io.FileOutputStream
 import java.util.UUID
@@ -21,7 +23,8 @@ import kotlinx.coroutines.withContext
 data class ScanSessionResult(
     val sessionId: String,
     val tempPdfPath: String?,
-    val tempPagePaths: List<String>
+    val tempPagePaths: List<String>,
+    val totalPagesExpected: Int = tempPagePaths.size
 )
 
 class DocumentScannerHelper(private val activity: Activity) {
@@ -65,11 +68,13 @@ class DocumentScannerHelper(private val activity: Activity) {
                 try {
                     launcher.launch(IntentSenderRequest.Builder(intentSender).build())
                 } catch (e: Exception) {
-                    onError(e.localizedMessage ?: "Failed to start scanner")
+                    Log.e(TAG, "Failed to start scanner launcher: ${e.message}", e)
+                    onError(getFailedToStartErrorMessage(activity))
                 }
             }
             .addOnFailureListener { e ->
-                onError(e.localizedMessage ?: "Scanner error")
+                Log.e(TAG, "Google Document Scanner client error: ${e.message}", e)
+                onError(getScannerGeneralErrorMessage(activity))
             }
     }
 
@@ -82,11 +87,13 @@ class DocumentScannerHelper(private val activity: Activity) {
                 try {
                     launcher.launch(IntentSenderRequest.Builder(intentSender).build())
                 } catch (e: Exception) {
-                    onError(e.localizedMessage ?: "Failed to start scanner")
+                    Log.e(TAG, "Failed to start ID card scanner launcher: ${e.message}", e)
+                    onError(getFailedToStartErrorMessage(activity))
                 }
             }
             .addOnFailureListener { e ->
-                onError(e.localizedMessage ?: "Scanner error")
+                Log.e(TAG, "Google ID Card Scanner client error: ${e.message}", e)
+                onError(getScannerGeneralErrorMessage(activity))
             }
     }
 
@@ -102,13 +109,13 @@ class DocumentScannerHelper(private val activity: Activity) {
         }
 
         if (result.resultCode != Activity.RESULT_OK || result.data == null) {
-            onError("Scan failed")
+            onError(getScanFailedErrorMessage(activity))
             return
         }
 
         val scanResult = GmsDocumentScanningResult.fromActivityResultIntent(result.data)
         if (scanResult == null) {
-            onError("Could not parse scan result")
+            onError(getParseFailedErrorMessage(activity))
             return
         }
 
@@ -118,6 +125,13 @@ class DocumentScannerHelper(private val activity: Activity) {
 
             // 1. Copy page images in parallel with 64KB high-speed I/O buffer
             val pages = scanResult.pages ?: emptyList()
+            if (pages.isEmpty()) {
+                withContext(Dispatchers.Main) {
+                    onError(getNoPagesErrorMessage(activity))
+                }
+                return@launch
+            }
+
             val deferredPages = pages.mapIndexed { index, page ->
                 async(Dispatchers.IO) {
                     try {
@@ -129,7 +143,11 @@ class DocumentScannerHelper(private val activity: Activity) {
                                     input.copyTo(output, bufferSize = 65536)
                                 }
                             }
-                            if (pageFile.exists() && pageFile.length() > 0) pageFile.absolutePath else null
+                            if (pageFile.exists() && pageFile.length() > 0 && SafeFileWriter.validateImage(pageFile)) {
+                                pageFile.absolutePath
+                            } else {
+                                null
+                            }
                         } else {
                             null
                         }
@@ -139,7 +157,17 @@ class DocumentScannerHelper(private val activity: Activity) {
                     }
                 }
             }
-            val pagePaths = deferredPages.awaitAll().filterNotNull()
+            val pagePathResults = deferredPages.awaitAll()
+            val failedIndices = pagePathResults.mapIndexedNotNull { idx, path -> if (path == null) idx + 1 else null }
+            if (failedIndices.isNotEmpty()) {
+                FileUtils.deleteDir(tempDir)
+                withContext(Dispatchers.Main) {
+                    val formattedIndices = failedIndices.joinToString(", ")
+                    onError(getImportPagesFailedErrorMessage(activity, formattedIndices, pages.size))
+                }
+                return@launch
+            }
+            val pagePaths = pagePathResults.filterNotNull()
 
             // 2. Copy generated PDF to temporary buffer if present
             var savedPdfPath: String? = null
@@ -165,12 +193,35 @@ class DocumentScannerHelper(private val activity: Activity) {
             val sessionResult = ScanSessionResult(
                 sessionId = sessionId,
                 tempPdfPath = savedPdfPath,
-                tempPagePaths = pagePaths
+                tempPagePaths = pagePaths,
+                totalPagesExpected = pages.size
             )
 
             withContext(Dispatchers.Main) {
                 onSuccess(sessionResult)
             }
         }
+    }
+
+    companion object {
+        private const val TAG = "DocumentScannerHelper"
+
+        fun getFailedToStartErrorMessage(context: android.content.Context): String =
+            context.getString(R.string.scanner_err_failed_to_start)
+
+        fun getScannerGeneralErrorMessage(context: android.content.Context): String =
+            context.getString(R.string.scanner_err_general)
+
+        fun getScanFailedErrorMessage(context: android.content.Context): String =
+            context.getString(R.string.scanner_err_scan_failed)
+
+        fun getParseFailedErrorMessage(context: android.content.Context): String =
+            context.getString(R.string.scanner_err_parse_failed)
+
+        fun getNoPagesErrorMessage(context: android.content.Context): String =
+            context.getString(R.string.scanner_err_no_pages)
+
+        fun getImportPagesFailedErrorMessage(context: android.content.Context, failedIndices: String, total: Int): String =
+            context.getString(R.string.scanner_err_import_pages_failed, failedIndices, total)
     }
 }

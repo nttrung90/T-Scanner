@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tscanner.app.VipSessionReauditProbeTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-06T02:33:56.902Z" hostname="NTT-LAPTOPACER" time="0.25">
+  <properties/>
+  <testcase name="P01_guestUpgradeSurvivesSuccessfulLoginGenerationChange" classname="com.tscanner.app.VipSessionReauditProbeTest" time="0.136"/>
+  <testcase name="P05_oldProductCallbackMustNotFinishNewAction" classname="com.tscanner.app.VipSessionReauditProbeTest" time="0.022"/>
+  <testcase name="C02_boundReauthRejectsOtherOwner" classname="com.tscanner.app.VipSessionReauditProbeTest" time="0.007"/>
+  <testcase name="P02_guestRestoreSurvivesSuccessfulLoginGenerationChange" classname="com.tscanner.app.VipSessionReauditProbeTest" time="0.009"/>
+  <testcase name="P04_duplicateProductCallbackMustNotLaunchTwice" classname="com.tscanner.app.VipSessionReauditProbeTest" time="0.003"/>
+  <testcase name="C01_sameOwnerReauthContinuesOnce" classname="com.tscanner.app.VipSessionReauditProbeTest" time="0.005"/>
+  <testcase name="P06_backend401MustRemainAnAuthFailureNotNetworkFailure" classname="com.tscanner.app.VipSessionReauditProbeTest" time="0.061"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

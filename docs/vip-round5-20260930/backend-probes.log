@@ -1,0 +1,136 @@
+(node:21108) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✖ B07 late RTDN must not overwrite newer verify expiry (24.4308ms)
+✖ B01 first-binding late active must not resurrect committed expiry (1.6609ms)
+✖ B02 conflict must not discard authoritative expiry and return active (1.9121ms)
+✖ B03 on-hold V2 must invalidate stored active grant (70.085ms)
+✖ B04 missing V2 lifecycle state must not grant active (1.8764ms)
+✖ B05 client metadata must not suppress refresh of known refunded receipt (1.8313ms)
+✔ B06 control empty restore refreshes refund with no conflicting metadata (3.7753ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 1
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 511.0602
+
+✖ failing tests:
+
+test at docs\vip-round5-20260930\backend-probes.test.ts:11:1
+✖ B07 late RTDN must not overwrite newer verify expiry (24.4308ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'VERIFIED_ACTIVE'
+  - 'EXPIRED'
+  
+      at TestContext.<anonymous> (file:///E:/DU%20AN%20AI/T-Scanner/docs/vip-round5-20260930/backend-probes.test.ts:18:9)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'VERIFIED_ACTIVE',
+    expected: 'EXPIRED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs\vip-round5-20260930\backend-probes.test.ts:21:1
+✖ B01 first-binding late active must not resurrect committed expiry (1.6609ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'VERIFIED_ACTIVE'
+  - 'EXPIRED'
+  
+      at TestContext.<anonymous> (file:///E:/DU%20AN%20AI/T-Scanner/docs/vip-round5-20260930/backend-probes.test.ts:27:9)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'VERIFIED_ACTIVE',
+    expected: 'EXPIRED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs\vip-round5-20260930\backend-probes.test.ts:30:1
+✖ B02 conflict must not discard authoritative expiry and return active (1.9121ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'VERIFIED_ACTIVE'
+  - 'EXPIRED'
+  
+      at TestContext.<anonymous> (file:///E:/DU%20AN%20AI/T-Scanner/docs/vip-round5-20260930/backend-probes.test.ts:38:9)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'VERIFIED_ACTIVE',
+    expected: 'EXPIRED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs\vip-round5-20260930\backend-probes.test.ts:41:1
+✖ B03 on-hold V2 must invalidate stored active grant (70.085ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'VERIFIED_ACTIVE'
+  - 'ON_HOLD'
+  
+      at TestContext.<anonymous> (file:///E:/DU%20AN%20AI/T-Scanner/docs/vip-round5-20260930/backend-probes.test.ts:46:9)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'VERIFIED_ACTIVE',
+    expected: 'ON_HOLD',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs\vip-round5-20260930\backend-probes.test.ts:49:1
+✖ B04 missing V2 lifecycle state must not grant active (1.8764ms)
+  AssertionError [ERR_ASSERTION]: Expected "actual" to be strictly unequal to:
+  
+  'SUCCESS'
+      at TestContext.<anonymous> (file:///E:/DU%20AN%20AI/T-Scanner/docs/vip-round5-20260930/backend-probes.test.ts:52:13)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'SUCCESS',
+    expected: 'SUCCESS',
+    operator: 'notStrictEqual',
+    diff: 'simple'
+  }
+
+test at docs\vip-round5-20260930\backend-probes.test.ts:54:1
+✖ B05 client metadata must not suppress refresh of known refunded receipt (1.8313ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'VERIFIED_ACTIVE'
+  - 'REVOKED'
+  
+      at TestContext.<anonymous> (file:///E:/DU%20AN%20AI/T-Scanner/docs/vip-round5-20260930/backend-probes.test.ts:60:9)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'VERIFIED_ACTIVE',
+    expected: 'REVOKED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

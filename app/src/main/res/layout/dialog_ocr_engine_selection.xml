@@ -155,59 +155,7 @@
             android:layout_height="1dp"
             android:background="@color/divider_dark" />
 
-        <!-- Option 3: PaddleOCR v4 Mobile -->
-        <LinearLayout
-            android:id="@+id/layout_engine_paddle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingVertical="12dp"
-            android:paddingHorizontal="8dp"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true">
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/ocr_engine_paddle"
-                    android:textColor="@color/text_primary"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="3dp"
-                    android:text="@string/ocr_engine_paddle_desc"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-            <ImageView
-                android:id="@+id/iv_check_paddle"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:layout_marginStart="8dp"
-                android:src="@drawable/ic_check"
-                app:tint="@color/primary_teal"
-                android:visibility="gone"
-                android:contentDescription="@null" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/divider_dark" />
-
-        <!-- Option 4: Google ML Kit -->
+        <!-- Option 3: Google ML Kit -->
         <LinearLayout
             android:id="@+id/layout_engine_mlkit"
             android:layout_width="match_parent"

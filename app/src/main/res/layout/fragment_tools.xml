@@ -263,6 +263,41 @@
             android:paddingTop="12dp"
             android:paddingBottom="24dp">
 
+            <!-- Item: Tạo file PDF -->
+            <LinearLayout
+                android:id="@+id/tool_convert_create_pdf"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground"
+                android:contentDescription="@string/action_create_pdf">
+
+                <FrameLayout
+                    android:layout_width="54dp"
+                    android:layout_height="54dp"
+                    android:background="@drawable/bg_action_circle">
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_pdf" />
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/action_create_pdf"
+                    android:textColor="@color/text_primary"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+            </LinearLayout>
+
             <!-- Item: Thành Word -->
             <LinearLayout
                 android:id="@+id/tool_convert_word"

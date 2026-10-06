@@ -49,6 +49,17 @@
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp" />
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/btn_close_id_card_dialog"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:padding="6dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_close"
+            app:tint="@color/text_secondary"
+            android:contentDescription="@string/close" />
     </LinearLayout>
 
     <View
@@ -91,7 +102,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Quét thẻ bằng AI (Mặc định)"
+                    android:text="@string/id_card_option_ai"
                     android:textColor="@color/text_primary"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -106,7 +117,7 @@
                     android:paddingEnd="6dp"
                     android:paddingTop="2dp"
                     android:paddingBottom="2dp"
-                    android:text="Khuyên dùng"
+                    android:text="@string/scan_badge_recommended"
                     android:textColor="@color/vip_gold"
                     android:textSize="10sp"
                     android:textStyle="bold" />
@@ -116,9 +127,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="Google AI tự động nắn góc 3D, khử bóng đổ và ngón tay"
+                android:text="@string/id_card_option_ai_desc"
                 android:textColor="@color/text_secondary"
                 android:textSize="11sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="@string/scan_google_ai_language_note"
+                android:textColor="#E5A93C"
+                android:textSize="10sp" />
         </LinearLayout>
 
         <ImageView
@@ -162,7 +181,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Chụp thẻ Siêu Tốc"
+                    android:text="@string/id_card_option_fast"
                     android:textColor="@color/text_primary"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -177,7 +196,7 @@
                     android:paddingEnd="6dp"
                     android:paddingTop="2dp"
                     android:paddingBottom="2dp"
-                    android:text="Tùy chọn"
+                    android:text="@string/scan_badge_optional"
                     android:textColor="@color/primary_teal"
                     android:textSize="10sp"
                     android:textStyle="bold" />
@@ -187,9 +206,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="Khung căn chuẩn thẻ, chụp tức thì và tự động ghép A4"
+                android:text="@string/id_card_option_fast_desc"
                 android:textColor="@color/text_secondary"
                 android:textSize="11sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="@string/scan_fast_camera_language_note"
+                android:textColor="#00C28E"
+                android:textSize="10sp" />
         </LinearLayout>
 
         <ImageView
@@ -235,7 +262,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Chọn 2 ảnh mặt trước và mặt sau đã có trong máy"
+                android:layout_marginTop="2dp"
+                android:text="@string/id_card_option_gallery_desc"
                 android:textColor="@color/text_secondary"
                 android:textSize="11sp" />
         </LinearLayout>

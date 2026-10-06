@@ -1,0 +1,28 @@
+{
+  "id": "en_doc_01",
+  "category": "single_column_en",
+  "language": "en",
+  "pageWidth": 1000,
+  "pageHeight": 1400,
+  "rotationDegrees": 0,
+  "groundTruthText": "T-Scanner Document Management System Specification\nConfidentiality Agreement and License Terms\nAll rights reserved by the development team.",
+  "ocrHypothesisText": "T-Scanner Document Management System Specification\nConfidentiality Agreement and License Terms\nAll rights reserved by the development team.",
+  "expectedCer": 0.0,
+  "lines": [
+    {
+      "id": "line_0",
+      "text": "T-Scanner Document Management System Specification",
+      "polygon": [{"x": 0.1, "y": 0.1}, {"x": 0.9, "y": 0.1}, {"x": 0.9, "y": 0.15}, {"x": 0.1, "y": 0.15}]
+    },
+    {
+      "id": "line_1",
+      "text": "Confidentiality Agreement and License Terms",
+      "polygon": [{"x": 0.1, "y": 0.18}, {"x": 0.8, "y": 0.18}, {"x": 0.8, "y": 0.22}, {"x": 0.1, "y": 0.22}]
+    },
+    {
+      "id": "line_2",
+      "text": "All rights reserved by the development team.",
+      "polygon": [{"x": 0.1, "y": 0.25}, {"x": 0.75, "y": 0.25}, {"x": 0.75, "y": 0.29}, {"x": 0.1, "y": 0.29}]
+    }
+  ]
+}

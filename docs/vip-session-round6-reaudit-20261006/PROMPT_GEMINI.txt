@@ -1,0 +1,15 @@
+Trong E:\DU AN AI\T-Scanner, đọc:
+1. PLAN_FIX_VIP_SESSION_ROUND6_GEMINI_2026-10-06.md
+2. RECHECK_VIP_SESSION_ROUND6_2026-10-06.md
+3. docs/vip-session-round6-reaudit-20261006/: README.md, VipSessionRound6ProbeTest.kt, run-probes.ps1, audit.init.gradle, source-evidence.txt, probes.log, TEST-*.xml.
+4. Kế hoạch vòng 5 để giữ yêu cầu/sửa đã đạt.
+
+Thực hiện tuần tự W00–W03, tự chuyển khi acceptance đạt. Baseline độc lập: 1.090 unit tests PASS; 25 regression cũ PASS; 2 probe mới 1 FAIL/1 PASS. Tái hiện trước sửa; giữ evidence cũ bất biến.
+
+Chỉ sửa S01/S02: dispatch/listener tồn tại không tiêu recovery budget; một state owner authoritative; reserve độc quyền, accepted provider mới commit. Listener bỏ qua trước consumer phải không mất lượt. Nối typed recovery request qua mọi entry point, nhất là Home→More, AccountDetail và CreatePdf; giữ origin context tới restore và trả accepted/refused đúng reservation. Không confirmStarted trước callback Unit hoặc khi callback null. Không mở mua mới khi recover receipt.
+
+Sửa fixture VipSessionRound3IntegrationTest: cần accepted provider thật qua production seam trước khi assert second retry bị chặn. Không giữ kỳ vọng dispatch=accepted. Giữ assertion mục tiêu và ghi rõ migration. Contract duplicate dùng hai consumer khác nhau; contract restore assert success thực. Test production adapters được UI gọi, không copy host logic hoặc tự gọi restore thay production success callback.
+
+Giữ owner/gen/epoch guards, guest flow, atomic claim và 25 regression đã đạt. Chạy 27 probes, tests mới, full testDebugUnitTest/lintDebug/assembleDebug; lưu log/XML riêng, báo executed/UP-TO-DATE. Giữ working tree; không reset/clean/stash, đổi OAuth/signing/package/version/R8/dependencies/backend, mua thật, commit/push/phát hành.
+
+Lưu REPORT_Wxx.md, PROGRESS.md, REPORT_FINAL.md trong docs/vip-session-round6-fix/. Báo bằng chứng từng entry point, red→green, migration tests, provider/restore/extra-launch counts. Thiếu thiết bị ghi device/Play BLOCKED_EXTERNAL. Dừng ở bàn giao review, không tuyên bố sửa xong hoàn toàn chỉ từ host tests.

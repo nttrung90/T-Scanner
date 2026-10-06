@@ -2,6 +2,7 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="16dp"
@@ -22,7 +23,7 @@
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:background="#FFFFFF"
-            android:contentDescription="Trang tài liệu" />
+            android:contentDescription="@string/pdf_page_desc" />
 
         <!-- Bottom Page Action Bar -->
         <LinearLayout
@@ -38,7 +39,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Trang 1"
+                tools:text="Trang 1"
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp" />
 
@@ -64,7 +65,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
-                    android:text="Cắt &amp; Xoay"
+                    android:text="@string/tool_crop_rotate"
                     android:textColor="@color/primary_teal"
                     android:textSize="12sp"
                     android:textStyle="bold" />

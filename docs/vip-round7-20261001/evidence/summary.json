@@ -1,0 +1,13 @@
+{
+  "policyOnlyFailures": 1,
+  "backendFailures": 7,
+  "totalTests": 27,
+  "totalFailures": 22,
+  "confirmedFindingGroups": 9,
+  "androidTests": 18,
+  "androidFailures": 15,
+  "androidErrors": 0,
+  "backendPasses": 2,
+  "totalPasses": 5,
+  "backendTests": 9
+}

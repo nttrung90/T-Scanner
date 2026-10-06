@@ -107,7 +107,7 @@ class SaveExportDialog(
             dismiss()
             onAction(finalName, action)
         } else {
-            Toast.makeText(context, "Vui lòng nhập tên tập tin hợp lệ", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.enter_valid_file_name_error), Toast.LENGTH_SHORT).show()
         }
     }
 }

@@ -38,7 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Bảo vệ dữ liệu &amp; Nâng tầm hiệu suất công việc"
+            android:text="@string/vip_upgrade_subtitle"
             android:textColor="@color/text_secondary"
             android:textSize="12.5sp" />
 
@@ -61,7 +61,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="GÓI VIP CHÍNH THỨC"
+                    android:text="@string/vip_official_plan_title"
                     android:textColor="@color/vip_gold"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -72,7 +72,7 @@
                     android:background="@drawable/btn_vip_gold"
                     android:paddingHorizontal="8dp"
                     android:paddingVertical="3dp"
-                    android:text="Phổ biến nhất"
+                    android:text="@string/vip_most_popular_badge"
                     android:textColor="@color/vip_btn_text"
                     android:textSize="11sp"
                     android:textStyle="bold" />
@@ -83,16 +83,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="20.000 đ / năm"
+                android:text="@string/vip_price_loading"
                 android:textColor="@color/text_primary"
                 android:textSize="22sp"
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/tv_vip_price_sub"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="Chỉ ~1.600 đ / tháng • Hủy bất cứ lúc nào"
+                android:visibility="gone"
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp" />
 
@@ -157,6 +158,19 @@
                 android:textStyle="bold"
                 android:clickable="true"
                 android:focusable="true" />
+
+            <!-- Nút Khôi phục giao dịch mua từ Google Play -->
+            <TextView
+                android:id="@+id/btn_restore_purchases"
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:text="@string/vip_restore_purchases_btn"
+                android:textColor="@color/vip_gold"
+                android:textSize="12.5sp"
+                android:clickable="true"
+                android:focusable="true" />
         </LinearLayout>
 
         <!-- SẴN SÀNG LUỒNG MỞ RỘNG: VIP PRO & VIP PRO MAX -->
@@ -165,10 +179,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
             android:layout_marginStart="4dp"
-            android:text="LỘ TRÌNH MỞ RỘNG NÂNG CAO"
+            android:text="@string/vip_advanced_roadmap_title"
             android:textColor="@color/text_secondary"
             android:textSize="12sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="gone" />
 
         <!-- Card: VIP PRO (Sắp ra mắt) -->
         <LinearLayout
@@ -179,7 +194,8 @@
             android:background="@drawable/bg_card_rounded"
             android:orientation="vertical"
             android:padding="12dp"
-            android:alpha="0.85">
+            android:alpha="0.85"
+            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -191,7 +207,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="💎 VIP PRO"
+                    android:text="@string/vip_pro_title"
                     android:textColor="#80D8FF"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -212,7 +228,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:text="Tóm tắt tài liệu bằng AI, Dịch thuật song ngữ nâng cao &amp; Nhận diện chữ viết tay chuẩn xác."
+                android:text="@string/vip_pro_desc"
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -226,7 +242,8 @@
             android:background="@drawable/bg_card_rounded"
             android:orientation="vertical"
             android:padding="12dp"
-            android:alpha="0.85">
+            android:alpha="0.85"
+            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -238,7 +255,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="👑 VIP PRO MAX"
+                    android:text="@string/vip_pro_max_title"
                     android:textColor="#E040FB"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -259,7 +276,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:text="Làm việc nhóm chia sẻ tài liệu (Team Sync), Ký số bảo mật hàng loạt &amp; Hỗ trợ ưu tiên 24/7."
+                android:text="@string/vip_pro_max_desc"
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp" />
         </LinearLayout>

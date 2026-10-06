@@ -1,0 +1,236 @@
+app/src/main/java/com/tscanner/app/utils/BillingManager.kt
+1040:                         val currentUserId = AppAuthManager.getCurrentUser()?.id
+1041:                         val currentGen = AppAuthManager.getSessionGeneration()
+1042:                         val currentEpoch = AppAuthManager.getProcessEpoch()
+1043:                         val isStale = opContext?.isStale(currentUserId, currentGen)
+1044:                             ?: (targetOwnerId != currentUserId)
+1045: 
+1046:                         val purchaseToken = purchase.purchaseToken
+1047:                         val recoveryKey = getRecoveryKey(opContext, targetOwnerId, currentGen, currentEpoch, purchaseToken)
+1048: 
+1049:                         val isInteractive = (origin == BillingOperationOrigin.PURCHASE) && !isStale
+1050:                         val hasUiListener = authRequiredListeners.isNotEmpty()
+1051:                         val alreadyRetried = attemptedRecoveryKeys.contains(recoveryKey)
+1052: 
+1053:                         if (isInteractive && hasUiListener && !alreadyRetried) {
+1054:                             attemptedRecoveryKeys.add(recoveryKey)
+1055:                         }
+1056: 
+1057:                         val event = PurchaseAuthRequiredEvent(
+1058:                             purchase = purchase,
+1059:                             message = result.message,
+1060:                             targetOwnerId = targetOwnerId,
+1061:                             sessionGeneration = currentGen,
+1062:                             processEpoch = currentEpoch,
+1063:                             isRetry = alreadyRetried,
+1064:                             operationContext = opContext,
+1065:                             onReleaseAttempt = {
+1066:                                 attemptedRecoveryKeys.remove(recoveryKey)
+1067:                             }
+1068:                         )
+1069: 
+1070:                         if (isInteractive) {
+app/src/main/java/com/tscanner/app/ui/dialogs/VipUpgradeDialog.kt
+135:     private val authRequiredListener: (BillingManager.PurchaseAuthRequiredEvent) -> Unit = { event ->
+136:         val act = findActivity(context)
+137:         if (act != null && !act.isFinishing && !act.isDestroyed && isShowing) {
+138:             act.runOnUiThread {
+139:                 handlePurchaseAuthRequired(event)
+140:             }
+141:         }
+142:     }
+143: 
+144:     private fun handlePurchaseAuthRequired(event: BillingManager.PurchaseAuthRequiredEvent) {
+145:         val currentContext = context ?: return
+146:         val act = findActivity(currentContext)
+147:         val isUiActive = isShowing && (act != null && !act.isFinishing && !act.isDestroyed)
+148: 
+149:         val decision = VipPurchaseAuthConsumer.evaluate(
+150:             event = event,
+151:             currentOwnerId = AppAuthManager.getCurrentUser()?.id,
+152:             currentGeneration = AppAuthManager.getSessionGeneration(),
+153:             currentEpoch = AppAuthManager.getProcessEpoch(),
+154:             isUiActive = isUiActive
+155:         )
+156:         executePurchaseAuthDecision(decision, event)
+157:     }
+158: 
+159:     @androidx.annotation.VisibleForTesting
+160:     fun handlePurchaseAuthRequiredWithDecision(
+161:         event: BillingManager.PurchaseAuthRequiredEvent,
+162:         currentOwnerId: String? = AppAuthManager.getCurrentUser()?.id,
+163:         currentGeneration: Long = AppAuthManager.getSessionGeneration(),
+164:         currentEpoch: String = AppAuthManager.getProcessEpoch(),
+165:         isUiActive: Boolean = isShowing && (context?.let { findActivity(it) }?.let { !it.isFinishing && !it.isDestroyed } ?: false)
+166:     ): PurchaseAuthDecision {
+167:         val decision = VipPurchaseAuthConsumer.evaluate(
+168:             event = event,
+169:             currentOwnerId = currentOwnerId,
+170:             currentGeneration = currentGeneration,
+171:             currentEpoch = currentEpoch,
+172:             isUiActive = isUiActive
+173:         )
+174:         executePurchaseAuthDecision(decision, event)
+175:         return decision
+176:     }
+177: 
+178:     private fun executePurchaseAuthDecision(
+179:         decision: PurchaseAuthDecision,
+180:         event: BillingManager.PurchaseAuthRequiredEvent
+181:     ) {
+182:         val currentContext = context ?: return
+183:         when (decision) {
+184:             is PurchaseAuthDecision.Stop -> {
+185:                 Toast.makeText(currentContext, decision.message, Toast.LENGTH_LONG).show()
+186:             }
+187:             is PurchaseAuthDecision.RequestReauth -> {
+188:                 dismiss()
+189:                 val currentUser = AppAuthManager.getCurrentUser()
+190:                 if (currentUser != null) {
+191:                     Toast.makeText(
+192:                         currentContext,
+193:                         currentContext.getString(decision.messageResId),
+194:                         Toast.LENGTH_SHORT
+195:                     ).show()
+196:                 }
+197:                 if (onRequestSignInForRecovery != null) {
+198:                     onRequestSignInForRecovery.invoke(
+199:                         decision.action,
+200:                         decision.operationContext,
+201:                         { decision.confirmStarted() },
+202:                         { decision.release() }
+203:                     )
+204:                 } else if (onRequestSignInForAction != null) {
+205:                     decision.confirmStarted()
+206:                     onRequestSignInForAction.invoke(decision.action)
+207:                 } else {
+208:                     decision.confirmStarted()
+209:                     onRequestSignIn?.invoke()
+210:                 }
+app/src/main/java/com/tscanner/app/ui/home/HomeFragment.kt
+311:         binding.btnVipHome.setOnClickListener {
+312:             val user = AppAuthManager.getCurrentUser()
+313:             VipUpgradeDialog(
+314:                 context = requireContext(),
+315:                 onRequestDrivePermission = { requestDrivePermission() },
+316:                 onRequestSignIn = {
+317:                     val currentUser = AppAuthManager.getCurrentUser()
+318:                     val opId = java.util.UUID.randomUUID().toString()
+319:                     (activity as? MainActivity)?.navigateToMoreForVipSignIn(
+320:                         action = com.tscanner.app.utils.VipContinuationAction.UPGRADE.name,
+321:                         forceReauth = false,
+322:                         expectedOwnerId = currentUser?.id,
+323:                         originGeneration = AppAuthManager.getSessionGeneration(),
+324:                         processEpoch = AppAuthManager.getProcessEpoch(),
+325:                         operationId = opId
+326:                     )
+327:                 },
+328:                 onRequestSignInForAction = { action ->
+329:                     val currentUser = AppAuthManager.getCurrentUser()
+330:                     val opId = java.util.UUID.randomUUID().toString()
+331:                     (activity as? MainActivity)?.navigateToMoreForVipSignIn(
+332:                         action = action.name,
+333:                         forceReauth = true,
+334:                         authReason = "AUTH_REQUIRED",
+335:                         expectedOwnerId = currentUser?.id,
+336:                         originGeneration = AppAuthManager.getSessionGeneration(),
+337:                         processEpoch = AppAuthManager.getProcessEpoch(),
+338:                         operationId = opId
+339:                     )
+340:                 },
+341:                 onSyncResult = { result ->
+342:                     val startUser = user?.id ?: ""
+343:                     val startGen = AppAuthManager.getSessionGeneration()
+app/src/main/java/com/tscanner/app/ui/dialogs/AccountDetailDialog.kt
+105:     }
+106: 
+107:     @VisibleForTesting
+108:     internal var vipUpgradeDialogFactory: (Context, (() -> Unit)?, (() -> Unit)?, (() -> Unit)?, ((com.tscanner.app.utils.SyncCatalogResult) -> Unit)?, ((com.tscanner.app.utils.VipContinuationAction) -> Unit)?) -> VipUpgradeDialog =
+109:         { ctx, drive, upgrade, signIn, sync, signInAction ->
+110:             VipUpgradeDialog(
+111:                 context = ctx,
+112:                 onRequestDrivePermission = drive,
+113:                 onUpgradeSuccess = upgrade,
+114:                 onRequestSignIn = signIn,
+115:                 onSyncResult = sync,
+116:                 onRequestSignInForAction = signInAction
+117:             )
+118:         }
+119: 
+120:     private fun openVipUpgradeDialog() {
+121:         dismiss()
+122:         vipUpgradeDialogFactory(
+123:             hostContext,
+124:             onRequestDrivePermission,
+125:             onUpgradeSuccess,
+126:             onRequestSignIn,
+127:             onSyncResult,
+128:             onRequestSignInForAction
+129:         ).show()
+130:     }
+app/src/main/java/com/tscanner/app/ui/dialogs/CreatePdfDialog.kt
+65:                 VipUpgradeDialog(
+66:                     context = context,
+67:                     onRequestDrivePermission = onRequestDrivePermission,
+68:                     onUpgradeSuccess = {
+69:                         if (AppAuthManager.isUserVip()) {
+70:                             isWatermarkRemoved = true
+71:                             updateWatermarkStatusView()
+72:                             onWatermarkToggled?.invoke(true)
+73:                             Toast.makeText(context, context.getString(R.string.vip_watermark_removed_toast), Toast.LENGTH_LONG).show()
+74:                         }
+75:                     },
+76:                     onRequestSignIn = if (onRequestSignIn != null) {
+77:                         {
+78:                             val currentName = binding.etPdfName.text.toString().trim()
+79:                             dismiss()
+80:                             onRequestSignIn.invoke(currentName)
+81:                         }
+82:                     } else null,
+83:                     onSyncResult = onSyncResult,
+84:                     onRequestSignInForAction = if (onRequestSignInForAction != null) {
+85:                         { action ->
+86:                             val currentName = binding.etPdfName.text.toString().trim()
+87:                             dismiss()
+88:                             onRequestSignInForAction.invoke(action, currentName)
+89:                         }
+90:                     } else if (onRequestSignIn != null) {
+91:                         { action ->
+92:                             val currentName = binding.etPdfName.text.toString().trim()
+93:                             dismiss()
+app/src/test/java/com/tscanner/app/VipSessionRound3IntegrationTest.kt
+119:         // 2. Second AuthRequired on same purchase receipt terminates without infinite loop
+120:         var secondTypedEvent: BillingManager.PurchaseAuthRequiredEvent? = null
+121:         billingManager.addAuthRequiredListener { secondTypedEvent = it }
+122:         billingManager.processPurchase(testPurchase, origin = com.tscanner.app.utils.billing.BillingOperationOrigin.PURCHASE)
+123:         org.junit.Assert.assertNotNull("Second call dispatches event marked isRetry=true", secondTypedEvent)
+124:         assertTrue(secondTypedEvent!!.isRetry)
+125: 
+app/src/test/java/com/tscanner/app/VipPurchaseRecoveryIntegrationTest.kt
+145:             if (decision is PurchaseAuthDecision.RequestReauth) {
+146:                 decision.confirmStarted()
+147:                 invocationCount++
+148:             }
+149:         }
+150: 
+151:         billingManager.addAuthRequiredListener(listener)
+152:         billingManager.addAuthRequiredListener(listener)
+153: 
+154:         billingManager.processPurchase(receipt, BillingOperationOrigin.PURCHASE, op)
+155:         assertEquals("Exactly 1 provider invocation allowed across duplicate consumers", 1, invocationCount)
+app/src/test/java/com/tscanner/app/VipPurchaseRecoveryIntegrationTest.kt
+211:         var restoreCallCount = 0
+212:         var restoredSuccess = false
+213:         val currentGen = AppAuthManager.getSessionGeneration()
+214:         val currentUser = AppAuthManager.getCurrentUser()?.id
+215: 
+216:         continuationHandler.onSignInSuccessWithAction(currentGen, currentUser, -1L) { action, _, restoredContext ->
+217:             if (action == VipContinuationAction.RESTORE) {
+218:                 restoreCallCount++
+219:                 billingManager.restorePurchases(opContext = restoredContext) { success, _ ->
+220:                     restoredSuccess = true
+221:                 }
+222:             }
+223:         }
+224: 
+225:         assertEquals("Restore must be invoked exactly once", 1, restoreCallCount)

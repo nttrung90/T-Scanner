@@ -26,6 +26,8 @@ import com.tscanner.app.data.model.ManagedFileType
 import com.tscanner.app.data.repository.DocumentRepo
 import com.tscanner.app.databinding.ActivityDocumentManagementBinding
 import com.tscanner.app.ui.adapter.ManagedFileAdapter
+import com.tscanner.app.utils.AppAuthManager
+import com.tscanner.app.utils.EdgeToEdgeInsetsHelper
 import com.tscanner.app.utils.FileUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -42,6 +44,12 @@ class DocumentManagementActivity : AppCompatActivity() {
     private var currentFilterType: ManagedFileType = ManagedFileType.ALL
     private var searchQuery: String = ""
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(KEY_FILTER_TYPE, currentFilterType.name)
+        outState.putString(KEY_SEARCH_QUERY, searchQuery)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
@@ -51,36 +59,48 @@ class DocumentManagementActivity : AppCompatActivity() {
         binding = ActivityDocumentManagementBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val baseBottomPadding = (24 * resources.displayMetrics.density).toInt()
+        if (savedInstanceState != null) {
+            val filterName = savedInstanceState.getString(KEY_FILTER_TYPE)
+            if (filterName != null) {
+                currentFilterType = runCatching { ManagedFileType.valueOf(filterName) }.getOrDefault(ManagedFileType.ALL)
+            }
+            searchQuery = savedInstanceState.getString(KEY_SEARCH_QUERY, "")
+        }
+
+        val initialToolbarPadding = EdgeToEdgeInsetsHelper.recordInitialPadding(binding.layoutDocMgmtToolbar)
+        val initialContentPadding = EdgeToEdgeInsetsHelper.recordInitialPadding(binding.layoutDocMgmtContent)
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
-            val statusBarInsets = insets.getInsets(
-                WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.displayCutout()
-            )
-            val navInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            val sysInsets = EdgeToEdgeInsetsHelper.getSystemBarAndCutoutInsets(insets)
+            val effectiveBottom = EdgeToEdgeInsetsHelper.getEffectiveBottomInset(insets, includeIme = true)
 
-            binding.layoutDocMgmtToolbar.setPadding(
-                binding.layoutDocMgmtToolbar.paddingLeft,
-                statusBarInsets.top,
-                binding.layoutDocMgmtToolbar.paddingRight,
-                binding.layoutDocMgmtToolbar.paddingBottom
+            EdgeToEdgeInsetsHelper.applyTopBarInsets(
+                binding.layoutDocMgmtToolbar,
+                initialToolbarPadding,
+                sysInsets
             )
 
-            binding.layoutDocMgmtContent.setPadding(
-                binding.layoutDocMgmtContent.paddingLeft,
-                binding.layoutDocMgmtContent.paddingTop,
-                binding.layoutDocMgmtContent.paddingRight,
-                baseBottomPadding + navInsets.bottom
+            EdgeToEdgeInsetsHelper.applyBottomBarInsets(
+                binding.layoutDocMgmtContent,
+                initialContentPadding,
+                sysInsets,
+                effectiveBottom
             )
 
             insets
         }
+        ViewCompat.requestApplyInsets(binding.root)
 
         repo = DocumentRepo.getInstance(this)
 
         setupToolbar()
         setupRecyclerView()
         setupFilterChips()
+        updateChipsVisualState()
         setupSearch()
+        if (searchQuery.isNotEmpty() && binding.etSearchManagedFiles.text.toString() != searchQuery) {
+            binding.etSearchManagedFiles.setText(searchQuery)
+        }
         loadData()
     }
 
@@ -93,7 +113,7 @@ class DocumentManagementActivity : AppCompatActivity() {
             val cleared = FileUtils.clearCache(this)
             Toast.makeText(
                 this,
-                "Đã dọn dẹp ${FileUtils.formatFileSize(cleared)} bộ nhớ đệm!",
+                getString(R.string.cleared_cache_format, FileUtils.formatFileSize(cleared)),
                 Toast.LENGTH_SHORT
             ).show()
             loadData()
@@ -164,8 +184,9 @@ class DocumentManagementActivity : AppCompatActivity() {
 
     private fun loadData() {
         binding.pbLoadingMgmt.visibility = View.VISIBLE
+        val currentUserId = AppAuthManager.getCurrentUser()?.id
         lifecycleScope.launch(Dispatchers.IO) {
-            val files = repo.getAllManagedFiles()
+            val files = repo.getAllManagedFiles(currentUserId)
             val stats = repo.calculateManagementStats(files)
 
             withContext(Dispatchers.Main) {
@@ -174,7 +195,7 @@ class DocumentManagementActivity : AppCompatActivity() {
 
                 // Overview card
                 binding.tvStatTotalStorage.text = FileUtils.formatFileSize(stats.totalSizeBytes)
-                binding.tvStatTotalCount.text = "${stats.totalFiles} tệp"
+                binding.tvStatTotalCount.text = resources.getQuantityString(R.plurals.files_count_plurals, stats.totalFiles, stats.totalFiles)
 
                 // Breakdown text
                 val pdfStat = stats.typeStats.firstOrNull { it.type == ManagedFileType.PDF }
@@ -184,20 +205,20 @@ class DocumentManagementActivity : AppCompatActivity() {
                 val imageStat = stats.typeStats.firstOrNull { it.type == ManagedFileType.IMAGE }
                 val otherStat = stats.typeStats.firstOrNull { it.type == ManagedFileType.OTHER }
 
-                binding.tvStatPdfDetail.text = "PDF: ${pdfStat?.count ?: 0} tệp (${FileUtils.formatFileSize(pdfStat?.totalSizeBytes ?: 0L)})"
-                binding.tvStatWordDetail.text = "Word: ${wordStat?.count ?: 0} tệp (${FileUtils.formatFileSize(wordStat?.totalSizeBytes ?: 0L)})"
-                binding.tvStatExcelDetail.text = "Excel: ${excelStat?.count ?: 0} tệp (${FileUtils.formatFileSize(excelStat?.totalSizeBytes ?: 0L)})"
-                binding.tvStatPptDetail.text = "PPT: ${pptStat?.count ?: 0} tệp (${FileUtils.formatFileSize(pptStat?.totalSizeBytes ?: 0L)})"
-                binding.tvStatImageDetail.text = "Ảnh: ${imageStat?.count ?: 0} tệp (${FileUtils.formatFileSize(imageStat?.totalSizeBytes ?: 0L)})"
-                binding.tvStatOtherDetail.text = "Khác: ${otherStat?.count ?: 0} tệp (${FileUtils.formatFileSize(otherStat?.totalSizeBytes ?: 0L)})"
+                binding.tvStatPdfDetail.text = getString(R.string.stat_type_detail_format, "PDF", pdfStat?.count ?: 0, FileUtils.formatFileSize(pdfStat?.totalSizeBytes ?: 0L))
+                binding.tvStatWordDetail.text = getString(R.string.stat_type_detail_format, "Word", wordStat?.count ?: 0, FileUtils.formatFileSize(wordStat?.totalSizeBytes ?: 0L))
+                binding.tvStatExcelDetail.text = getString(R.string.stat_type_detail_format, "Excel", excelStat?.count ?: 0, FileUtils.formatFileSize(excelStat?.totalSizeBytes ?: 0L))
+                binding.tvStatPptDetail.text = getString(R.string.stat_type_detail_format, "PPT", pptStat?.count ?: 0, FileUtils.formatFileSize(pptStat?.totalSizeBytes ?: 0L))
+                binding.tvStatImageDetail.text = getString(R.string.stat_type_detail_format, getString(R.string.filter_image), imageStat?.count ?: 0, FileUtils.formatFileSize(imageStat?.totalSizeBytes ?: 0L))
+                binding.tvStatOtherDetail.text = getString(R.string.stat_type_detail_format, getString(R.string.filter_other), otherStat?.count ?: 0, FileUtils.formatFileSize(otherStat?.totalSizeBytes ?: 0L))
 
                 // Update chip labels with count
-                binding.chipAll.text = "Tất cả (${stats.totalFiles})"
+                binding.chipAll.text = "${getString(R.string.filter_all)} (${stats.totalFiles})"
                 binding.chipPdf.text = "PDF (${pdfStat?.count ?: 0})"
                 binding.chipWord.text = "Word (${wordStat?.count ?: 0})"
                 binding.chipExcel.text = "Excel (${excelStat?.count ?: 0})"
                 binding.chipPpt.text = "PPT (${pptStat?.count ?: 0})"
-                binding.chipImage.text = "Hình ảnh (${imageStat?.count ?: 0})"
+                binding.chipImage.text = "${getString(R.string.filter_image)} (${imageStat?.count ?: 0})"
 
                 applyFilterAndSearch()
             }
@@ -222,7 +243,7 @@ class DocumentManagementActivity : AppCompatActivity() {
         }
 
         adapter.submitList(filtered)
-        binding.tvFilteredCount.text = "${filtered.size} tệp"
+        binding.tvFilteredCount.text = resources.getQuantityString(R.plurals.files_count_plurals, filtered.size, filtered.size)
 
         if (filtered.isEmpty()) {
             binding.layoutEmptyMgmt.visibility = View.VISIBLE
@@ -254,9 +275,9 @@ class DocumentManagementActivity : AppCompatActivity() {
                 setDataAndType(uri, mimeType)
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
-            startActivity(Intent.createChooser(intent, "Mở tập tin bằng..."))
+            startActivity(Intent.createChooser(intent, getString(R.string.open_file_with)))
         } catch (e: Exception) {
-            Toast.makeText(this, "Không tìm thấy ứng dụng phù hợp để mở file", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.no_app_to_open_file), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -264,7 +285,7 @@ class DocumentManagementActivity : AppCompatActivity() {
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("File Path", item.path)
         clipboard.setPrimaryClip(clip)
-        Toast.makeText(this, "Đã sao chép đường dẫn:\n${item.name}", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.copied_path_format, item.name), Toast.LENGTH_SHORT).show()
     }
 
     private fun shareFile(item: ManagedFileItem) {
@@ -289,30 +310,33 @@ class DocumentManagementActivity : AppCompatActivity() {
                 putExtra(Intent.EXTRA_STREAM, uri)
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
-            startActivity(Intent.createChooser(shareIntent, "Chia sẻ tập tin"))
+            startActivity(Intent.createChooser(shareIntent, getString(R.string.share_file_title)))
         } catch (e: Exception) {
-            Toast.makeText(this, "Không thể chia sẻ tập tin", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.cannot_share_file), Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun confirmDelete(item: ManagedFileItem) {
         MaterialAlertDialogBuilder(this)
-            .setTitle("Xác nhận xóa tệp")
-            .setMessage("Bạn có chắc chắn muốn xóa tệp này vĩnh viễn không?\n\n📄 ${item.name}\n📍 ${item.path}")
-            .setPositiveButton("Xóa") { _, _ ->
+            .setTitle(R.string.confirm_delete_title)
+            .setMessage(getString(R.string.confirm_delete_message, item.name, item.path))
+            .setPositiveButton(R.string.delete) { _, _ ->
                 val deleted = repo.deleteManagedFile(item.file)
                 if (deleted) {
-                    Toast.makeText(this, "Đã xóa ${item.name}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.deleted_file_format, item.name), Toast.LENGTH_SHORT).show()
                     loadData()
                 } else {
-                    Toast.makeText(this, "Không thể xóa tệp", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.cannot_delete_file), Toast.LENGTH_SHORT).show()
                 }
             }
-            .setNegativeButton("Hủy", null)
+            .setNegativeButton(R.string.cancel, null)
             .show()
     }
 
     companion object {
+        private const val KEY_FILTER_TYPE = "key_filter_type"
+        private const val KEY_SEARCH_QUERY = "key_search_query"
+
         fun start(context: Context) {
             val intent = Intent(context, DocumentManagementActivity::class.java)
             context.startActivity(intent)

@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
+import com.tscanner.app.R
 import com.tscanner.app.databinding.DialogExportDocBinding
 import com.tscanner.app.utils.FileUtils
 
@@ -13,6 +14,7 @@ class ExportDocDialog(
     private val description: String,
     private val defaultName: String,
     private val extension: String,
+    private val supportedExtensions: List<String> = listOf(extension),
     private val onAction: (fileName: String, action: ExportAction) -> Unit
 ) : Dialog(context) {
 
@@ -65,13 +67,17 @@ class ExportDocDialog(
 
     private fun handleAction(action: ExportAction) {
         val rawName = binding.etExportFileName.text.toString().trim()
-        val sanitized = FileUtils.sanitizeFileName(rawName.removeSuffix(".$extension"))
+        val extensionToUse = supportedExtensions.firstOrNull {
+            rawName.endsWith(".$it", ignoreCase = true)
+        } ?: extension
+
+        val sanitized = FileUtils.sanitizeFileName(rawName.removeSuffix(".$extensionToUse"))
         if (sanitized.isNotEmpty()) {
-            val finalName = "$sanitized.$extension"
+            val finalName = "$sanitized.$extensionToUse"
             dismiss()
             onAction(finalName, action)
         } else {
-            Toast.makeText(context, "Vui lòng nhập tên tập tin hợp lệ", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.enter_valid_file_name_error), Toast.LENGTH_SHORT).show()
         }
     }
 }

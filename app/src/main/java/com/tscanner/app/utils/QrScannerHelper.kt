@@ -69,9 +69,9 @@ object QrScannerHelper {
                 val errorMsg = when {
                     e.message?.contains("module", ignoreCase = true) == true ||
                     e.message?.contains("download", ignoreCase = true) == true ->
-                        "Google Play Services đang tải dữ liệu quét mã. Vui lòng thử lại sau giây lát hoặc chọn ảnh từ bộ sưu tập."
+                        activity.getString(R.string.qr_play_services_downloading)
                     e.message?.contains("cancel", ignoreCase = true) == true ->
-                        "Đã hủy quét"
+                        activity.getString(R.string.qr_scan_cancelled)
                     else ->
                         e.localizedMessage ?: activity.getString(R.string.scanner_error, "QR")
                 }
@@ -153,10 +153,10 @@ object QrScannerHelper {
                 val ssid = barcode.wifi?.ssid.orEmpty()
                 val password = barcode.wifi?.password.orEmpty()
                 val encType = when (barcode.wifi?.encryptionType) {
-                    Barcode.WiFi.TYPE_OPEN -> "Mạng mở"
+                    Barcode.WiFi.TYPE_OPEN -> context.getString(R.string.wifi_enc_open)
                     Barcode.WiFi.TYPE_WPA -> "WPA/WPA2"
                     Barcode.WiFi.TYPE_WEP -> "WEP"
-                    else -> "Bảo mật"
+                    else -> context.getString(R.string.wifi_enc_secure)
                 }
                 QrCodeResult(
                     rawValue = raw,
@@ -196,7 +196,7 @@ object QrScannerHelper {
                     type = QrType.SMS,
                     typeLabel = context.getString(R.string.qr_type_sms),
                     primaryActionUrl = "smsto:$phone",
-                    primaryActionLabel = "Gửi SMS"
+                    primaryActionLabel = context.getString(R.string.qr_send_sms)
                 )
             }
             Barcode.TYPE_CONTACT_INFO -> {
@@ -227,30 +227,30 @@ object QrScannerHelper {
                     val issueDate = parts.getOrNull(6)?.let { formatCccdDate(it) }.orEmpty()
 
                     val formatted = buildString {
-                        append("🪪 THÔNG TIN THẺ CĂN CƯỚC\n")
-                        append("• Số CCCD: $cccdNumber\n")
-                        if (oldCmnd.isNotBlank()) append("• Số CMND cũ: $oldCmnd\n")
-                        append("• Họ và tên: $fullName\n")
-                        append("• Ngày sinh: $dob\n")
-                        append("• Giới tính: $gender\n")
-                        append("• Nơi thường trú: $address")
-                        if (issueDate.isNotBlank()) append("\n• Ngày cấp: $issueDate")
+                        append(context.getString(R.string.qr_id_card_header))
+                        append(context.getString(R.string.qr_id_card_number_format, cccdNumber))
+                        if (oldCmnd.isNotBlank()) append(context.getString(R.string.qr_old_id_number_format, oldCmnd))
+                        append(context.getString(R.string.qr_id_fullname_format, fullName))
+                        append(context.getString(R.string.qr_id_dob_format, dob))
+                        append(context.getString(R.string.qr_id_gender_format, gender))
+                        append(context.getString(R.string.qr_id_address_format, address))
+                        if (issueDate.isNotBlank()) append(context.getString(R.string.qr_id_issue_date_format, issueDate))
                     }
 
                     QrCodeResult(
                         rawValue = raw,
                         type = QrType.CCCD,
-                        typeLabel = "Thẻ CCCD gắn chip",
+                        typeLabel = context.getString(R.string.qr_type_chip_id_card),
                         displayContent = formatted,
-                        primaryActionLabel = "Sao chép thông tin CCCD"
+                        primaryActionLabel = context.getString(R.string.qr_copy_id_card_info)
                     )
                 } else if (raw.startsWith("000201") && (raw.contains("A000000727") || raw.contains("vietqr", ignoreCase = true) || raw.contains("QRPUSH", ignoreCase = true))) {
                     QrCodeResult(
                         rawValue = raw,
                         type = QrType.VIETQR,
-                        typeLabel = "Mã thanh toán VietQR",
-                        displayContent = "Mã thanh toán chuyển khoản ngân hàng VietQR / EMVCo\n\nNội dung chuỗi mã:\n$raw",
-                        primaryActionLabel = "Sao chép mã VietQR"
+                        typeLabel = context.getString(R.string.qr_type_vietqr),
+                        displayContent = context.getString(R.string.qr_vietqr_desc_format, raw),
+                        primaryActionLabel = context.getString(R.string.qr_copy_vietqr)
                     )
                 } else {
                     QrCodeResult(

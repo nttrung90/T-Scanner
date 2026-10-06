@@ -6,6 +6,7 @@ import android.graphics.RectF
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.tscanner.app.R
 import com.tscanner.app.data.model.PostScanSessionDraft
 import com.tscanner.app.data.repository.PostScanSessionRepository
 import com.tscanner.app.ui.editor.model.DocumentFilterType
@@ -40,9 +41,23 @@ enum class DraftStatus {
     ERROR
 }
 
+enum class ExportErrorCode {
+    NO_PAGES,
+    PROCESS_PAGE_FAILED,
+    PAGE_COUNT_MISMATCH,
+    UNKNOWN
+}
+
 sealed class ExportResult {
     data class Success(val exportId: String, val sessionRevision: Long, val pagePaths: List<String>) : ExportResult()
-    data class Failure(val pageIndex: Int, val stage: String, val message: String, val canRetry: Boolean) : ExportResult()
+    data class Failure(
+        val pageIndex: Int,
+        val stage: String,
+        val message: String,
+        val canRetry: Boolean,
+        val errorCode: ExportErrorCode = ExportErrorCode.UNKNOWN,
+        val errorArgs: List<String> = emptyList()
+    ) : ExportResult()
     object Cancelled : ExportResult()
 }
 
@@ -57,7 +72,7 @@ data class RenderRequestToken(
 
 data class EditorUiState(
     val sessionId: String = "",
-    val documentTitle: String = "Tài liệu mới",
+    val documentTitle: String = "",
     val currentPageIndex: Int = 0,
     val totalPages: Int = 0,
     val activeTool: ActiveEditorTool? = null,
@@ -84,6 +99,8 @@ class PostScanEditorViewModel(application: Application) : AndroidViewModel(appli
     private var currentDraft: PostScanSessionDraft? = null
     private val pageStates = mutableListOf<PageEditState>()
     private var currentRevision: Long = 1L
+    private var initialTitle: String = ""
+    private var saveJob: Job? = null
 
     // Base bitmap cache
     private var activeBaseBitmap: Bitmap? = null
@@ -98,6 +115,20 @@ class PostScanEditorViewModel(application: Application) : AndroidViewModel(appli
     private var activeRenderJob: Job? = null
     private var roiRenderJob: Job? = null
 
+    fun hasAnyModifiedPages(): Boolean = pageStates.any { it.isModified }
+    fun isTitleModified(): Boolean = _uiState.value.documentTitle != initialTitle
+    fun isDirty(): Boolean = hasAnyModifiedPages() || isTitleModified()
+
+    suspend fun flushPendingChanges(): Boolean {
+        saveJob?.join()
+        val sid = _uiState.value.sessionId
+        return if (sid.isNotEmpty()) {
+            sessionRepo.flush(sid, currentRevision)
+        } else {
+            true
+        }
+    }
+
     fun initialize(sessionId: String, pagePaths: List<String>, title: String?) {
         if (currentDraft != null && currentDraft?.sessionId == sessionId) return
 
@@ -111,15 +142,26 @@ class PostScanEditorViewModel(application: Application) : AndroidViewModel(appli
                 sessionRepo.initializeSession(sessionId, pagePaths, title)
             }
 
+            if (draft == null) {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    draftStatus = DraftStatus.ERROR
+                )
+                return@launch
+            }
+
             currentDraft = draft
             currentRevision = draft.revision
             pageStates.clear()
             pageStates.addAll(draft.pageStates)
 
+            val defaultTitle = getApplication<Application>().getString(R.string.editor_default_doc_title)
+            val resolvedTitle = draft.documentTitle.ifEmpty { defaultTitle }
+            initialTitle = resolvedTitle
             _thumbnailPaths.value = pageStates.map { it.inputImagePath }
             _uiState.value = _uiState.value.copy(
                 sessionId = draft.sessionId,
-                documentTitle = draft.documentTitle,
+                documentTitle = resolvedTitle,
                 currentPageIndex = 0,
                 totalPages = pageStates.size,
                 currentPageState = pageStates.firstOrNull(),
@@ -187,7 +229,8 @@ class PostScanEditorViewModel(application: Application) : AndroidViewModel(appli
     }
 
     fun setDocumentTitle(title: String) {
-        val sanitized = title.trim().ifEmpty { "Tài liệu mới" }
+        val defaultTitle = getApplication<Application>().getString(R.string.editor_default_doc_title)
+        val sanitized = title.trim().ifEmpty { defaultTitle }
         _uiState.value = _uiState.value.copy(documentTitle = sanitized)
         currentDraft?.let { d ->
             currentRevision++
@@ -351,7 +394,7 @@ class PostScanEditorViewModel(application: Application) : AndroidViewModel(appli
         currentDraft = draft
         _uiState.value = _uiState.value.copy(draftStatus = DraftStatus.SAVING)
 
-        viewModelScope.launch {
+        saveJob = viewModelScope.launch {
             val success = sessionRepo.saveDraft(draft)
             if (success) {
                 _uiState.value = _uiState.value.copy(draftStatus = DraftStatus.SAVED)
@@ -392,13 +435,22 @@ class PostScanEditorViewModel(application: Application) : AndroidViewModel(appli
             return@withContext ExportResult.Failure(
                 pageIndex = -1,
                 stage = "init",
-                message = "Không có trang tài liệu nào để kết xuất",
-                canRetry = false
+                message = "No document pages to export",
+                canRetry = false,
+                errorCode = ExportErrorCode.NO_PAGES
             )
         }
 
-        val snapshotRevision = currentRevision
-        sessionRepo.flush(sid, snapshotRevision)
+        val flushed = flushPendingChanges()
+        if (!flushed) {
+            return@withContext ExportResult.Failure(
+                pageIndex = -1,
+                stage = "flush_draft",
+                message = "Failed to flush draft revision $currentRevision to storage",
+                canRetry = true,
+                errorCode = ExportErrorCode.PROCESS_PAGE_FAILED
+            )
+        }
 
         val exportId = "export_${System.currentTimeMillis()}_${UUID.randomUUID().toString().take(8)}"
         val exportDir = File(sessionRepo.getSessionDir(sid), exportId)
@@ -418,8 +470,10 @@ class PostScanEditorViewModel(application: Application) : AndroidViewModel(appli
                 return@withContext ExportResult.Failure(
                     pageIndex = i + 1,
                     stage = "process_image",
-                    message = "Không thể xử lý hoàn tất trang ${i + 1}. Bản nháp vẫn được lưu an toàn.",
-                    canRetry = true
+                    message = "Failed to process page ${i + 1}",
+                    canRetry = true,
+                    errorCode = ExportErrorCode.PROCESS_PAGE_FAILED,
+                    errorArgs = listOf((i + 1).toString())
                 )
             }
             resultPaths.add(outFile.absolutePath)
@@ -430,15 +484,18 @@ class PostScanEditorViewModel(application: Application) : AndroidViewModel(appli
             return@withContext ExportResult.Failure(
                 pageIndex = -1,
                 stage = "verification",
-                message = "Số trang kết xuất không khớp (${resultPaths.size}/${pagesSnapshot.size})",
-                canRetry = true
+                message = "Exported page count mismatch (${resultPaths.size}/${pagesSnapshot.size})",
+                canRetry = true,
+                errorCode = ExportErrorCode.PAGE_COUNT_MISMATCH,
+                errorArgs = listOf(resultPaths.size.toString(), pagesSnapshot.size.toString())
             )
         }
 
-        ExportResult.Success(exportId, snapshotRevision, resultPaths)
+        ExportResult.Success(exportId, currentRevision, resultPaths)
     }
 
     suspend fun discardSession(): Boolean {
+        saveJob?.cancel()
         val sid = _uiState.value.sessionId
         return if (sid.isNotEmpty()) {
             sessionRepo.discardSession(sid)

@@ -145,7 +145,6 @@
             android:layout_height="1dp"
             android:background="@color/divider_dark" />
 
-        <!-- 31 Languages List -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_languages"
             android:layout_width="match_parent"
@@ -153,6 +152,16 @@
             android:scrollbars="vertical"
             android:overScrollMode="never" />
 
+        <TextView
+            android:id="@+id/tv_empty_search"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:gravity="center"
+            android:text="@string/language_search_empty"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp"
+            android:visibility="gone"
+            tools:visibility="visible" />
     </LinearLayout>
 
     <!-- Close Button -->

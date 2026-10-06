@@ -84,7 +84,7 @@
                 android:layout_marginStart="8dp"
                 android:src="@drawable/ic_cloud_done"
                 android:visibility="gone"
-                android:contentDescription="Sync status" />
+                android:contentDescription="@string/sync_status" />
         </LinearLayout>
     </LinearLayout>
 

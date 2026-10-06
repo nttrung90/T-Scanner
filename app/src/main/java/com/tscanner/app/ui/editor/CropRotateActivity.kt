@@ -14,12 +14,16 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnLayout
 import androidx.lifecycle.lifecycleScope
+import com.tscanner.app.R
 import com.tscanner.app.databinding.ActivityCropRotateBinding
+import com.tscanner.app.utils.EdgeToEdgeInsetsHelper
+import com.tscanner.app.utils.SafeFileWriter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -29,8 +33,23 @@ import java.io.FileOutputStream
 class CropRotateActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityCropRotateBinding
+    private val viewModel: CropRotateViewModel by viewModels()
     private var imagePath: String = ""
     private var currentBitmap: Bitmap? = null
+    private var currentRotationAngle: Float = 0f
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putFloat(KEY_ROTATION_DEGREES, currentRotationAngle)
+        val normRect = viewModel.resolveCropRectForSaveState(
+            isOverlayInitialized = binding.cropOverlayView.isInitialized(),
+            currentOverlayRect = binding.cropOverlayView.getNormalizedCropRect()
+        )
+        outState.putFloatArray(
+            KEY_NORMALIZED_CROP_RECT,
+            floatArrayOf(normRect.left, normRect.top, normRect.right, normRect.bottom)
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge(
@@ -41,37 +60,93 @@ class CropRotateActivity : AppCompatActivity() {
         binding = ActivityCropRotateBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        if (savedInstanceState != null) {
+            currentRotationAngle = savedInstanceState.getFloat(KEY_ROTATION_DEGREES, 0f)
+            val rectArray = savedInstanceState.getFloatArray(KEY_NORMALIZED_CROP_RECT)
+            if (rectArray != null && rectArray.size == 4) {
+                viewModel.pendingNormalizedCropRect = RectF(rectArray[0], rectArray[1], rectArray[2], rectArray[3])
+            }
+        }
+
+        val initialToolbarPadding = EdgeToEdgeInsetsHelper.recordInitialPadding(binding.layoutCropToolbar)
+        val initialBottomPadding = EdgeToEdgeInsetsHelper.recordInitialPadding(binding.layoutCropBottomActions)
+        val initialContainerPadding = EdgeToEdgeInsetsHelper.recordInitialPadding(binding.layoutCropContainer)
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
-            val statusBarInsets = insets.getInsets(
-                WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.displayCutout()
-            )
-            val navInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            val sysInsets = EdgeToEdgeInsetsHelper.getSystemBarAndCutoutInsets(insets)
 
-            binding.layoutCropToolbar.setPadding(
-                binding.layoutCropToolbar.paddingLeft,
-                statusBarInsets.top,
-                binding.layoutCropToolbar.paddingRight,
-                binding.layoutCropToolbar.paddingBottom
+            EdgeToEdgeInsetsHelper.applyTopBarInsets(
+                binding.layoutCropToolbar,
+                initialToolbarPadding,
+                sysInsets
             )
 
-            binding.layoutCropBottomActions.setPadding(
-                binding.layoutCropBottomActions.paddingLeft,
-                binding.layoutCropBottomActions.paddingTop,
-                binding.layoutCropBottomActions.paddingRight,
-                (12 * resources.displayMetrics.density).toInt() + navInsets.bottom
+            EdgeToEdgeInsetsHelper.applyBottomBarInsets(
+                binding.layoutCropBottomActions,
+                initialBottomPadding,
+                sysInsets,
+                sysInsets.bottom
             )
+
+            EdgeToEdgeInsetsHelper.applyContentHorizontalInsets(
+                binding.layoutCropContainer,
+                initialContainerPadding,
+                sysInsets
+            )
+
             insets
         }
         ViewCompat.requestApplyInsets(binding.root)
 
         imagePath = intent.getStringExtra(EXTRA_IMAGE_PATH) ?: ""
         if (imagePath.isEmpty() || !File(imagePath).exists()) {
-            Toast.makeText(this, "Không tìm thấy ảnh cần chỉnh sửa", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.crop_image_not_found, Toast.LENGTH_SHORT).show()
             finish()
             return
         }
 
+        viewModel.saveState.observe(this) { state ->
+            when (state) {
+                is CropSaveState.Idle -> {
+                    binding.pbCropLoading.visibility = View.GONE
+                    binding.btnSaveCrop.isEnabled = true
+                    binding.btnCropRotateLeft.isEnabled = true
+                    binding.btnCropRotateRight.isEnabled = true
+                    binding.btnCropReset.isEnabled = true
+                    binding.btnCancelCrop.isEnabled = true
+                }
+                is CropSaveState.Saving -> {
+                    binding.pbCropLoading.visibility = View.VISIBLE
+                    binding.btnSaveCrop.isEnabled = false
+                    binding.btnCropRotateLeft.isEnabled = false
+                    binding.btnCropRotateRight.isEnabled = false
+                    binding.btnCropReset.isEnabled = false
+                    binding.btnCancelCrop.isEnabled = false
+                }
+                is CropSaveState.Committed -> {
+                    binding.pbCropLoading.visibility = View.GONE
+                    Toast.makeText(this, R.string.crop_save_success, Toast.LENGTH_SHORT).show()
+                    val resultIntent = Intent().apply {
+                        putExtra(EXTRA_IMAGE_PATH, state.imagePath)
+                        putExtra(EXTRA_PAGE_INDEX, state.pageIndex)
+                    }
+                    setResult(Activity.RESULT_OK, resultIntent)
+                    finish()
+                }
+                is CropSaveState.Error -> {
+                    binding.pbCropLoading.visibility = View.GONE
+                    binding.btnSaveCrop.isEnabled = true
+                    binding.btnCropRotateLeft.isEnabled = true
+                    binding.btnCropRotateRight.isEnabled = true
+                    binding.btnCropReset.isEnabled = true
+                    binding.btnCancelCrop.isEnabled = true
+                    Toast.makeText(this, state.messageResId, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
         binding.btnCancelCrop.setOnClickListener {
+            if (viewModel.isSaving()) return@setOnClickListener
             finish()
         }
 
@@ -88,10 +163,14 @@ class CropRotateActivity : AppCompatActivity() {
         }
 
         binding.btnCropReset.setOnClickListener {
+            if (viewModel.isSaving()) return@setOnClickListener
+            viewModel.pendingNormalizedCropRect = null
             binding.cropOverlayView.resetToFull()
         }
 
-        loadImage()
+        if (!viewModel.isCommitted() && !viewModel.isSaving() && currentBitmap == null) {
+            loadImage()
+        }
     }
 
     private fun loadImage() {
@@ -99,7 +178,17 @@ class CropRotateActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val bmp = withContext(Dispatchers.IO) {
                 try {
-                    BitmapFactory.decodeFile(imagePath)
+                    val decoded = BitmapFactory.decodeFile(imagePath)
+                    if (decoded != null && currentRotationAngle != 0f) {
+                        val matrix = Matrix().apply { postRotate(currentRotationAngle) }
+                        val rotated = Bitmap.createBitmap(decoded, 0, 0, decoded.width, decoded.height, matrix, true)
+                        if (rotated != decoded) {
+                            decoded.recycle()
+                        }
+                        rotated
+                    } else {
+                        decoded
+                    }
                 } catch (e: Exception) {
                     e.printStackTrace()
                     null
@@ -111,7 +200,7 @@ class CropRotateActivity : AppCompatActivity() {
                 currentBitmap = bmp
                 updateImageDisplay()
             } else {
-                Toast.makeText(this@CropRotateActivity, "Không thể đọc file ảnh", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@CropRotateActivity, R.string.crop_image_read_error, Toast.LENGTH_SHORT).show()
                 finish()
             }
         }
@@ -122,12 +211,21 @@ class CropRotateActivity : AppCompatActivity() {
         binding.ivCropTarget.setImageBitmap(bmp)
         binding.layoutCropContainer.doOnLayout {
             val bounds = calculateImageBounds(binding.ivCropTarget, bmp)
-            binding.cropOverlayView.setImageBounds(bounds)
+            val pending = viewModel.pendingNormalizedCropRect
+            if (pending != null) {
+                binding.cropOverlayView.setImageBounds(bounds)
+                binding.cropOverlayView.setNormalizedCropRect(pending)
+                viewModel.pendingNormalizedCropRect = null
+            } else {
+                binding.cropOverlayView.setImageBoundsPreservingNormalizedRect(bounds)
+            }
         }
     }
 
     private fun rotateCurrentBitmap(degrees: Float) {
+        if (viewModel.isSaving() || viewModel.isCommitted()) return
         val bmp = currentBitmap ?: return
+        currentRotationAngle = (currentRotationAngle + degrees) % 360f
         val matrix = Matrix().apply { postRotate(degrees) }
         val rotated = Bitmap.createBitmap(bmp, 0, 0, bmp.width, bmp.height, matrix, true)
         if (bmp != rotated) {
@@ -138,50 +236,19 @@ class CropRotateActivity : AppCompatActivity() {
     }
 
     private fun saveCroppedImage() {
+        if (viewModel.isSaving() || viewModel.isCommitted()) return
         val bmp = currentBitmap ?: return
-        val normRect = binding.cropOverlayView.getNormalizedCropRect()
-
-        binding.pbCropLoading.visibility = View.VISIBLE
-        binding.btnSaveCrop.isEnabled = false
-
-        lifecycleScope.launch {
-            val success = withContext(Dispatchers.IO) {
-                try {
-                    val x = (normRect.left * bmp.width).toInt().coerceIn(0, bmp.width - 1)
-                    val y = (normRect.top * bmp.height).toInt().coerceIn(0, bmp.height - 1)
-                    val w = (normRect.width() * bmp.width).toInt().coerceIn(1, bmp.width - x)
-                    val h = (normRect.height() * bmp.height).toInt().coerceIn(1, bmp.height - y)
-
-                    val cropped = Bitmap.createBitmap(bmp, x, y, w, h)
-                    val file = File(imagePath)
-                    FileOutputStream(file).use { out ->
-                        cropped.compress(Bitmap.CompressFormat.JPEG, 95, out)
-                    }
-                    if (cropped != bmp) {
-                        cropped.recycle()
-                    }
-                    true
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    false
-                }
-            }
-
-            binding.pbCropLoading.visibility = View.GONE
-            binding.btnSaveCrop.isEnabled = true
-
-            if (success) {
-                Toast.makeText(this@CropRotateActivity, "Đã cắt và lưu trang thành công", Toast.LENGTH_SHORT).show()
-                val resultIntent = Intent().apply {
-                    putExtra(EXTRA_IMAGE_PATH, imagePath)
-                    putExtra(EXTRA_PAGE_INDEX, intent.getIntExtra(EXTRA_PAGE_INDEX, 0))
-                }
-                setResult(Activity.RESULT_OK, resultIntent)
-                finish()
-            } else {
-                Toast.makeText(this@CropRotateActivity, "Lỗi khi lưu ảnh cắt", Toast.LENGTH_SHORT).show()
-            }
-        }
+        val normRect = viewModel.resolveCropRectForSaveState(
+            isOverlayInitialized = binding.cropOverlayView.isInitialized(),
+            currentOverlayRect = binding.cropOverlayView.getNormalizedCropRect()
+        )
+        val pageIndex = intent.getIntExtra(EXTRA_PAGE_INDEX, 0)
+        viewModel.save(
+            bitmap = bmp,
+            normalizedRect = normRect,
+            imagePath = imagePath,
+            pageIndex = pageIndex
+        )
     }
 
     private fun calculateImageBounds(imageView: ImageView, bitmap: Bitmap): RectF {
@@ -200,13 +267,17 @@ class CropRotateActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        currentBitmap?.recycle()
-        currentBitmap = null
+        if (isFinishing && !viewModel.isSaving()) {
+            currentBitmap?.recycle()
+            currentBitmap = null
+        }
     }
 
     companion object {
         const val EXTRA_IMAGE_PATH = "extra_image_path"
         const val EXTRA_PAGE_INDEX = "extra_page_index"
+        private const val KEY_ROTATION_DEGREES = "key_rotation_degrees"
+        private const val KEY_NORMALIZED_CROP_RECT = "key_normalized_crop_rect"
 
         fun createIntent(context: Context, imagePath: String, pageIndex: Int): Intent {
             return Intent(context, CropRotateActivity::class.java).apply {

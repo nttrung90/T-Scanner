@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tscanner.app.VipSessionRound3ProbeTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-05T02:03:43.286Z" hostname="NTT-LAPTOPACER" time="0.014">
+  <properties/>
+  <testcase name="C03_backend401WithFreshTokenIsTyped" classname="com.tscanner.app.VipSessionRound3ProbeTest" time="0.004"/>
+  <testcase name="P02_boundContinuationMustRequireOriginatingAttemptAtConsumption" classname="com.tscanner.app.VipSessionRound3ProbeTest" time="0.001"/>
+  <testcase name="P04_expiredCredentialMustStopBeforeTransport" classname="com.tscanner.app.VipSessionRound3ProbeTest" time="0.002"/>
+  <testcase name="P03_missingCredentialMustBeAuthRequiredNotReceiptRejection" classname="com.tscanner.app.VipSessionRound3ProbeTest" time="0.003"/>
+  <testcase name="C02_wrongCancellationPreservesPending" classname="com.tscanner.app.VipSessionRound3ProbeTest" time="0.002"/>
+  <testcase name="P01_oldSuccessMustNotEraseNewPendingRequest" classname="com.tscanner.app.VipSessionRound3ProbeTest" time="0.001"/>
+  <testcase name="C01_matchingAttemptDispatchesOnce" classname="com.tscanner.app.VipSessionRound3ProbeTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

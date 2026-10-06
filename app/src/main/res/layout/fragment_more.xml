@@ -2,6 +2,7 @@
 <androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_dark"
@@ -198,56 +199,16 @@
                 android:layout_marginStart="56dp"
                 android:background="@color/divider_dark" />
 
-            <!-- Item 3: Quản lý tài liệu -->
-            <LinearLayout
-                android:id="@+id/item_doc_management"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="16dp"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_storage"
-                    app:tint="@color/text_primary"
-                    android:contentDescription="@string/item_doc_management" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="16dp"
-                    android:text="@string/item_doc_management"
-                    android:textColor="@color/text_primary"
-                    android:textSize="15sp" />
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_chevron_right"
-                    android:contentDescription="@null" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginStart="56dp"
-                android:background="@color/divider_dark" />
-
-            <!-- Item 3: Ngôn ngữ -->
+            <!-- Item 3: Ngôn ngữ (Chỉ đọc - Tự động theo hệ thống E03) -->
             <LinearLayout
                 android:id="@+id/item_language"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="16dp"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true">
+                android:background="@android:color/transparent"
+                android:clickable="false"
+                android:focusable="false">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -269,8 +230,50 @@
                     android:id="@+id/tv_current_language_badge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    tools:text="Theo hệ thống: Tiếng Việt"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="56dp"
+                android:background="@color/divider_dark" />
+
+            <!-- Item: Ngôn ngữ tài liệu OCR -->
+            <LinearLayout
+                android:id="@+id/item_ocr_language"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_ocr"
+                    app:tint="@color/text_primary"
+                    android:contentDescription="@string/ocr_doc_language_title" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="16dp"
+                    android:text="@string/ocr_doc_language_title"
+                    android:textColor="@color/text_primary"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_current_ocr_language_badge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:text="Tiếng Việt"
+                    tools:text="Tiếng Việt"
                     android:textColor="@color/text_secondary"
                     android:textSize="13sp" />
 
@@ -319,7 +322,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:text="Tự động"
+                    tools:text="Tự động"
                     android:textColor="@color/text_secondary"
                     android:textSize="13sp" />
 
@@ -368,7 +371,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:text="v0.6.0"
+                    tools:text="v1.01"
                     android:textColor="@color/text_secondary"
                     android:textSize="13sp" />
 

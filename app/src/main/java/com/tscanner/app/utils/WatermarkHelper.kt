@@ -20,6 +20,19 @@ object WatermarkHelper {
     }
 
     /**
+     * Shared policy for watermarking at the moment of export (V12).
+     * Separates the user's requested preference [userWantsRemoved] from the active entitlement [isVipActive].
+     * If user is NOT active VIP, watermark is ALWAYS applied regardless of UI state.
+     * If user IS active VIP, watermark is applied only if user explicitly chooses to keep watermark (!userWantsRemoved).
+     */
+    fun shouldApplyWatermark(userWantsRemoved: Boolean, isVipActive: Boolean = AppAuthManager.isUserVip()): Boolean {
+        if (!isVipActive) {
+            return true
+        }
+        return !userWantsRemoved
+    }
+
+    /**
      * Draws the "T-Scanner" watermark at the bottom-right corner of the canvas.
      * Font size is 13pt scaled proportionally to the page dimensions (relative to standard A4 595pt).
      */

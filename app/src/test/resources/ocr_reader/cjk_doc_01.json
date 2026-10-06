@@ -1,0 +1,57 @@
+{
+  "id": "doc_cjk_01",
+  "documentId": "doc_cjk_01",
+  "title": "CJK Document Sample",
+  "sourceLanguage": "ja",
+  "totalPages": 1,
+  "pages": [
+    {
+      "pageId": "p_cjk_1",
+      "pageIndex": 1,
+      "status": "SUCCESS",
+      "sourceLanguage": "ja",
+      "imageInfo": {
+        "imagePath": "/storage/emulated/0/sample_cjk.jpg",
+        "width": 1000,
+        "height": 1400,
+        "rotationDegrees": 0
+      },
+      "sourceBlocks": [
+        {
+          "blockId": "b1",
+          "boundingBox": { "left": 100, "top": 100, "right": 900, "bottom": 250 },
+          "lines": [
+            {
+              "lineId": "l1",
+              "text": "東京都千代田区丸の内1丁目",
+              "confidence": 0.98,
+              "boundingBox": { "left": 100, "top": 100, "right": 900, "bottom": 160 },
+              "tokens": [
+                {
+                  "tokenId": "t1",
+                  "text": "東京都千代田区丸の内1丁目",
+                  "confidence": 0.98,
+                  "boundingBox": { "left": 100, "top": 100, "right": 900, "bottom": 160 }
+                }
+              ]
+            },
+            {
+              "lineId": "l2",
+              "text": "안녕하세요 세계 여러분",
+              "confidence": 0.97,
+              "boundingBox": { "left": 100, "top": 180, "right": 800, "bottom": 240 },
+              "tokens": [
+                {
+                  "tokenId": "t2",
+                  "text": "안녕하세요 세계 여러분",
+                  "confidence": 0.97,
+                  "boundingBox": { "left": 100, "top": 180, "right": 800, "bottom": 240 }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

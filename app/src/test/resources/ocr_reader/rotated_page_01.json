@@ -1,0 +1,21 @@
+{
+  "id": "rot_90_01",
+  "category": "rotated_page",
+  "language": "en",
+  "pageWidth": 1600,
+  "pageHeight": 1200,
+  "rotationDegrees": 90,
+  "groundTruthText": "ROTATED LANDSCAPE ORIENTATION TEST",
+  "lines": [
+    {
+      "id": "rot_line_0",
+      "text": "ROTATED LANDSCAPE ORIENTATION TEST",
+      "polygon": [
+        {"x": 0.1, "y": 0.2},
+        {"x": 0.1, "y": 0.8},
+        {"x": 0.15, "y": 0.8},
+        {"x": 0.15, "y": 0.2}
+      ]
+    }
+  ]
+}

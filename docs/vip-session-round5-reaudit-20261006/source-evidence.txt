@@ -1,0 +1,277 @@
+app/src/main/java/com/tscanner/app/utils/BillingManager.kt
+1020:                         Log.w(TAG, "Purchase verification requires authentication: ${result.message}")
+1021:                         val currentUserId = AppAuthManager.getCurrentUser()?.id
+1022:                         val currentGen = AppAuthManager.getSessionGeneration()
+1023:                         val currentEpoch = AppAuthManager.getProcessEpoch()
+1024:                         val isStale = opContext?.isStale(currentUserId, currentGen)
+1025:                             ?: (targetOwnerId != currentUserId)
+1026: 
+1027:                         val purchaseToken = purchase.purchaseToken
+1028:                         val recoveryKey = getRecoveryKey(opContext, targetOwnerId, currentGen, currentEpoch, purchaseToken)
+1029: 
+1030:                         val isInteractive = (origin == BillingOperationOrigin.PURCHASE) && !isStale
+1031:                         val hasUiListener = authRequiredListeners.isNotEmpty()
+1032:                         val alreadyRetried = attemptedRecoveryKeys.contains(recoveryKey)
+1033: 
+1034:                         if (isInteractive && hasUiListener && !alreadyRetried) {
+1035:                             attemptedRecoveryKeys.add(recoveryKey)
+1036:                         }
+1037: 
+1038:                         val event = PurchaseAuthRequiredEvent(
+1039:                             purchase = purchase,
+1040:                             message = result.message,
+1041:                             targetOwnerId = targetOwnerId,
+1042:                             sessionGeneration = currentGen,
+1043:                             processEpoch = currentEpoch,
+1044:                             isRetry = alreadyRetried,
+1045:                             operationContext = opContext
+1046:                         )
+1047: 
+1048:                         if (isInteractive) {
+1049:                             notifyPurchaseAuthRequired(event, origin)
+1050:                         } else {
+1051:                             Log.d(TAG, "Deferred auth recovery for non-interactive origin or stale session (origin=$origin, isStale=$isStale)")
+1052:                         }
+1053:                         onComplete?.invoke(false)
+1054:                     }
+1055:                 }
+app/src/main/java/com/tscanner/app/utils/BillingManager.kt
+1143:         purchaseSuccessNotifiedForFlow.set(false)
+1144: 
+1145:         val action = Runnable {
+1146:             if (isDestroyed || !scope.isActive) return@Runnable
+1147: 
+1148:             // K02: Validate session state right inside Runnable before dispatching
+1149:             val runOwner = AppAuthManager.getCurrentUser()?.id
+1150:             val runGen = AppAuthManager.getSessionGeneration()
+1151:             val runEpoch = AppAuthManager.getProcessEpoch()
+1152:             if (event.targetOwnerId != null && event.targetOwnerId != runOwner) {
+1153:                 Log.w(TAG, "Dropping auth event: owner mismatch before dispatch (event=${event.targetOwnerId}, current=$runOwner)")
+1154:                 return@Runnable
+1155:             }
+1156:             if (event.sessionGeneration != -1L && event.sessionGeneration != runGen) {
+1157:                 Log.w(TAG, "Dropping auth event: generation mismatch before dispatch (event=${event.sessionGeneration}, current=$runGen)")
+1158:                 return@Runnable
+1159:             }
+1160:             if (event.processEpoch.isNotEmpty() && runEpoch.isNotEmpty() && event.processEpoch != runEpoch) {
+1161:                 Log.w(TAG, "Dropping auth event: epoch mismatch before dispatch (event=${event.processEpoch}, current=$runEpoch)")
+1162:                 return@Runnable
+1163:             }
+1164:             if (opContext != null && opContext.isStale(runOwner, runGen)) {
+1165:                 Log.w(TAG, "Dropping auth event: opContext is stale before dispatch ($opContext vs current=$runOwner, gen=$runGen)")
+1166:                 return@Runnable
+1167:             }
+1168: 
+1169:             var handled = false
+1170:             for (listener in authRequiredListeners) {
+1171:                 // K02: Re-check session mutation before invoking EACH listener to suppress delivery if earlier listener changed session
+1172:                 val nowOwner = AppAuthManager.getCurrentUser()?.id
+1173:                 val nowGen = AppAuthManager.getSessionGeneration()
+1174:                 val nowEpoch = AppAuthManager.getProcessEpoch()
+1175:                 if (event.targetOwnerId != null && event.targetOwnerId != nowOwner) {
+1176:                     Log.w(TAG, "Suppressed stale auth event delivery due to owner change ($event vs current=$nowOwner)")
+1177:                     break
+1178:                 }
+1179:                 if (event.sessionGeneration != -1L && event.sessionGeneration != nowGen) {
+1180:                     Log.w(TAG, "Suppressed stale auth event delivery due to generation change ($event vs currentGen=$nowGen)")
+1181:                     break
+1182:                 }
+1183:                 if (event.processEpoch.isNotEmpty() && nowEpoch.isNotEmpty() && event.processEpoch != nowEpoch) {
+1184:                     Log.w(TAG, "Suppressed stale auth event delivery due to epoch change ($event vs currentEpoch=$nowEpoch)")
+1185:                     break
+1186:                 }
+1187:                 if (opContext != null && opContext.isStale(nowOwner, nowGen)) {
+1188:                     Log.w(TAG, "Suppressed stale auth event delivery due to stale opContext ($opContext vs current=$nowOwner, gen=$nowGen)")
+1189:                     break
+1190:                 }
+1191: 
+1192:                 try {
+1193:                     listener.invoke(event)
+1194:                     handled = true
+1195:                 } catch (e: Exception) {
+1196:                     Log.e(TAG, "Error invoking authRequiredListener", e)
+1197:                 }
+1198:             }
+1199:             for (callback in purchaseCallbacks) {
+1200:                 val nowOwner = AppAuthManager.getCurrentUser()?.id
+1201:                 val nowGen = AppAuthManager.getSessionGeneration()
+1202:                 val nowEpoch = AppAuthManager.getProcessEpoch()
+1203:                 if (event.targetOwnerId != null && event.targetOwnerId != nowOwner) break
+1204:                 if (event.sessionGeneration != -1L && event.sessionGeneration != nowGen) break
+1205:                 if (event.processEpoch.isNotEmpty() && nowEpoch.isNotEmpty() && event.processEpoch != nowEpoch) break
+1206:                 if (opContext != null && opContext.isStale(nowOwner, nowGen)) break
+1207: 
+1208:                 try {
+1209:                     callback.onAuthRequired(event)
+1210:                 } catch (e: Exception) {
+1211:                     Log.e(TAG, "Error invoking callback.onAuthRequired", e)
+1212:                 }
+1213:             }
+1214:             if (!handled && authRequiredListeners.isEmpty()) {
+1215:                 for (callback in purchaseCallbacks) {
+1216:                     try {
+1217:                         callback.onPurchaseResult(false, event.message, event.purchase)
+1218:                     } catch (e: Exception) {
+app/src/main/java/com/tscanner/app/ui/dialogs/VipPurchaseAuthConsumer.kt
+40: object VipPurchaseAuthConsumer {
+41: 
+42:     fun evaluate(
+43:         event: BillingManager.PurchaseAuthRequiredEvent,
+44:         currentOwnerId: String?,
+45:         currentGeneration: Long,
+46:         currentEpoch: String,
+47:         isUiActive: Boolean
+48:     ): PurchaseAuthDecision {
+49:         if (!isUiActive) {
+50:             return PurchaseAuthDecision.Defer("UI is inactive, destroyed, or not showing")
+51:         }
+52: 
+53:         // K02: Strict session origin validation at time of consumption
+54:         if (event.targetOwnerId != null && event.targetOwnerId != currentOwnerId) {
+55:             return PurchaseAuthDecision.Ignore(
+56:                 "Owner mismatch at consumption: event target='${event.targetOwnerId}' vs current='$currentOwnerId'"
+57:             )
+58:         }
+59: 
+60:         if (event.sessionGeneration != -1L && event.sessionGeneration != currentGeneration) {
+61:             return PurchaseAuthDecision.Ignore(
+62:                 "Session generation mismatch at consumption: event gen=${event.sessionGeneration} vs current gen=$currentGeneration"
+63:             )
+64:         }
+65: 
+66:         if (event.processEpoch.isNotEmpty() && currentEpoch.isNotEmpty() && event.processEpoch != currentEpoch) {
+67:             return PurchaseAuthDecision.Ignore(
+68:                 "Process epoch mismatch at consumption: event epoch='${event.processEpoch}' vs current epoch='$currentEpoch'"
+69:             )
+70:         }
+71: 
+72:         val opContext = event.operationContext
+73:         if (opContext != null && opContext.isStale(currentOwnerId, currentGeneration)) {
+74:             return PurchaseAuthDecision.Ignore("Operation context is stale at consumption ($opContext)")
+75:         }
+76: 
+77:         // K01: Limit to maximum 1 reauth per user operation
+78:         if (event.isRetry) {
+79:             return PurchaseAuthDecision.Stop(event.message)
+80:         }
+81: 
+82:         return PurchaseAuthDecision.RequestReauth(
+83:             action = VipContinuationAction.RESTORE,
+84:             targetOwnerId = event.targetOwnerId
+85:         )
+86:     }
+87: }
+app/src/main/java/com/tscanner/app/ui/dialogs/VipUpgradeDialog.kt
+128: 
+129:     private val authRequiredListener: (BillingManager.PurchaseAuthRequiredEvent) -> Unit = { event ->
+130:         val act = findActivity(context)
+131:         if (act != null && !act.isFinishing && !act.isDestroyed && isShowing) {
+132:             act.runOnUiThread {
+133:                 handlePurchaseAuthRequired(event)
+134:             }
+135:         }
+136:     }
+137: 
+138:     private fun handlePurchaseAuthRequired(event: BillingManager.PurchaseAuthRequiredEvent) {
+139:         val currentContext = context ?: return
+140:         val act = findActivity(currentContext)
+141:         val isUiActive = isShowing && (act != null && !act.isFinishing && !act.isDestroyed)
+142: 
+143:         val decision = VipPurchaseAuthConsumer.evaluate(
+144:             event = event,
+145:             currentOwnerId = AppAuthManager.getCurrentUser()?.id,
+146:             currentGeneration = AppAuthManager.getSessionGeneration(),
+147:             currentEpoch = AppAuthManager.getProcessEpoch(),
+148:             isUiActive = isUiActive
+149:         )
+150:         executePurchaseAuthDecision(decision, event)
+151:     }
+152: 
+153:     @androidx.annotation.VisibleForTesting
+154:     fun handlePurchaseAuthRequiredWithDecision(
+155:         event: BillingManager.PurchaseAuthRequiredEvent,
+156:         currentOwnerId: String? = AppAuthManager.getCurrentUser()?.id,
+157:         currentGeneration: Long = AppAuthManager.getSessionGeneration(),
+158:         currentEpoch: String = AppAuthManager.getProcessEpoch(),
+159:         isUiActive: Boolean = isShowing && (context?.let { findActivity(it) }?.let { !it.isFinishing && !it.isDestroyed } ?: false)
+160:     ): PurchaseAuthDecision {
+161:         val decision = VipPurchaseAuthConsumer.evaluate(
+162:             event = event,
+163:             currentOwnerId = currentOwnerId,
+164:             currentGeneration = currentGeneration,
+165:             currentEpoch = currentEpoch,
+166:             isUiActive = isUiActive
+167:         )
+168:         executePurchaseAuthDecision(decision, event)
+169:         return decision
+170:     }
+171: 
+172:     private fun executePurchaseAuthDecision(
+173:         decision: PurchaseAuthDecision,
+174:         event: BillingManager.PurchaseAuthRequiredEvent
+175:     ) {
+176:         val currentContext = context ?: return
+177:         when (decision) {
+178:             is PurchaseAuthDecision.Stop -> {
+179:                 Toast.makeText(currentContext, decision.message, Toast.LENGTH_LONG).show()
+180:             }
+181:             is PurchaseAuthDecision.RequestReauth -> {
+182:                 dismiss()
+183:                 val currentUser = AppAuthManager.getCurrentUser()
+184:                 if (currentUser != null) {
+185:                     Toast.makeText(
+186:                         currentContext,
+187:                         currentContext.getString(decision.messageResId),
+188:                         Toast.LENGTH_SHORT
+189:                     ).show()
+190:                 }
+191:                 if (onRequestSignInForAction != null) {
+192:                     onRequestSignInForAction.invoke(decision.action)
+193:                 } else {
+194:                     onRequestSignIn?.invoke()
+195:                 }
+196:             }
+197:             is PurchaseAuthDecision.Ignore, is PurchaseAuthDecision.Defer -> {
+198:                 // Safely drop or defer without UI side-effects
+199:             }
+app/src/main/java/com/tscanner/app/ui/more/MoreFragment.kt
+431:         }
+432:         return started
+433:     }
+434: 
+435:     fun startSignInForVipContinuation(
+436:         action: VipContinuationAction = VipContinuationAction.UPGRADE,
+437:         targetProductId: String? = null
+438:     ) {
+439:         if (!isAdded) return
+440:         if (vipContinuationHandler.isPending) {
+441:             android.util.Log.d("MoreFragment", "Continuation already pending, ignoring duplicate start")
+442:             return
+443:         }
+444:         val currentGen = AppAuthManager.getSessionGeneration()
+445:         val currentOwner = AppAuthManager.getCurrentUser()?.id
+446:         val currentEpoch = AppAuthManager.getProcessEpoch()
+447:         vipContinuationHandler.requestContinuation(
+448:             action = action,
+449:             sessionGeneration = currentGen,
+450:             targetProductId = targetProductId,
+451:             initialOwnerId = currentOwner,
+452:             processEpoch = currentEpoch
+453:         )
+454:         val started = performGoogleSignIn()
+455:         if (!started) {
+456:             vipContinuationHandler.reset()
+457:         }
+458:     }
+459: 
+460:     private fun executeVipContinuation(action: VipContinuationAction, targetProductId: String? = null) {
+461:         if (!isAdded) return
+462:         when (action) {
+463:             VipContinuationAction.UPGRADE -> showVipUpgradeDialog()
+464:             VipContinuationAction.RESTORE -> {
+465:                 val ctx = context ?: return
+466:                 val billingManager = BillingManager.getInstance(ctx)
+467:                 Toast.makeText(ctx, getString(R.string.vip_restore_purchases_btn), Toast.LENGTH_SHORT).show()
+468:                 billingManager.restorePurchases(
+469:                     onAuthRequired = { authMessage ->
+470:                         activity?.runOnUiThread {

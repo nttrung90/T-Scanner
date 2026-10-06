@@ -34,7 +34,7 @@ data class PostScanSessionDraft(
     companion object {
         fun fromJson(json: JSONObject): PostScanSessionDraft {
             val sessionId = json.getString("sessionId")
-            val documentTitle = json.optString("documentTitle", "Tài liệu mới")
+            val documentTitle = json.optString("documentTitle", "")
             val schemaVersion = json.optInt("schemaVersion", 1)
             val revision = json.optLong("revision", 1L)
             val createdAt = json.optLong("createdAt", System.currentTimeMillis())

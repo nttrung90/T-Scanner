@@ -1,0 +1,210 @@
+(node:10452) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Q09: Crash after grant before ack - restart preserves job and worker recovers (286.1155ms)
+✔ Q09: Acknowledge idempotence - Play returns already acknowledged (195.9047ms)
+✔ Q09: Permanent acknowledge error transitions job to FAILED without endless retry (124.1187ms)
+✔ Q09: Worker bounded retry stops retrying after maxAttempts is reached (294.7442ms)
+✔ Q09: Do not acknowledge token that is not verified in store (4.6347ms)
+✔ Q09: Worker autonomously runs in background without manual drain (500.4368ms)
+✔ M05: Atomic grant + outbox for CANCELED_ACTIVE unacknowledged receipt and crash recovery (210.4261ms)
+✔ M05: HTTP Server /readiness endpoint checks durability and auth readiness (398.5752ms)
+(node:13508) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Q10: Production client without credentials throws MissingCredentialsError (6.0414ms)
+✔ Q10: HTTP Transport - Request path, package, token, and Bearer auth (306.9605ms)
+✔ Q10: HTTP Transport - In-app product mapping (45.5037ms)
+✔ Q10: HTTP Transport - Error mapping (401, 403, 404, 429, 503, malformed) (69.7413ms)
+✔ Q10: HTTP Transport - Acknowledge endpoints and idempotent already-acknowledged (39.9194ms)
+✔ Q10: Catalog aliases consistency with Android catalog (0.793ms)
+✔ M02: Google Play Transport - Schema strictness and subscriptionsv2 lifecycle mapping (80.7347ms)
+(node:5872) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ HTTP Auth: Missing Authorization header returns 401 on /verify, /restore, /acknowledge (243.3305ms)
+✔ HTTP Auth: Malformed header and malformed token format return 401 (54.0467ms)
+✔ HTTP Auth: Disallowed alg=none returns 401 (20.7616ms)
+✔ HTTP Auth: Expired token returns 401 (54.8428ms)
+✔ HTTP Auth: Tampered or invalid signature returns 401 (20.9843ms)
+✔ HTTP Auth: Audience and Issuer mismatch return 401 (50.6245ms)
+✔ HTTP Auth: Ownership spoofing (User B claiming User A) returns 403 Forbidden (38.1987ms)
+[INFO] Verifying purchase for user=usr_alice, product=tscanner_vip_yearly, token=tok_al...lean
+[INFO] Successfully verified and bound purchase: token=tok_al...lean to owner=usr_alice
+✔ HTTP Auth: Canonical owner derived from principal when ownerAppUserId omitted (38.9586ms)
+[INFO] Successfully acknowledged purchase: token=tok_al...
+✔ HTTP Auth: Acknowledge endpoint enforces token ownership and rejects unverified or foreign tokens (51.6582ms)
+[WARN] RTDN received for unknown token tok_rt... (not yet verified by any user)
+[WARN] RTDN received for unknown token tok_rt... (not yet verified by any user)
+✔ HTTP Auth: RTDN Pub/Sub webhook authentication (120.4307ms)
+[INFO] Verifying purchase for user=usr_google_123, product=tscanner_vip_yearly, token=tok_go...sa_1
+[INFO] Successfully verified and bound purchase: token=tok_go...sa_1 to owner=usr_google_123
+[WARN] RTDN received for unknown token tok_rt... (not yet verified by any user)
+✔ HTTP Auth: Google Identity RS256 with JWKS verification and error conditions (637.1305ms)
+✔ HTTP Auth: Readiness differentiates user auth vs push auth capability (75.5928ms)
+(node:5624) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+[INFO] Restoring purchases for user=usr_alice, candidateTokens=1
+[INFO] Verifying purchase for user=usr_alice, product=tscanner_vip_yearly, token=tok_su...ub_1
+[INFO] Restoring purchases for user=usr_bob, candidateTokens=1
+[INFO] Verifying purchase for user=usr_bob, product=tscanner_vip_lifetime, token=tok_li...fe_1
+[INFO] Restoring purchases for user=usr_charlie, candidateTokens=1
+[INFO] Verifying purchase for user=usr_charlie, product=tscanner_vip_yearly, token=tok_tr...nt_1
+[WARN] Transient Google Play API error (503): Play API 503
+[INFO] Restoring purchases for user=usr_david, candidateTokens=2
+[INFO] Verifying purchase for user=usr_david, product=tscanner_vip_yearly, token=tok_go...good
+[INFO] Successfully verified and bound purchase: token=tok_go...good to owner=usr_david
+[INFO] Verifying purchase for user=usr_david, product=tscanner_vip_yearly, token=tok_fa...ling
+[WARN] Transient Google Play API error (503): Service unavailable
+[INFO] Restoring purchases for user=usr_eve, candidateTokens=1
+[INFO] Verifying purchase for user=usr_eve, product=tscanner_vip_yearly, token=tok_al...wned
+[WARN] Ownership conflict: purchase token already bound to user 'usr_alice', requested by 'usr_eve'
+[INFO] Restoring purchases for user=usr_frank, candidateTokens=0
+[INFO] Verifying purchase for user=usr_charlie, product=tscanner_vip_yearly, token=tok_li...hain
+[INFO] Successfully verified and bound purchase: token=tok_li...hain to owner=usr_charlie
+[INFO] Verifying purchase for user=usr_charlie, product=tscanner_vip_yearly, token=tok_li...hain
+[INFO] Verifying purchase for user=usr_charlie, product=tscanner_vip_yearly, token=tok_li...hain
+[INFO] Successfully verified and bound purchase: token=tok_li...hain to owner=usr_charlie
+[INFO] Verifying purchase for user=usr_alice, product=tscanner_vip_lifetime, token=tok_li...tion
+[INFO] Successfully verified and bound purchase: token=tok_li...tion to owner=usr_alice
+[INFO] Verifying purchase for user=usr_alice, product=tscanner_vip_lifetime, token=tok_li...tion
+[INFO] Verifying purchase for user=usr_bob, product=tscanner_vip_lifetime, token=tok_li...tion
+✔ Restore Revocation: Active cached subscription that Play reports expired is updated to EXPIRED in store and not returned active (29.8242ms)
+✔ Restore Revocation: Refunded/Canceled lifetime in-app is marked REVOKED in store and response (3.1577ms)
+✔ Restore Revocation: Google Play 503 transient error preserves cached state and returns TRANSIENT_ERROR status (2.6246ms)
+✔ Restore Revocation: Partial failure reports PARTIAL status with itemized results (8.5445ms)
+✔ Restore Revocation: Ownership conflict rejects candidate belonging to another user (2.9416ms)
+✔ Restore Revocation: Empty candidate list does not leak other users entitlements (1.5366ms)
+✔ M03: Active -> Expired -> Renewal lifecycle maintains stable canonical ID and monotonic versions (4.1842ms)
+✔ M03: Lifetime active -> Revoked maintains stable canonical ID and rejects unauthorized owner (3.0346ms)
+(node:8876) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ probe RTDN retries same event after temporary Google API failure (25.6779ms)
+✔ probe authoritative expired verification must not restore stale active receipt (14.7906ms)
+✔ probe HTTP restore endpoint must require authentication (441.4845ms)
+✔ control ownership conflict rejected within one store instance (5.1991ms)
+(node:6960) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ auth must reject development-key JWT without required identity claims (20.2961ms)
+✔ auth must reject unsupported algorithm even when HMAC matches (0.7535ms)
+✔ empty Play JSON must not grant lifetime VIP (74.6183ms)
+✔ entitlement ID must remain stable after authoritative expiry (4.4255ms)
+✔ canceled active unacknowledged receipt must enter outbox (3.2715ms)
+✔ out-of-order RTDN completion must not override newer event (7.0809ms)
+✔ late expired verification cannot overwrite newer renewal (5.0439ms)
+(node:7456) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ configured googleClientId must enforce matching audience (22.3764ms)
+✔ PubSub must fail closed without audience and service account configuration (2.3193ms)
+✔ PubSub must validate issuer in addition to audience and email (1.8229ms)
+✔ control valid RSA user token with explicit audience is accepted (1.867ms)
+✔ V2 SUBSCRIPTION_STATE_PAUSED must not become active paid entitlement (224.9486ms)
+✔ V2 SUBSCRIPTION_STATE_UNKNOWN must not become active paid entitlement (11.9358ms)
+✔ V2 product mismatch must not grant requested VIP (9.9968ms)
+✔ late ACTIVE verification must not resurrect newer EXPIRED snapshot (32.7256ms)
+✔ expired receipt owned by another Play hash must not bind to caller (15.881ms)
+✔ empty-candidate restore must refresh known lifetime receipt before success (7.6962ms)
+(node:260) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ RTDN retry: transient Google Play API failure leaves event retryable (10.4101ms)
+✔ RTDN deduplication: stale older event arriving after newer event is rejected (4.343ms)
+✔ RTDN one-time product notification: revocation transitions state to REVOKED (6.0774ms)
+✔ RTDN unknown token skips gracefully and processes once bound (3.1831ms)
+✔ RTDN HTTP endpoint: returns 503 on ERROR and 200 on PROCESSED/SKIPPED (233.3376ms)
+✔ M04: Durable event watermark survives store restart and rejects older events (939.1779ms)
+(node:11584) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+[INFO] Verifying purchase for user=usr_renew_1, product=tscanner_vip_monthly, token=tok_su...al_1
+[INFO] Successfully verified and bound purchase: token=tok_su...al_1 to owner=usr_renew_1
+[INFO] Updated entitlement via RTDN: token=tok_su..., type=2, newState=VERIFIED_ACTIVE, expiry=1795959878437
+[INFO] Verifying purchase for user=usr_cancel_1, product=tscanner_vip_monthly, token=tok_su...el_1
+[INFO] Successfully verified and bound purchase: token=tok_su...el_1 to owner=usr_cancel_1
+[INFO] Updated entitlement via RTDN: token=tok_su..., type=3, newState=CANCELED_ACTIVE, expiry=1792503878476
+[INFO] Updated entitlement via RTDN: token=tok_st..., type=2, newState=VERIFIED_ACTIVE, expiry=1790776878500
+[WARN] Skipping stale or out-of-order RTDN for token tok_st... (eventTime=4000 <= last=5000)
+[ERROR] Error querying Play API during RTDN handling: Error: Google Play 500 internal error
+    at file:///E:/DU%20AN%20AI/T-Scanner/backend/billing-verifier/test/rtdn_and_lifecycle.test.ts:220:11
+    at MockGooglePlayBillingApi.getSubscription (file:///E:/DU%20AN%20AI/T-Scanner/backend/billing-verifier/src/googlePlayClient.ts:593:12)
+    at RtdnHandler.processDeveloperNotification (file:///E:/DU%20AN%20AI/T-Scanner/backend/billing-verifier/src/rtdnHandler.ts:196:51)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async TestContext.<anonymous> (file:///E:/DU%20AN%20AI/T-Scanner/backend/billing-verifier/test/rtdn_and_lifecycle.test.ts:223:15)
+    at async Test.run (node:internal/test_runner/test:1125:7)
+    at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+[INFO] Verifying purchase for user=usr_multi_vip, product=tscanner_vip_lifetime, token=tok_li...rved
+[INFO] Successfully verified and bound purchase: token=tok_li...rved to owner=usr_multi_vip
+[INFO] Verifying purchase for user=usr_multi_vip, product=tscanner_vip_monthly, token=tok_su...oked
+[INFO] Successfully verified and bound purchase: token=tok_su...oked to owner=usr_multi_vip
+[INFO] Updated entitlement via RTDN: token=tok_su..., type=12, newState=REVOKED, expiry=1790775878533
+[WARN] Failed to acknowledge purchase; token queued for retry: Play API acknowledge timeout
+[INFO] Successfully acknowledged purchase: token=tok_ac...
+✔ B04b RTDN: Renewal updates expiration without accumulating relative days (36.0565ms)
+✔ B04b RTDN: Cancellation before term expiry transitions to CANCELED_ACTIVE (8.7889ms)
+✔ B04b RTDN: Out-of-order or duplicate notification is safely skipped (17.8797ms)
+✔ B04b RTDN: Blind revocation guard preserves user entitlement on Play API error (8.2093ms)
+✔ B04b Multi-Entitlement: Revoking subscription does not revoke user lifetime entitlement (30.0343ms)
+✔ B04b Acknowledge: Persist-before-ack queues token on external failure and drains on retry (4.1296ms)
+(node:15628) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Storage Integration: Token ownership and snapshot version survive process restart (83.3522ms)
+✔ Storage Integration: Two independent connections enforce unique token ownership (233.0558ms)
+✔ Storage Integration: Monotonic version sequence does not reset across updates and restarts (110.7954ms)
+✔ Storage Integration: Transaction rollbacks on write failure without corrupting state (71.2637ms)
+✔ Storage Integration: Multiple entitlements under same owner are aggregated (68.7971ms)
+✔ Storage Integration: Ack retry queue persists and retrieves pending retries (93.9357ms)
+(node:19780) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+[INFO] Verifying purchase for user=usr_1, product=hacked_super_vip, token=tok_di..._123
+[WARN] Disallowed product ID: hacked_super_vip for type subs
+[INFO] Verifying purchase for user=usr_1, product=tscanner_vip_yearly, token=tok_pk..._123
+[WARN] Package name mismatch: expected com.tscanner.app, got com.malicious.fakeapp
+[INFO] Verifying purchase for user=usr_1, product=tscanner_vip_yearly, token=tok_no...ogle
+[INFO] Verifying purchase for user=usr_alice, product=tscanner_vip_yearly, token=tok_va...arly
+[INFO] Successfully verified and bound purchase: token=tok_va...arly to owner=usr_alice
+[INFO] Verifying purchase for user=usr_bob, product=tscanner_vip_lifetime, token=tok_va...time
+[INFO] Successfully verified and bound purchase: token=tok_va...time to owner=usr_bob
+[INFO] Verifying purchase for user=usr_alice, product=tscanner_vip_yearly, token=shared..._123
+[INFO] Successfully verified and bound purchase: token=shared..._123 to owner=usr_alice
+[INFO] Verifying purchase for user=usr_charlie, product=tscanner_vip_yearly, token=shared..._123
+[WARN] Ownership conflict: purchase token already bound to user 'usr_alice', requested by 'usr_charlie'
+[INFO] Verifying purchase for user=usr_alice, product=tscanner_vip_yearly, token=tok_ha...atch
+[WARN] ObfuscatedAccountId mismatch: external=64c9ee891d739b86619cd123e45bf4eafd6e1a77185c57c56f8000b59e6dcc9e, expected=188a1a5e915406bb012a09406bd6d3b54a3b3024e7c20c3c463c02b3c5210123
+[INFO] Verifying purchase for user=usr_david, product=tscanner_vip_yearly, token=tok_co...play
+[INFO] Verifying purchase for user=usr_david, product=tscanner_vip_yearly, token=tok_co...play
+[INFO] Verifying purchase for user=usr_david, product=tscanner_vip_yearly, token=tok_co...play
+[INFO] Verifying purchase for user=usr_david, product=tscanner_vip_yearly, token=tok_co...play
+[INFO] Verifying purchase for user=usr_david, product=tscanner_vip_yearly, token=tok_co...play
+[INFO] Successfully verified and bound purchase: token=tok_co...play to owner=usr_david
+[INFO] Successfully verified and bound purchase: token=tok_co...play to owner=usr_david
+[INFO] Successfully verified and bound purchase: token=tok_co...play to owner=usr_david
+[INFO] Successfully verified and bound purchase: token=tok_co...play to owner=usr_david
+[INFO] Successfully verified and bound purchase: token=tok_co...play to owner=usr_david
+[INFO] Verifying purchase for user=usr_eve, product=tscanner_vip_monthly, token=tok_ex..._sub
+[INFO] Verifying purchase for user=usr_frank, product=tscanner_vip_lifetime, token=tok_re...life
+[INFO] Verifying purchase for user=usr_grace, product=tscanner_vip_yearly, token=tok_pe...ment
+[INFO] Verifying purchase for user=usr_heidi, product=tscanner_vip_yearly, token=tok_50...rror
+[WARN] Transient Google Play API error (503): Play backend 503
+[INFO] Restoring purchases for user=usr_judy, candidateTokens=2
+[INFO] Verifying purchase for user=usr_judy, product=tscanner_vip_yearly, token=tok_re..._sub
+[INFO] Successfully verified and bound purchase: token=tok_re..._sub to owner=usr_judy
+[INFO] Verifying purchase for user=usr_judy, product=tscanner_vip_lifetime, token=tok_re...life
+[INFO] Successfully verified and bound purchase: token=tok_re...life to owner=usr_judy
+✔ B04a Verifier: Disallowed product ID is rejected (11.867ms)
+✔ B04a Verifier: Package name mismatch is rejected (2.2003ms)
+✔ B04a Verifier: Invalid token not found in Google Play is rejected (6.867ms)
+✔ B04a Verifier: Valid subscription returns VERIFIED_ACTIVE with exact Play expiry (5.5046ms)
+✔ B04a Verifier: Valid Lifetime in-app product returns null expiryTimeMillis (24.6004ms)
+✔ B04a Verifier: Ownership conflict rejects User B claiming User A token (6.4609ms)
+✔ B04a Verifier: ObfuscatedAccountId mismatch from Play is rejected (8.5428ms)
+✔ B04a Verifier: Concurrent replay is idempotent without race condition (9.3471ms)
+✔ B04a Verifier: Expired subscription returns PURCHASE_EXPIRED (41.7457ms)
+✔ B04a Verifier: Revoked/refunded in-app purchase returns PURCHASE_REVOKED (22.4061ms)
+✔ B04a Verifier: Pending payment returns status PENDING (12.2425ms)
+✔ B04a Verifier: Google Play transient error returns TRANSIENT_ERROR (21.2203ms)
+✔ B04a Verifier: Sensitive token is masked in logs (7.2081ms)
+✔ B04a Verifier: Restore aggregates active entitlements for owner (5.9102ms)
+✔ B04a Verifier Gate: Production client without credentials throws MissingCredentialsError (3.0931ms)
+ℹ tests 89
+ℹ suites 0
+ℹ pass 89
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3973.7328

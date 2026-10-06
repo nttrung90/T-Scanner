@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tscanner.app.VipRound6AuditTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-10-01T02:01:40.974Z" hostname="NTT-LAPTOPACER" time="0.427">
+  <properties/>
+  <testcase name="A05ProjectionFailureMustNotProduceSuccessfulRestore" classname="com.tscanner.app.VipRound6AuditTest" time="0.235"/>
+  <testcase name="A02NonemptyPlayListMustStillRefreshOtherServerReceipts" classname="com.tscanner.app.VipRound6AuditTest" time="0.089"/>
+  <testcase name="A06MissingIdTokenMustRequestReauthentication" classname="com.tscanner.app.VipRound6AuditTest" time="0.003"/>
+  <testcase name="A09ControlGoodRestoreUpdatesWatermarkGate" classname="com.tscanner.app.VipRound6AuditTest" time="0.006"/>
+  <testcase name="A04DestroyedManagerMustNotCommitSuspendedRestore" classname="com.tscanner.app.VipRound6AuditTest" time="0.051"/>
+  <testcase name="A07RestoreWrongCatalogTypeMustFail" classname="com.tscanner.app.VipRound6AuditTest" time="0.016"/>
+  <testcase name="A08RestoreWrongProviderSourceMustFail" classname="com.tscanner.app.VipRound6AuditTest" time="0.006"/>
+  <testcase name="A03PartialMustNotBePresentedAsCompleteRestore" classname="com.tscanner.app.VipRound6AuditTest" time="0.004"/>
+  <testcase name="A01PendingPlayPurchaseMustNotSuppressKnownAccountRefresh" classname="com.tscanner.app.VipRound6AuditTest" time="0.006"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

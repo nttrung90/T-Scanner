@@ -39,7 +39,7 @@ class ManagedFileAdapter(
             binding.tvFilePath.text = item.path
             binding.tvFileSize.text = FileUtils.formatFileSize(item.sizeBytes)
             binding.tvFileDate.text = FileUtils.formatDate(item.lastModified)
-            binding.tvFileBadge.text = item.fileType.displayName
+            binding.tvFileBadge.text = binding.root.context.getString(item.fileType.displayNameRes)
 
             // Icon according to file type
             val iconRes = when (item.fileType) {

@@ -1,0 +1,151 @@
+(node:5680) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✖ B701 first-bind linked query must not overwrite a newer authoritative EXPIRED receipt (5.2194ms)
+✖ B702 canceled yearly upgrade must recover authoritative linked monthly receipt (26.1832ms)
+✖ B703 unresolved linked upstream failure must not be reported as complete restore SUCCESS (1.2602ms)
+✖ B704 RTDN after a real pending verification must refresh the canceled purchases linked old receipt (1.5482ms)
+✖ B705 all-pending restore must preserve per-token PENDING semantics (0.8235ms)
+✖ B706 all unknown rejected restore candidates must not be reported as full SUCCESS (0.9416ms)
+✔ B709 control same-SKU linked ACTIVE receipt is resolved and owned correctly (1.2734ms)
+✔ B710 control linked receipt already owned by another account is preserved (1.0775ms)
+✖ B711 linked first-bind race must remain protected across two SQLite connections and restart (1614.901ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 2
+ℹ fail 7
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1826.0128
+
+✖ failing tests:
+
+test at docs\vip-round7-20261001\backend-agent-probes.test.ts:22:1
+✖ B701 first-bind linked query must not overwrite a newer authoritative EXPIRED receipt (5.2194ms)
+  AssertionError [ERR_ASSERTION]: Late linked query resurrected VERIFIED_ACTIVE at v3
+  + actual - expected
+  
+  + 'VERIFIED_ACTIVE'
+  - 'EXPIRED'
+  
+      at TestContext.<anonymous> (file:///E:/DU%20AN%20AI/T-Scanner/docs/vip-round7-20261001/backend-agent-probes.test.ts:43:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'VERIFIED_ACTIVE',
+    expected: 'EXPIRED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs\vip-round7-20261001\backend-agent-probes.test.ts:47:1
+✖ B702 canceled yearly upgrade must recover authoritative linked monthly receipt (26.1832ms)
+  AssertionError [ERR_ASSERTION]: Linked monthly receipt was queried using yearly SKU and silently discarded
+  + actual - expected
+  
+  + undefined
+  - 'tscanner_vip_monthly'
+  
+      at TestContext.<anonymous> (file:///E:/DU%20AN%20AI/T-Scanner/docs/vip-round7-20261001/backend-agent-probes.test.ts:66:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'tscanner_vip_monthly',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs\vip-round7-20261001\backend-agent-probes.test.ts:71:1
+✖ B703 unresolved linked upstream failure must not be reported as complete restore SUCCESS (1.2602ms)
+  AssertionError [ERR_ASSERTION]: Unresolved linked receipt was swallowed: [{"purchaseToken":"new-canceled","status":"REVOKED","reason":"PURCHASE_REVOKED"}]
+      at TestContext.<anonymous> (file:///E:/DU%20AN%20AI/T-Scanner/docs/vip-round7-20261001/backend-agent-probes.test.ts:78:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'SUCCESS',
+    expected: 'SUCCESS',
+    operator: 'notStrictEqual',
+    diff: 'simple'
+  }
+
+test at docs\vip-round7-20261001\backend-agent-probes.test.ts:82:1
+✖ B704 RTDN after a real pending verification must refresh the canceled purchases linked old receipt (1.5482ms)
+  AssertionError [ERR_ASSERTION]: Real pending token remained unbound; RTDN returned TOKEN_UNKNOWN; canceledNewQueries=0, oldRefreshQueries=0; linked old ACTIVE remained stale
+  + actual - expected
+  
+  + 'VERIFIED_ACTIVE'
+  - 'EXPIRED'
+  
+      at TestContext.<anonymous> (file:///E:/DU%20AN%20AI/T-Scanner/docs/vip-round7-20261001/backend-agent-probes.test.ts:102:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'VERIFIED_ACTIVE',
+    expected: 'EXPIRED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs\vip-round7-20261001\backend-agent-probes.test.ts:106:1
+✖ B705 all-pending restore must preserve per-token PENDING semantics (0.8235ms)
+  AssertionError [ERR_ASSERTION]: Payment PENDING was recategorized as [{"purchaseToken":"pending-new","status":"REJECTED"}]
+  + actual - expected
+  
+  + 'REJECTED'
+  - 'PENDING'
+  
+      at TestContext.<anonymous> (file:///E:/DU%20AN%20AI/T-Scanner/docs/vip-round7-20261001/backend-agent-probes.test.ts:112:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'REJECTED',
+    expected: 'PENDING',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs\vip-round7-20261001\backend-agent-probes.test.ts:116:1
+✖ B706 all unknown rejected restore candidates must not be reported as full SUCCESS (0.9416ms)
+  AssertionError [ERR_ASSERTION]: Every candidate failed verification but aggregate status was SUCCESS
+      at TestContext.<anonymous> (file:///E:/DU%20AN%20AI/T-Scanner/docs/vip-round7-20261001/backend-agent-probes.test.ts:123:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'SUCCESS',
+    expected: 'SUCCESS',
+    operator: 'notStrictEqual',
+    diff: 'simple'
+  }
+
+test at docs\vip-round7-20261001\backend-agent-probes.test.ts:153:1
+✖ B711 linked first-bind race must remain protected across two SQLite connections and restart (1614.901ms)
+  AssertionError [ERR_ASSERTION]: Wrong durable grant survived restart: VERIFIED_ACTIVE at v3
+  + actual - expected
+  
+  + 'VERIFIED_ACTIVE'
+  - 'EXPIRED'
+  
+      at TestContext.<anonymous> (file:///E:/DU%20AN%20AI/T-Scanner/docs/vip-round7-20261001/backend-agent-probes.test.ts:180:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'VERIFIED_ACTIVE',
+    expected: 'EXPIRED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

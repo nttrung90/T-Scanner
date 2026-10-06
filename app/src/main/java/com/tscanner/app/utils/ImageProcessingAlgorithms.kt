@@ -32,12 +32,13 @@ object ImageProcessingAlgorithms {
     }
 
     /**
-     * Tăng nét có ngưỡng (Thresholded Unsharp Masking):
-     * - Làm mờ hộp nhanh (separable box blur) trên kênh độ sáng/màu.
-     * - Tính sai phân Delta = Original - Blurred.
-     * - Bỏ qua sai phân nhỏ (< noiseThreshold) để không khuếch đại hạt nhiễu cảm biến.
-     * - Giới hạn biên độ Delta (clamp [-maxDiff, +maxDiff]) để tránh quầng sáng trắng (halo) và không làm dính chữ.
-     * - Cộng bù lại theo cường độ intensity (0..100).
+     * Tăng nét đa tỷ lệ trên kênh độ sáng (Multi-Scale Luminance Unsharp Masking):
+     * - Thao tác hoàn toàn trên kênh độ sáng Y (Rec. 601) để bảo toàn 100% tỷ lệ màu (chroma), triệt tiêu viền màu giả.
+     * - Đa tỷ lệ 2 tầng (Fine scale cho nét mảnh & dấu tiếng Việt; Coarse scale cho viền nhòe dày/out-of-focus).
+     * - Khử nhiễu mềm (Soft coring) tránh tạo bậc nhảy và không khuếch đại hạt nhiễu trên nền giấy phẳng.
+     * - Điều biến thích ứng nền (Paper Background Attenuation) giữ nền trắng sạch không lốm đốm.
+     * - Kiểm soát quầng sáng bất đối xứng (Asymmetric halo control) ngăn viền trắng quanh chữ và ngăn dính nét hẹp.
+     * - Giữ nguyên tuyệt đối điểm ảnh (strict no-op) khi intensity <= 0.
      */
     fun applyThresholdedUnsharpMask(
         pixels: IntArray,
@@ -54,102 +55,66 @@ object ImageProcessingAlgorithms {
         val size = width * height
         if (pixels.size < size) return
 
-        // 1. Tạo bản sao tạm để tính toán mờ
-        val blurred = IntArray(size)
-        System.arraycopy(pixels, 0, blurred, 0, size)
-
-        // 2. Separable box blur theo chiều ngang
-        val tempHorizontal = IntArray(size)
-        val r = radius.coerceAtLeast(1)
-        val div = 2 * r + 1
-
-        for (y in 0 until height) {
-            checkActive?.invoke()
-            val rowOffset = y * width
-
-            var sumR = 0
-            var sumG = 0
-            var sumB = 0
-
-            // Khởi tạo cửa sổ đầu dòng
-            val firstPx = blurred[rowOffset]
-            val fR = (firstPx shr 16) and 0xFF
-            val fG = (firstPx shr 8) and 0xFF
-            val fB = firstPx and 0xFF
-            sumR += fR * (r + 1)
-            sumG += fG * (r + 1)
-            sumB += fB * (r + 1)
-
-            for (i in 1..r) {
-                val p = blurred[rowOffset + min(i, width - 1)]
-                sumR += (p shr 16) and 0xFF
-                sumG += (p shr 8) and 0xFF
-                sumB += p and 0xFF
-            }
-
-            for (x in 0 until width) {
-                tempHorizontal[rowOffset + x] = (0xFF shl 24) or
-                        ((sumR / div) shl 16) or
-                        ((sumG / div) shl 8) or
-                        (sumB / div)
-
-                val xRemove = max(0, x - r)
-                val xAdd = min(width - 1, x + r + 1)
-
-                val pRemove = blurred[rowOffset + xRemove]
-                val pAdd = blurred[rowOffset + xAdd]
-
-                sumR += ((pAdd shr 16) and 0xFF) - ((pRemove shr 16) and 0xFF)
-                sumG += ((pAdd shr 8) and 0xFF) - ((pRemove shr 8) and 0xFF)
-                sumB += (pAdd and 0xFF) - (pRemove and 0xFF)
-            }
+        // 1. Trích xuất kênh độ sáng Y (0..255)
+        val lum = IntArray(size)
+        for (i in 0 until size) {
+            val p = pixels[i]
+            val r = (p shr 16) and 0xFF
+            val g = (p shr 8) and 0xFF
+            val b = p and 0xFF
+            lum[i] = (299 * r + 587 * g + 114 * b + 500) / 1000
         }
 
-        // 3. Separable box blur theo chiều dọc
-        for (x in 0 until width) {
-            checkActive?.invoke()
-            var sumR = 0
-            var sumG = 0
-            var sumB = 0
+        // 2. Thiết lập bán kính đa tầng: tầng 1 nét mảnh/dấu, tầng 2 viền nhòe dày
+        val baseR = radius.coerceAtLeast(1)
+        val r1 = max(1, (baseR * 0.5f).toInt())
+        val r2 = max(r1 + 1, (baseR * 1.5f).toInt())
 
-            val firstPx = tempHorizontal[x]
-            val fR = (firstPx shr 16) and 0xFF
-            val fG = (firstPx shr 8) and 0xFF
-            val fB = firstPx and 0xFF
-            sumR += fR * (r + 1)
-            sumG += fG * (r + 1)
-            sumB += fB * (r + 1)
+        // 3. Tính 2 tầng làm mờ trên kênh độ sáng
+        val blur1 = IntArray(size)
+        val blur2 = IntArray(size)
 
-            for (i in 1..r) {
-                val p = tempHorizontal[min(i, height - 1) * width + x]
-                sumR += (p shr 16) and 0xFF
-                sumG += (p shr 8) and 0xFF
-                sumB += p and 0xFF
-            }
+        boxBlurLuminance(lum, blur1, width, height, r1, checkActive)
+        boxBlurLuminance(lum, blur2, width, height, r2, checkActive)
 
-            for (y in 0 until height) {
-                blurred[y * width + x] = (0xFF shl 24) or
-                        ((sumR / div) shl 16) or
-                        ((sumG / div) shl 8) or
-                        (sumB / div)
-
-                val yRemove = max(0, y - r)
-                val yAdd = min(height - 1, y + r + 1)
-
-                val pRemove = tempHorizontal[yRemove * width + x]
-                val pAdd = tempHorizontal[yAdd * width + x]
-
-                sumR += ((pAdd shr 16) and 0xFF) - ((pRemove shr 16) and 0xFF)
-                sumG += ((pAdd shr 8) and 0xFF) - ((pRemove shr 8) and 0xFF)
-                sumB += (pAdd and 0xFF) - (pRemove and 0xFF)
-            }
-        }
-
-        // 4. Tính toán unsharp mask có ngưỡng và giới hạn biên độ
-        val factor = intensity / 50f // Tại 50 là 1.0x, tại 100 là 2.0x
+        // 4. Tổng hợp sai phân đa tỷ lệ, khử nhiễu mềm và giới hạn halo
+        val factor = intensity / 50f // 1.0x ở mức 50, 2.0x ở mức 100
+        val wFine = 1.1f * factor
+        val wCoarse = 0.55f * factor
+        val threshold = noiseThreshold.toFloat()
 
         for (i in 0 until size) {
             if (i % 2048 == 0) checkActive?.invoke()
+
+            val yVal = lum[i]
+            val b1 = blur1[i]
+            val b2 = blur2[i]
+
+            // Tách thành phần tần số cao (fine) và trung (band-pass)
+            val diffFine = (yVal - b1).toFloat()
+            val diffCoarse = (b1 - b2).toFloat()
+
+            val rawDiff = wFine * diffFine + wCoarse * diffCoarse
+            val absDiff = abs(rawDiff)
+
+            // Khử nhiễu mềm (Soft Coring): triệt tiêu hạt nhiễu nhỏ êm dịu, không giật bậc
+            val coredDiff = if (absDiff <= threshold) {
+                0f
+            } else {
+                val excess = absDiff - threshold
+                val smoothFactor = excess / (excess + threshold)
+                val cored = excess * smoothFactor
+                if (rawDiff > 0f) cored else -cored
+            }
+
+            if (coredDiff == 0f) continue
+
+            // Điều biến giảm biên độ nếu ở nền giấy rất sáng (Y > 210) để giữ nền sạch
+            var delta = coredDiff
+            if (delta > 0f && yVal > 210) {
+                val paperDampen = ((255 - yVal) / 45f).coerceIn(0.25f, 1.0f)
+                delta *= paperDampen
+            }
 
             val orig = pixels[i]
             val a = (orig shr 24) and 0xFF
@@ -157,33 +122,90 @@ object ImageProcessingAlgorithms {
             val oG = (orig shr 8) and 0xFF
             val oB = orig and 0xFF
 
-            val blur = blurred[i]
-            val bR = (blur shr 16) and 0xFF
-            val bG = (blur shr 8) and 0xFF
-            val bB = blur and 0xFF
+            val minChannel = min(oR, min(oG, oB))
+            val maxChannel = max(oR, max(oG, oB))
 
-            val diffR = oR - bR
-            val diffG = oG - bG
-            val diffB = oB - bB
+            // Kiểm soát quầng sáng bất đối xứng (Asymmetric Halo Control):
+            // - Phía sáng (overshoot): giới hạn quầng trắng không vượt quá 45 hoặc mép 255 của kênh lớn nhất
+            // - Phía tối (undershoot): tăng tương phản nét chữ nhưng không vượt quá maxDiff hoặc mép 0 của kênh nhỏ nhất
+            val maxOvershoot = min(maxDiff, min(45, 255 - maxChannel))
+            val maxUndershoot = min(maxDiff, minChannel)
+            val clampedDelta = delta.toInt().coerceIn(-maxUndershoot, maxOvershoot)
 
-            val nR = sharpenChannel(oR, diffR, factor, noiseThreshold, maxDiff)
-            val nG = sharpenChannel(oG, diffG, factor, noiseThreshold, maxDiff)
-            val nB = sharpenChannel(oB, diffB, factor, noiseThreshold, maxDiff)
+            if (clampedDelta == 0) continue
+
+            // Áp dụng độ lệch delta đồng nhất vào RGB, bảo toàn tuyệt đối sắc độ (R - G, B - G không đổi)
+            val nR = oR + clampedDelta
+            val nG = oG + clampedDelta
+            val nB = oB + clampedDelta
 
             pixels[i] = (a shl 24) or (nR shl 16) or (nG shl 8) or nB
         }
     }
 
-    private fun sharpenChannel(
-        original: Int,
-        diff: Int,
-        factor: Float,
-        noiseThreshold: Int,
-        maxDiff: Int
-    ): Int {
-        if (abs(diff) < noiseThreshold) return original
-        val scaled = (diff * factor).toInt().coerceIn(-maxDiff, maxDiff)
-        return (original + scaled).coerceIn(0, 255)
+    /**
+     * Làm mờ hộp phân tách (Separable Box Blur) nhanh trên mảng 1 kênh Luminance.
+     * Sử dụng buffer 1D cột kích thước O(height) để làm mờ dọc tại chỗ, tiết kiệm RAM tối đa.
+     */
+    fun boxBlurLuminance(
+        src: IntArray,
+        dst: IntArray,
+        width: Int,
+        height: Int,
+        radius: Int,
+        checkActive: (() -> Unit)? = null
+    ) {
+        if (width <= 0 || height <= 0) return
+        if (width == 1 && height == 1) {
+            dst[0] = src[0]
+            return
+        }
+
+        val rH = radius.coerceIn(1, max(1, width - 1))
+        val divH = 2 * rH + 1
+
+        // 1. Quét ngang từ src sang dst
+        for (y in 0 until height) {
+            if (y % 64 == 0) checkActive?.invoke()
+            val rowOffset = y * width
+
+            var sum = src[rowOffset] * (rH + 1)
+            for (i in 1..rH) {
+                sum += src[rowOffset + min(i, width - 1)]
+            }
+
+            for (x in 0 until width) {
+                dst[rowOffset + x] = sum / divH
+                val xRemove = max(0, x - rH)
+                val xAdd = min(width - 1, x + rH + 1)
+                sum += src[rowOffset + xAdd] - src[rowOffset + xRemove]
+            }
+        }
+
+        // 2. Quét dọc tại chỗ trên dst sử dụng buffer 1 cột
+        val rV = radius.coerceIn(1, max(1, height - 1))
+        val divV = 2 * rV + 1
+        val colBuffer = IntArray(height)
+
+        for (x in 0 until width) {
+            if (x % 64 == 0) checkActive?.invoke()
+
+            for (y in 0 until height) {
+                colBuffer[y] = dst[y * width + x]
+            }
+
+            var sum = colBuffer[0] * (rV + 1)
+            for (i in 1..rV) {
+                sum += colBuffer[min(i, height - 1)]
+            }
+
+            for (y in 0 until height) {
+                dst[y * width + x] = sum / divV
+                val yRemove = max(0, y - rV)
+                val yAdd = min(height - 1, y + rV + 1)
+                sum += colBuffer[yAdd] - colBuffer[yRemove]
+            }
+        }
     }
 
     /**

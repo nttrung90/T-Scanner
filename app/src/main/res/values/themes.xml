@@ -8,10 +8,8 @@
         <item name="colorSecondary">@color/primary_teal</item>
         <item name="colorOnSecondary">#FFFFFF</item>
         
-        <!-- Status bar and nav bar for Edge-to-Edge -->
-        <item name="android:statusBarColor">@android:color/transparent</item>
+        <!-- Window light status bar fallback (Edge-to-Edge is managed programmatically via enableEdgeToEdge) -->
         <item name="android:windowLightStatusBar">false</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
         
         <!-- Backgrounds -->
         <item name="android:windowBackground">@color/bg_dark</item>

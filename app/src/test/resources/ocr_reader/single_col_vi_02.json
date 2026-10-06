@@ -1,0 +1,23 @@
+{
+  "id": "vi_doc_02",
+  "category": "single_column_vi",
+  "language": "vi",
+  "pageWidth": 1200,
+  "pageHeight": 1600,
+  "rotationDegrees": 0,
+  "groundTruthText": "Hóa đơn giá trị gia tăng kiêm phiếu bảo hành sản phẩm điện máy chính hãng.",
+  "ocrHypothesisText": "Hóa đơn giá trị gia tăng kiêm phiếu bảo hanh sản phẩm điện máy chính hãng.",
+  "expectedCer": 0.0135,
+  "lines": [
+    {
+      "id": "line_0",
+      "text": "Hóa đơn giá trị gia tăng kiêm phiếu bảo hành sản phẩm điện máy chính hãng.",
+      "polygon": [
+        {"x": 0.1, "y": 0.1},
+        {"x": 0.9, "y": 0.1},
+        {"x": 0.9, "y": 0.14},
+        {"x": 0.1, "y": 0.14}
+      ]
+    }
+  ]
+}

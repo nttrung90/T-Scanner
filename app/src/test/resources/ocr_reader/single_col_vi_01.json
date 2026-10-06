@@ -1,0 +1,53 @@
+{
+  "id": "vi_doc_01",
+  "category": "single_column_vi",
+  "language": "vi",
+  "pageWidth": 1200,
+  "pageHeight": 1800,
+  "rotationDegrees": 0,
+  "groundTruthText": "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc\n\nGIẤY XÁC NHẬN THÔNG TIN CƯ TRÚ\nKính gửi: Công an phường Bến Nghé, Quận 1, TP. Hồ Chí Minh.",
+  "ocrHypothesisText": "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc\n\nGIẤY XÁC NHẬN THÔNG TIN CƯ TRÚ\nKính gửi: Công an phường Bến Nghé, Quận 1, TP. Hồ Chí Minh.",
+  "expectedCer": 0.0,
+  "lines": [
+    {
+      "id": "line_0",
+      "text": "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM",
+      "polygon": [
+        {"x": 0.2, "y": 0.05},
+        {"x": 0.8, "y": 0.05},
+        {"x": 0.8, "y": 0.08},
+        {"x": 0.2, "y": 0.08}
+      ]
+    },
+    {
+      "id": "line_1",
+      "text": "Độc lập - Tự do - Hạnh phúc",
+      "polygon": [
+        {"x": 0.3, "y": 0.09},
+        {"x": 0.7, "y": 0.09},
+        {"x": 0.7, "y": 0.12},
+        {"x": 0.3, "y": 0.12}
+      ]
+    },
+    {
+      "id": "line_2",
+      "text": "GIẤY XÁC NHẬN THÔNG TIN CƯ TRÚ",
+      "polygon": [
+        {"x": 0.25, "y": 0.16},
+        {"x": 0.75, "y": 0.16},
+        {"x": 0.75, "y": 0.20},
+        {"x": 0.25, "y": 0.20}
+      ]
+    },
+    {
+      "id": "line_3",
+      "text": "Kính gửi: Công an phường Bến Nghé, Quận 1, TP. Hồ Chí Minh.",
+      "polygon": [
+        {"x": 0.15, "y": 0.23},
+        {"x": 0.85, "y": 0.23},
+        {"x": 0.85, "y": 0.26},
+        {"x": 0.15, "y": 0.26}
+      ]
+    }
+  ]
+}

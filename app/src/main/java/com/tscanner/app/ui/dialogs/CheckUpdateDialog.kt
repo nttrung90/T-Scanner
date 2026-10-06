@@ -57,7 +57,7 @@ class CheckUpdateDialog(
         window?.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT)
 
         val versionName = getAppVersionName()
-        binding.tvCurrentVersion.text = "Phiên bản hiện tại: v$versionName"
+        binding.tvCurrentVersion.text = context.getString(R.string.current_version_format, "v$versionName")
 
         binding.btnSecondaryAction.setOnClickListener {
             dismiss()
@@ -69,9 +69,9 @@ class CheckUpdateDialog(
     private fun getAppVersionName(): String {
         return try {
             val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-            pInfo.versionName ?: "0.6.0"
+            pInfo.versionName ?: "1.2.0"
         } catch (e: Exception) {
-            "0.6.0"
+            "1.2.0"
         }
     }
 
@@ -159,10 +159,10 @@ class CheckUpdateDialog(
         binding.ivStatusIcon.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.primary_teal))
 
         binding.tvUpdateTitle.text = context.getString(R.string.check_update_title)
-        binding.tvUpdateMessage.text = "Quá trình cập nhật đang diễn ra trong nền. Bạn có thể tiếp tục cập nhật ngay bây giờ."
+        binding.tvUpdateMessage.text = context.getString(R.string.update_in_progress_desc)
 
         binding.btnPrimaryAction.visibility = View.VISIBLE
-        binding.btnPrimaryAction.text = "Tiếp tục cập nhật"
+        binding.btnPrimaryAction.text = context.getString(R.string.continue_update_action)
         binding.btnPrimaryAction.setOnClickListener {
             dismiss()
             try {

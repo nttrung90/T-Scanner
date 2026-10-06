@@ -11,10 +11,6 @@
 -dontwarn com.google.mlkit.**
 -keep class com.google.android.gms.vision.** { *; }
 
-# ONNX Runtime (PaddleOCR inference)
--keep class ai.onnxruntime.** { *; }
--dontwarn ai.onnxruntime.**
-
 # Tesseract OCR 4 Android
 -keep class com.googlecode.tesseract.android.** { *; }
 -keep class cz.adaptech.tesseract4android.** { *; }

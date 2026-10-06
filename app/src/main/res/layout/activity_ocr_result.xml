@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_dark"
@@ -24,10 +25,9 @@
             android:layout_height="36dp"
             android:padding="6dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_chevron_right"
-            android:rotation="180"
+            android:src="@drawable/ic_arrow_back"
             app:tint="@color/text_primary"
-            android:contentDescription="Back" />
+            android:contentDescription="@string/btn_back" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -48,15 +48,26 @@
                 android:id="@+id/tv_ocr_engine"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Động cơ: Tesseract OCR v5 (Tiếng Việt + Tiếng Anh)"
+                tools:text="Động cơ: Tesseract OCR v5 (Tiếng Việt + Tiếng Anh)"
                 android:textColor="@color/primary_teal"
                 android:textSize="11sp" />
         </LinearLayout>
 
         <ImageView
+            android:id="@+id/btn_search_ocr"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:padding="6dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_search"
+            app:tint="@color/text_primary"
+            android:contentDescription="@string/search_hint" />
+
+        <ImageView
             android:id="@+id/btn_copy_ocr"
             android:layout_width="36dp"
             android:layout_height="36dp"
+            android:layout_marginStart="8dp"
             android:padding="6dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_copy"
@@ -75,22 +86,217 @@
             android:contentDescription="@string/share" />
     </LinearLayout>
 
-    <!-- Content Area -->
-    <androidx.core.widget.NestedScrollView
+    <!-- In-page Search Bar (Gói S10) -->
+    <LinearLayout
+        android:id="@+id/layout_search_bar"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:padding="16dp">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@color/bg_dark_header"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="6dp"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/et_search_ocr"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_search_bar"
+            android:hint="@string/search_hint"
+            android:textColorHint="@color/text_secondary"
+            android:textColor="@color/text_primary"
+            android:textSize="13sp"
+            android:paddingHorizontal="12dp"
+            android:imeOptions="actionSearch"
+            android:singleLine="true" />
+
+        <ImageView
+            android:id="@+id/btn_close_search"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:padding="6dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_close"
+            app:tint="@color/text_secondary"
+            android:contentDescription="@string/btn_back" />
+    </LinearLayout>
+
+    <!-- Language Detection Banner (Gói O03) -->
+    <LinearLayout
+        android:id="@+id/layout_detected_language"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@color/bg_dark_header"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp">
 
         <TextView
-            android:id="@+id/tv_ocr_content"
-            android:layout_width="match_parent"
+            android:id="@+id/tv_detected_language"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:textColor="@color/text_primary"
-            android:textSize="15sp"
-            android:lineSpacingMultiplier="1.4"
-            android:textIsSelectable="true" />
-    </androidx.core.widget.NestedScrollView>
+            android:textSize="12sp"
+            tools:text="Phát hiện: Tiếng Việt" />
+
+        <TextView
+            android:id="@+id/btn_re_recognize_language"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:textColor="@color/primary_teal"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:text="@string/ocr_action_select_and_re_recognize"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider_dark" />
+
+    <!-- OCR Reader Tabs (Gói S09) -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout_ocr"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/bg_dark_header"
+        app:tabIndicatorColor="@color/primary_teal"
+        app:tabSelectedTextColor="@color/primary_teal"
+        app:tabTextColor="@color/text_secondary"
+        app:tabTextAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        app:tabMode="fixed"
+        app:tabGravity="fill">
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ocr_tab_scan" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ocr_tab_text" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ocr_tab_table" />
+    </com.google.android.material.tabs.TabLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider_dark" />
+
+    <!-- Content Area: Switchable between Scan view, Text view, and Table view -->
+    <FrameLayout
+        android:id="@+id/layout_ocr_content_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <!-- Tab 1: Scan View (Default) -->
+        <LinearLayout
+            android:id="@+id/layout_scan_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <com.tscanner.app.ui.ocr.reader.OcrPageView
+                android:id="@+id/ocr_page_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="#121212" />
+
+            <!-- Page Navigation Bar -->
+            <LinearLayout
+                android:id="@+id/layout_page_navigation"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@color/bg_dark_header"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <ImageView
+                    android:id="@+id/btn_prev_page"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_arrow_back"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    app:tint="@color/text_primary"
+                    android:contentDescription="@string/btn_back" />
+
+                <TextView
+                    android:id="@+id/tv_page_indicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:textColor="@color/text_primary"
+                    android:textSize="13sp"
+                    tools:text="Trang 1 / 3" />
+
+                <ImageView
+                    android:id="@+id/btn_next_page"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_chevron_right"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    app:tint="@color/text_primary"
+                    android:contentDescription="@string/btn_next" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Tab 2: Text Editor View (Gói S12) -->
+        <FrameLayout
+            android:id="@+id/layout_text_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <!-- Hidden TextView for backward compatibility with existing tests and callers -->
+            <TextView
+                android:id="@+id/tv_ocr_content"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone" />
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fragment_text_editor"
+                android:name="com.tscanner.app.ui.ocr.editor.OcrTextEditorFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </FrameLayout>
+
+        <!-- Tab 3: Table Editor View (Gói S17) -->
+        <FrameLayout
+            android:id="@+id/layout_table_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fragment_table_editor"
+                android:name="com.tscanner.app.ui.ocr.editor.OcrTableEditorFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </FrameLayout>
+    </FrameLayout>
 
     <!-- Bottom Actions -->
     <LinearLayout

@@ -1,0 +1,26 @@
+[
+  {
+    "Path": "E:\\DU AN AI\\T-Scanner\\app\\src\\main\\java\\com\\tscanner\\app\\utils\\AppAuthManager.kt",
+    "Hash": "7B2A4A70E27AC24E2B70F58C296163C6DEBC8734482C3666AEAF97A657907936"
+  },
+  {
+    "Path": "E:\\DU AN AI\\T-Scanner\\app\\src\\main\\java\\com\\tscanner\\app\\utils\\VipLoginContinuationHandler.kt",
+    "Hash": "B8F082149CAFEFA112E6FCF677468BA67FB4AB49087440B0A2A77B10F677982F"
+  },
+  {
+    "Path": "E:\\DU AN AI\\T-Scanner\\app\\src\\main\\java\\com\\tscanner\\app\\utils\\VipPurchaseActionCoordinator.kt",
+    "Hash": "6DF638440DF01CD269FC5BBBA72AC94A945356CA9E6D590F1055E8A05B6EC81B"
+  },
+  {
+    "Path": "E:\\DU AN AI\\T-Scanner\\app\\src\\main\\java\\com\\tscanner\\app\\ui\\more\\MoreFragment.kt",
+    "Hash": "484F31F5259B3F764FCB649AE2A54974975EC1D7A8A9B2539B09CF8DB2F8366B"
+  },
+  {
+    "Path": "E:\\DU AN AI\\T-Scanner\\app\\src\\main\\java\\com\\tscanner\\app\\ui\\viewer\\PdfViewerActivity.kt",
+    "Hash": "8037D85E69D3550699C39B176AC49C4FF6325C5F3533CE2516F702484EFA5E83"
+  },
+  {
+    "Path": "E:\\DU AN AI\\T-Scanner\\app\\src\\main\\java\\com\\tscanner\\app\\ui\\idcard\\IdCardComposeActivity.kt",
+    "Hash": "E3713417EFE590CF25BC9FE7318830AACBBD678A952CAEEF11716191E6931FF3"
+  }
+]

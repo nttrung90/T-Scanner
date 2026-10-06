@@ -1,0 +1,195 @@
+Starting a Gradle Daemon, 1 busy and 2 incompatible and 1 stopped Daemons could not be reused, use --status for details
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:dataBindingMergeDependencyArtifactsDebug UP-TO-DATE
+> Task :app:generateDebugResources UP-TO-DATE
+> Task :app:mergeDebugResources UP-TO-DATE
+> Task :app:packageDebugResources UP-TO-DATE
+> Task :app:processDebugNavigationResources UP-TO-DATE
+> Task :app:parseDebugLocalResources UP-TO-DATE
+> Task :app:dataBindingGenBaseClassesDebug UP-TO-DATE
+> Task :app:generateDebugBuildConfig
+> Task :app:generateDebugRFile UP-TO-DATE
+> Task :app:javaPreCompileDebug UP-TO-DATE
+> Task :app:checkDebugAarMetadata UP-TO-DATE
+> Task :app:mapDebugSourceSetPaths UP-TO-DATE
+> Task :app:compileDebugNavigationResources UP-TO-DATE
+> Task :app:createDebugCompatibleScreenManifests
+> Task :app:extractDeepLinksDebug UP-TO-DATE
+> Task :app:processDebugMainManifest
+> Task :app:processDebugManifest
+> Task :app:preDebugUnitTestBuild UP-TO-DATE
+> Task :app:javaPreCompileDebugUnitTest UP-TO-DATE
+> Task :app:processDebugManifestForPackage
+> Task :app:processDebugResources
+> Task :app:compileDebugKotlin
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/ui/dialogs/LanguageAdapter.kt:65:49 'field locale: Locale!' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:17:8 'class GoogleSignIn : Any' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:18:8 'class GoogleSignInOptions : AbstractSafeParcelable, Api.ApiOptions.Optional, ReflectedParcelable' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:51:23 'class GoogleSignInOptions : AbstractSafeParcelable, Api.ApiOptions.Optional, ReflectedParcelable' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:51:51 'class GoogleSignInOptions : AbstractSafeParcelable, Api.ApiOptions.Optional, ReflectedParcelable' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:52:20 'class GoogleSignIn : Any' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:229:23 'class GoogleSignIn : Any' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:233:16 'class GoogleSignIn : Any' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:236:60 'class GoogleSignInOptions : AbstractSafeParcelable, Api.ApiOptions.Optional, ReflectedParcelable' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:237:23 'class GoogleSignInOptions : AbstractSafeParcelable, Api.ApiOptions.Optional, ReflectedParcelable' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:237:51 'class GoogleSignInOptions : AbstractSafeParcelable, Api.ApiOptions.Optional, ReflectedParcelable' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:291:16 'class GoogleSignIn : Any' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:605:37 'class GoogleSignInOptions : AbstractSafeParcelable, Api.ApiOptions.Optional, ReflectedParcelable' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:606:16 'class GoogleSignInOptions : AbstractSafeParcelable, Api.ApiOptions.Optional, ReflectedParcelable' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:606:44 'class GoogleSignInOptions : AbstractSafeParcelable, Api.ApiOptions.Optional, ReflectedParcelable' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:618:16 'class GoogleSignIn : Any' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/CloudBackupManager.kt:243:13 Condition is always 'true'.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/GoogleDriveService.kt:146:28 'static fun getToken(p0: Context, p1: String, p2: String): String' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/GoogleSignInResultRouter.kt:7:8 'class GoogleSignIn : Any' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/GoogleSignInResultRouter.kt:41:20 'class GoogleSignIn : Any' is deprecated. Deprecated in Java.
+
+> Task :app:compileDebugJavaWithJavac
+> Task :app:processDebugJavaRes UP-TO-DATE
+> Task :app:bundleDebugClassesToRuntimeJar
+> Task :app:bundleDebugClassesToCompileJar
+> Task :app:compileDebugUnitTestKotlin
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppAuthDriveAuthorizationTest.kt:113:24 'fun handleDrivePermissionResult(context: Context, data: Intent?, onSuccess: () -> Unit, onError: (String) -> Unit): Unit' is deprecated. Callers must provide explicit attempt token from launch.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:231:31 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:231:45 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:235:29 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:242:31 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:242:51 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:246:72 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:250:72 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:254:31 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:269:71 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:269:85 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:270:79 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:270:93 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:271:79 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:277:69 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:283:71 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:283:85 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:290:69 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:303:73 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:309:69 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:317:31 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:318:33 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:318:47 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:319:31 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:321:36 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:322:36 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:482:76 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:483:76 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:484:76 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:490:76 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:491:76 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:496:76 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:497:76 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:498:76 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:505:76 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:506:76 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:507:76 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:513:76 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:514:76 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:515:76 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:521:76 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:522:76 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:523:76 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:524:76 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:532:76 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:533:76 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:534:76 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:540:76 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:541:76 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:546:76 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:547:76 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:548:76 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:549:76 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:550:76 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:553:76 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:554:76 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:555:76 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:556:76 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:557:76 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:558:76 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:559:76 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:560:76 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:561:76 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:585:31 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:585:51 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:593:31 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:593:45 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:599:31 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:599:51 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:604:31 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:604:51 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:609:31 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:609:51 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:614:31 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:614:51 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:619:31 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:619:51 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:624:31 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:624:51 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:629:31 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:629:51 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:639:13 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:639:27 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:639:41 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:639:55 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:640:13 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:640:27 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:640:41 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:640:55 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:641:13 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:641:27 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:641:41 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:641:55 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:642:13 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:642:27 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:642:41 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:642:55 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:643:13 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:643:27 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:643:41 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:643:55 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:644:13 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:644:27 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:644:41 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:644:55 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:645:13 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:645:27 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:645:41 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:645:55 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:646:13 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:646:27 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:646:41 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:646:55 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:647:13 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:647:27 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:647:41 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:647:55 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:648:13 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:648:27 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:648:41 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt:648:55 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/BillingOfferPresentationTest.kt:396:38 'val priceDisplay: String' is deprecated. Static prices are removed in favor of Google Play Billing product details (F10).
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/BillingOfferPresentationTest.kt:397:38 'val priceVnd: Long' is deprecated. Static prices are removed in favor of Google Play Billing product details (F10).
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/BillingTestFixtures.kt:392:29 'val skus: ArrayList<String!>' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/DriveAuthorizationFlowTest.kt:471:24 'fun handleDrivePermissionResult(context: Context, resultCode: Int, data: Intent?, parser: GoogleSignInAccountParser = ..., onSuccess: () -> Unit, onCancelled: () -> Unit = ..., onError: (String) -> Unit): Unit' is deprecated. Callers must provide explicit attempt token from launch.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/GoogleSignInResultRouterTest.kt:358:24 'fun handleGoogleSignInResult(context: Context, resultCode: Int, data: Intent?, parser: GoogleSignInAccountParser = ..., onSuccess: (UserProfile) -> Unit, onCancelled: () -> Unit = ..., onError: (String) -> Unit): Unit' is deprecated. Callers must provide explicit attempt token from launch.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/VipLoginRound2RegressionTest.kt:252:24 'fun handleDrivePermissionResult(context: Context, resultCode: Int, data: Intent?, parser: GoogleSignInAccountParser = ..., onSuccess: () -> Unit, onCancelled: () -> Unit = ..., onError: (String) -> Unit): Unit' is deprecated. Callers must provide explicit attempt token from launch.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/test/java/com/tscanner/app/VipRound8RegressionTest.kt:139:51 The corresponding parameter in the supertype 'PurchaseVerifier' is named 'request'. This may cause problems when calling this function with named arguments.
+
+> Task :app:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :app:processDebugUnitTestJavaRes UP-TO-DATE
+> Task :app:testDebugUnitTest
+
+[Incubating] Problems report is available at: file:///E:/DU%20AN%20AI/T-Scanner/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.7.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 3m 37s
+28 actionable tasks: 12 executed, 16 up-to-date
+Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.7.1/userguide/configuration_cache_enabling.html

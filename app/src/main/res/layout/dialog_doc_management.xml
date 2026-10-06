@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -43,7 +44,7 @@
             android:id="@+id/tv_stat_total_docs"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tổng số tài liệu: 0"
+            tools:text="Tổng số tài liệu: 0"
             android:textColor="@color/text_primary"
             android:textSize="14sp" />
 
@@ -52,7 +53,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Tập tin PDF: 0"
+            tools:text="Tập tin PDF: 0"
             android:textColor="@color/text_primary"
             android:textSize="14sp" />
 
@@ -61,7 +62,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Dung lượng sử dụng: 0 KB"
+            tools:text="Dung lượng sử dụng: 0 KB"
             android:textColor="@color/primary_teal"
             android:textSize="14sp"
             android:textStyle="bold" />

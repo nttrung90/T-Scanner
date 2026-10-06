@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tscanner.app.VipSessionRound3IntegrationTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-06T03:37:17.066Z" hostname="NTT-LAPTOPACER" time="0.008">
+  <properties/>
+  <testcase name="fallbackLaunchFailureAllowsRetryOnSameHost_contractSpecification" classname="com.tscanner.app.VipSessionRound3IntegrationTest" time="0.001"/>
+  <testcase name="receiptAuthRequiredRequestsSameOwnerRecoveryWithoutNewPurchase_contractSpecification" classname="com.tscanner.app.VipSessionRound3IntegrationTest" time="0.006"/>
+  <testcase name="navigationFromOwnerARejectedAfterLogoutAndOnReplay_contractSpecification" classname="com.tscanner.app.VipSessionRound3IntegrationTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

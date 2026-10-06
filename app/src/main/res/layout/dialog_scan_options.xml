@@ -37,7 +37,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Quét tài liệu"
+                android:text="@string/scan_options_title"
                 android:textColor="@color/text_primary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -46,7 +46,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="Chọn phương thức quét phù hợp với nhu cầu"
+                android:text="@string/scan_options_subtitle"
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -92,7 +92,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Quét AI (Mặc định)"
+                    android:text="@string/scan_option_ai"
                     android:textColor="@color/text_primary"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -107,7 +107,7 @@
                     android:paddingEnd="6dp"
                     android:paddingTop="2dp"
                     android:paddingBottom="2dp"
-                    android:text="Khuyên dùng"
+                    android:text="@string/scan_badge_recommended"
                     android:textColor="@color/vip_gold"
                     android:textSize="10sp"
                     android:textStyle="bold" />
@@ -117,9 +117,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="Google AI tự động căn viền 3D, khử bóng đổ và vết bẩn"
+                android:text="@string/scan_option_ai_desc"
                 android:textColor="@color/text_secondary"
                 android:textSize="11sp" />
+
+            <TextView
+                android:id="@+id/tv_scan_option_ai_lang_note"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="@string/scan_google_ai_language_note"
+                android:textColor="#E5A93C"
+                android:textSize="10sp" />
         </LinearLayout>
 
         <ImageView
@@ -163,7 +172,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Camera Siêu Tốc"
+                    android:text="@string/scan_option_fast"
                     android:textColor="@color/text_primary"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -178,7 +187,7 @@
                     android:paddingEnd="6dp"
                     android:paddingTop="2dp"
                     android:paddingBottom="2dp"
-                    android:text="Tùy chọn"
+                    android:text="@string/scan_badge_optional"
                     android:textColor="@color/primary_teal"
                     android:textSize="10sp"
                     android:textStyle="bold" />
@@ -188,9 +197,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="Chụp chớp mắt (&lt; 50ms), lấy nét liên tục, chụp tập tài liệu"
+                android:text="@string/scan_option_fast_desc"
                 android:textColor="@color/text_secondary"
                 android:textSize="11sp" />
+
+            <TextView
+                android:id="@+id/tv_scan_option_fast_lang_note"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="@string/scan_fast_camera_language_note"
+                android:textColor="#00C28E"
+                android:textSize="10sp" />
         </LinearLayout>
 
         <ImageView
@@ -207,7 +225,7 @@
         android:layout_marginTop="12dp"
         android:background="@drawable/bg_search_bar"
         android:padding="10dp"
-        android:text="💡 Mẹo: Quét AI tối ưu cho tài liệu đơn lẻ cần căn chỉnh kỹ. Camera Siêu Tốc tối ưu khi cần chụp nhanh tập tài liệu nhiều trang."
+        android:text="@string/scan_options_tip"
         android:textColor="@color/text_secondary"
         android:textSize="11sp" />
 

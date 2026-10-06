@@ -60,7 +60,7 @@
             android:layout_height="40dp"
             android:background="@drawable/bg_camera_pill"
             android:src="@drawable/ic_close"
-            android:contentDescription="Đóng"
+            android:contentDescription="@string/close"
             app:tint="#FFFFFF" />
 
         <!-- Flash Button -->
@@ -71,7 +71,7 @@
             android:layout_marginStart="12dp"
             android:background="@drawable/bg_camera_pill"
             android:src="@drawable/ic_flash_off"
-            android:contentDescription="Đèn flash"
+            android:contentDescription="@string/camera_flash_desc"
             app:tint="#FFFFFF" />
 
         <View
@@ -103,7 +103,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
-                android:text="Tự căn viền"
+                android:text="@string/camera_auto_crop"
                 android:textColor="#00C28E"
                 android:textSize="13sp"
                 android:textStyle="bold" />
@@ -130,7 +130,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
-                android:text="Quét AI"
+                android:text="@string/camera_ai_scan"
                 android:textColor="#FFD54F"
                 android:textSize="13sp"
                 android:textStyle="bold" />
@@ -147,7 +147,7 @@
         android:paddingEnd="16dp"
         android:paddingTop="6dp"
         android:paddingBottom="6dp"
-        android:text="⚡ Chạm màn hình để lấy nét • Căn văn bản vào khung"
+        android:text="@string/camera_hint_default"
         android:textColor="#DDFFFFFF"
         android:textSize="12sp"
         app:layout_constraintTop_toBottomOf="@id/layoutCameraTopBar"
@@ -193,7 +193,7 @@
             android:layout_width="76dp"
             android:layout_height="76dp"
             android:background="@drawable/bg_shutter_button"
-            android:contentDescription="Chụp ảnh siêu tốc"
+            android:contentDescription="@string/camera_shutter_desc"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -213,7 +213,8 @@
                 android:id="@+id/btnDoneScan"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
-                android:text="Hoàn tất"
+                android:text="@string/camera_done"
+                tools:text="Hoàn tất"
                 android:textColor="#131418"
                 android:textSize="14sp"
                 android:textStyle="bold"
@@ -232,7 +233,7 @@
                 android:layout_marginEnd="-4dp"
                 android:background="@drawable/bg_camera_badge"
                 android:gravity="center"
-                android:text="1"
+                tools:text="1"
                 android:textColor="#FFFFFF"
                 android:textSize="11sp"
                 android:textStyle="bold" />

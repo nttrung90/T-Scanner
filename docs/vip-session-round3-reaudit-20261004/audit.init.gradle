@@ -1,0 +1,13 @@
+allprojects {
+    afterEvaluate { p ->
+        if (p.path == ':app') {
+            if (p.hasProperty('sessionRound3Probes')) {
+                p.android.sourceSets.test.kotlin.srcDir(new File(p.rootDir, 'docs/vip-session-round3-reaudit-20261004'))
+                p.android.sourceSets.test.kotlin.srcDir(new File(p.rootDir, 'docs/vip-session-reaudit-20261004'))
+            }
+            p.tasks.withType(org.gradle.api.tasks.testing.Test).configureEach {
+                outputs.upToDateWhen { false }
+            }
+        }
+    }
+}

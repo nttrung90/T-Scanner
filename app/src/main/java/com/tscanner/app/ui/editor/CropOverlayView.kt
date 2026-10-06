@@ -80,6 +80,8 @@ class CropOverlayView @JvmOverloads constructor(
         isAntiAlias = true
     }
 
+    fun isInitialized(): Boolean = imageBounds.width() > 0 && imageBounds.height() > 0
+
     fun setImageBounds(bounds: RectF) {
         imageBounds.set(bounds)
         // Default crop rect: 90% of image bounds centered
@@ -92,6 +94,24 @@ class CropOverlayView @JvmOverloads constructor(
             imageBounds.bottom - insetY
         )
         invalidate()
+    }
+
+    fun setImageBoundsPreservingNormalizedRect(bounds: RectF) {
+        val currentNorm = if (isInitialized()) getNormalizedCropRect() else null
+        imageBounds.set(bounds)
+        if (currentNorm != null) {
+            setNormalizedCropRect(currentNorm)
+        } else {
+            val insetX = imageBounds.width() * 0.05f
+            val insetY = imageBounds.height() * 0.05f
+            cropRect.set(
+                imageBounds.left + insetX,
+                imageBounds.top + insetY,
+                imageBounds.right - insetX,
+                imageBounds.bottom - insetY
+            )
+            invalidate()
+        }
     }
 
     fun resetToFull() {
@@ -113,6 +133,20 @@ class CropOverlayView @JvmOverloads constructor(
         val right = ((cropRect.right - imageBounds.left) / imageBounds.width()).coerceIn(0f, 1f)
         val bottom = ((cropRect.bottom - imageBounds.top) / imageBounds.height()).coerceIn(0f, 1f)
         return RectF(left, top, right, bottom)
+    }
+
+    /**
+     * Restores crop rect from normalized coordinates (0.0 to 1.0)
+     */
+    fun setNormalizedCropRect(normRect: RectF) {
+        if (imageBounds.width() > 0 && imageBounds.height() > 0) {
+            val left = imageBounds.left + normRect.left.coerceIn(0f, 1f) * imageBounds.width()
+            val top = imageBounds.top + normRect.top.coerceIn(0f, 1f) * imageBounds.height()
+            val right = imageBounds.left + normRect.right.coerceIn(0f, 1f) * imageBounds.width()
+            val bottom = imageBounds.top + normRect.bottom.coerceIn(0f, 1f) * imageBounds.height()
+            cropRect.set(left, top, right, bottom)
+            invalidate()
+        }
     }
 
     override fun onDraw(canvas: Canvas) {

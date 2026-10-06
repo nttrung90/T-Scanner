@@ -1,0 +1,37 @@
+{
+  "id": "two_col_01",
+  "category": "two_column_doc",
+  "language": "en",
+  "pageWidth": 1200,
+  "pageHeight": 1600,
+  "rotationDegrees": 0,
+  "columnCount": 2,
+  "groundTruthText": "Left Column Line 1\nLeft Column Line 2\nRight Column Line 1\nRight Column Line 2",
+  "expectedReadingOrder": ["line_col1_1", "line_col1_2", "line_col2_1", "line_col2_2"],
+  "lines": [
+    {
+      "id": "line_col1_1",
+      "text": "Left Column Line 1",
+      "column": 0,
+      "polygon": [{"x": 0.05, "y": 0.10}, {"x": 0.45, "y": 0.10}, {"x": 0.45, "y": 0.15}, {"x": 0.05, "y": 0.15}]
+    },
+    {
+      "id": "line_col1_2",
+      "text": "Left Column Line 2",
+      "column": 0,
+      "polygon": [{"x": 0.05, "y": 0.18}, {"x": 0.45, "y": 0.18}, {"x": 0.45, "y": 0.23}, {"x": 0.05, "y": 0.23}]
+    },
+    {
+      "id": "line_col2_1",
+      "text": "Right Column Line 1",
+      "column": 1,
+      "polygon": [{"x": 0.55, "y": 0.10}, {"x": 0.95, "y": 0.10}, {"x": 0.95, "y": 0.15}, {"x": 0.55, "y": 0.15}]
+    },
+    {
+      "id": "line_col2_2",
+      "text": "Right Column Line 2",
+      "column": 1,
+      "polygon": [{"x": 0.55, "y": 0.18}, {"x": 0.95, "y": 0.18}, {"x": 0.95, "y": 0.23}, {"x": 0.55, "y": 0.23}]
+    }
+  ]
+}

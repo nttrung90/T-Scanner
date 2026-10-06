@@ -7,6 +7,7 @@ import android.widget.Toast
 import com.tscanner.app.R
 import com.tscanner.app.data.repository.DocumentRepo
 import com.tscanner.app.databinding.DialogDocManagementBinding
+import com.tscanner.app.utils.AppAuthManager
 import com.tscanner.app.utils.FileUtils
 
 class DocumentManagementDialog(context: Context) : Dialog(context) {
@@ -26,7 +27,7 @@ class DocumentManagementDialog(context: Context) : Dialog(context) {
             val cleared = FileUtils.clearCache(context)
             Toast.makeText(
                 context,
-                "Đã dọn dẹp ${FileUtils.formatFileSize(cleared)} bộ nhớ đệm!",
+                context.getString(R.string.cleared_cache_format, FileUtils.formatFileSize(cleared)),
                 Toast.LENGTH_SHORT
             ).show()
             updateStats()
@@ -51,7 +52,8 @@ class DocumentManagementDialog(context: Context) : Dialog(context) {
     }
 
     private fun updateStats() {
-        val stats = DocumentRepo.getInstance(context).getStorageStats()
+        val currentUserId = AppAuthManager.getCurrentUser()?.id
+        val stats = DocumentRepo.getInstance(context).getStorageStats(currentUserId)
         binding.tvStatTotalDocs.text = context.getString(R.string.total_documents, stats.totalDocuments)
         binding.tvStatTotalPdfs.text = context.getString(R.string.total_pdfs, stats.totalPdfs)
         binding.tvStatStorageUsed.text = context.getString(R.string.storage_used, FileUtils.formatFileSize(stats.totalSizeBytes))

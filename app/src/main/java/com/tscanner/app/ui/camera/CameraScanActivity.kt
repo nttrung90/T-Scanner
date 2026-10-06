@@ -40,9 +40,12 @@ import com.tscanner.app.ui.idcard.IdCardComposeActivity
 import com.tscanner.app.ui.viewer.PdfViewerActivity
 import com.tscanner.app.utils.DocumentEdgeDetector
 import com.tscanner.app.utils.DocumentScannerHelper
+import com.tscanner.app.utils.EdgeToEdgeInsetsHelper
 import com.tscanner.app.utils.FileUtils
+import com.tscanner.app.utils.SafeFileWriter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -62,15 +65,20 @@ class CameraScanActivity : AppCompatActivity() {
     private var imageCapture: ImageCapture? = null
     private lateinit var cameraExecutor: ExecutorService
 
-    private val sessionId = UUID.randomUUID().toString()
+    private var sessionId = UUID.randomUUID().toString()
     private val capturedPagePaths = mutableListOf<String>()
     private val captureSequence = AtomicInteger(0)
+    private val inFlightCaptureCount = AtomicInteger(0)
     private val activeCropJobs = ConcurrentHashMap<Int, Job>()
     private val orderedPageMap = ConcurrentSkipListMap<Int, String>()
+    private val pendingRawCaptures = ConcurrentHashMap<Int, String>()
+    private val failedCaptures = ConcurrentHashMap<Int, String>()
+    private lateinit var sessionManager: CameraScanSessionManager
 
     private var flashMode = ImageCapture.FLASH_MODE_OFF
     private var isAutoCropEnabled = true
     private var isCapturing = false
+    private var isFinishingSession = false
     private var isIdCardMode = false
 
     // Scanner helper for switching to Google ML Kit AI Scanner
@@ -83,7 +91,7 @@ class CameraScanActivity : AppCompatActivity() {
         if (isGranted) {
             startCamera()
         } else {
-            Toast.makeText(this, "Cần cấp quyền máy ảnh để thực hiện quét tài liệu", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, R.string.camera_permission_required, Toast.LENGTH_LONG).show()
             finish()
         }
     }
@@ -100,13 +108,138 @@ class CameraScanActivity : AppCompatActivity() {
         isIdCardMode = intent.getBooleanExtra(EXTRA_IS_ID_CARD_MODE, false)
         cameraExecutor = Executors.newSingleThreadExecutor()
 
+        if (savedInstanceState != null) {
+            savedInstanceState.getString(KEY_SESSION_ID)?.let { sessionId = it }
+            captureSequence.set(savedInstanceState.getInt(KEY_CAPTURE_SEQ, 0))
+            isAutoCropEnabled = savedInstanceState.getBoolean(KEY_AUTO_CROP, true)
+            flashMode = savedInstanceState.getInt(KEY_FLASH_MODE, ImageCapture.FLASH_MODE_OFF)
+
+            val pageIndices = savedInstanceState.getIntArray(KEY_PAGE_MAP_INDICES)
+            val pagePaths = savedInstanceState.getStringArrayList(KEY_PAGE_MAP_PATHS)
+            var maxIdx = captureSequence.get()
+
+            if (pageIndices != null && pagePaths != null && pageIndices.size == pagePaths.size) {
+                for (i in pageIndices.indices) {
+                    val idx = pageIndices[i]
+                    val path = pagePaths[i]
+                    val f = File(path)
+                    if (f.exists() && f.length() > 0L) {
+                        orderedPageMap[idx] = path
+                        maxIdx = maxOf(maxIdx, idx)
+                    }
+                }
+            } else {
+                val restored = savedInstanceState.getStringArrayList(KEY_CAPTURED_PAGES)
+                if (!restored.isNullOrEmpty()) {
+                    restored.forEachIndexed { index, path ->
+                        val f = File(path)
+                        if (f.exists() && f.length() > 0L) {
+                            val pIdx = index + 1
+                            orderedPageMap[pIdx] = path
+                            maxIdx = maxOf(maxIdx, pIdx)
+                        }
+                    }
+                }
+            }
+
+            val pendingIndices = savedInstanceState.getIntArray(KEY_PENDING_RAW_INDICES)
+            val pendingPaths = savedInstanceState.getStringArrayList(KEY_PENDING_RAW_PATHS)
+            if (pendingIndices != null && pendingPaths != null) {
+                for (i in pendingIndices.indices) {
+                    val idx = pendingIndices[i]
+                    val path = pendingPaths[i]
+                    val f = File(path)
+                    if (f.exists() && f.length() > 0L) {
+                        pendingRawCaptures[idx] = path
+                        maxIdx = maxOf(maxIdx, idx)
+                    }
+                }
+            }
+
+            val failedIndices = savedInstanceState.getIntArray(KEY_FAILED_CAPTURE_INDICES)
+            val failedPaths = savedInstanceState.getStringArrayList(KEY_FAILED_CAPTURE_PATHS)
+            if (failedIndices != null && failedPaths != null) {
+                for (i in failedIndices.indices) {
+                    val idx = failedIndices[i]
+                    val path = failedPaths[i]
+                    val f = File(path)
+                    if (f.exists() && f.length() > 0L) {
+                        failedCaptures[idx] = path
+                        maxIdx = maxOf(maxIdx, idx)
+                    }
+                }
+            }
+            captureSequence.set(maxIdx)
+        }
+
+        val tempDir = FileUtils.getTempScanSessionDir(this, sessionId)
+        sessionManager = CameraScanSessionManager(tempDir)
+
+        // C01: Reconcile manifest with disk files to recover any completed or pending pages across process death
+        lifecycleScope.launch {
+            val reconciled = sessionManager.reconcileSession()
+            withContext(Dispatchers.Main) {
+                reconciled.committedPages.forEach { (idx, path) ->
+                    orderedPageMap[idx] = path
+                }
+                reconciled.pendingRawFiles.forEach { (idx, path) ->
+                    if (!orderedPageMap.containsKey(idx)) {
+                        pendingRawCaptures[idx] = path
+                    }
+                }
+                reconciled.failedPages.forEach { (idx, path) ->
+                    if (!orderedPageMap.containsKey(idx) && !pendingRawCaptures.containsKey(idx)) {
+                        failedCaptures[idx] = path ?: ""
+                    }
+                }
+                if (reconciled.maxSequence > captureSequence.get()) {
+                    captureSequence.set(reconciled.maxSequence)
+                }
+
+                synchronized(capturedPagePaths) {
+                    capturedPagePaths.clear()
+                    capturedPagePaths.addAll(orderedPageMap.values)
+                }
+                if (capturedPagePaths.isNotEmpty()) {
+                    updateCapturedPagesUI(capturedPagePaths.last())
+                }
+
+                // Resume processing for any pending raw captures discovered
+                if (pendingRawCaptures.isNotEmpty()) {
+                    val pendingEntries = pendingRawCaptures.entries.toList()
+                    for ((idx, rawPath) in pendingEntries) {
+                        val rawFile = File(rawPath)
+                        if (rawFile.exists() && rawFile.length() > 0L) {
+                            inFlightCaptureCount.incrementAndGet()
+                            val job = lifecycleScope.launch {
+                                try {
+                                    processCapturedRawFile(idx, rawFile, tempDir)
+                                } finally {
+                                    activeCropJobs.remove(idx)
+                                    inFlightCaptureCount.decrementAndGet()
+                                }
+                            }
+                            activeCropJobs[idx] = job
+                        } else {
+                            pendingRawCaptures.remove(idx)
+                            failedCaptures[idx] = ""
+                        }
+                    }
+                }
+            }
+        }
+
         setupWindowInsets()
         setupListeners()
         setupAiScannerFallback()
 
+        if (capturedPagePaths.isNotEmpty()) {
+            updateCapturedPagesUI(capturedPagePaths.last())
+        }
+
         if (isIdCardMode) {
             binding.focusOverlayView.setIdCardMode(true)
-            binding.tvCameraHint.text = "🪪 Chụp MẶT TRƯỚC của thẻ (đặt thẻ khớp khung)"
+            binding.tvCameraHint.setText(R.string.camera_hint_id_card_front)
         }
 
         if (allPermissionsGranted()) {
@@ -122,25 +255,51 @@ class CameraScanActivity : AppCompatActivity() {
         })
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(KEY_SESSION_ID, sessionId)
+        outState.putInt(KEY_CAPTURE_SEQ, captureSequence.get())
+        outState.putBoolean(KEY_AUTO_CROP, isAutoCropEnabled)
+        outState.putInt(KEY_FLASH_MODE, flashMode)
+
+        // Completed pages with indices
+        val pageIndices = orderedPageMap.keys.toIntArray()
+        val pagePaths = ArrayList(orderedPageMap.values)
+        outState.putIntArray(KEY_PAGE_MAP_INDICES, pageIndices)
+        outState.putStringArrayList(KEY_PAGE_MAP_PATHS, pagePaths)
+        outState.putStringArrayList(KEY_CAPTURED_PAGES, pagePaths)
+
+        // Pending raw captures
+        val pendingIndices = pendingRawCaptures.keys.toIntArray()
+        val pendingPaths = ArrayList(pendingRawCaptures.values)
+        outState.putIntArray(KEY_PENDING_RAW_INDICES, pendingIndices)
+        outState.putStringArrayList(KEY_PENDING_RAW_PATHS, pendingPaths)
+
+        // Failed captures
+        val failedIndices = failedCaptures.keys.toIntArray()
+        val failedPaths = ArrayList(failedCaptures.values)
+        outState.putIntArray(KEY_FAILED_CAPTURE_INDICES, failedIndices)
+        outState.putStringArrayList(KEY_FAILED_CAPTURE_PATHS, failedPaths)
+    }
+
     private fun setupWindowInsets() {
+        val initialTopPadding = EdgeToEdgeInsetsHelper.recordInitialPadding(binding.layoutCameraTopBar)
+        val initialBottomPadding = EdgeToEdgeInsetsHelper.recordInitialPadding(binding.layoutCameraBottomBar)
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
-            val statusBarInsets = insets.getInsets(
-                WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.displayCutout()
-            )
-            val navInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            val sysInsets = EdgeToEdgeInsetsHelper.getSystemBarAndCutoutInsets(insets)
 
-            binding.layoutCameraTopBar.setPadding(
-                binding.layoutCameraTopBar.paddingLeft,
-                statusBarInsets.top + (8 * resources.displayMetrics.density).toInt(),
-                binding.layoutCameraTopBar.paddingRight,
-                binding.layoutCameraTopBar.paddingBottom
+            EdgeToEdgeInsetsHelper.applyTopBarInsets(
+                binding.layoutCameraTopBar,
+                initialTopPadding,
+                sysInsets
             )
 
-            binding.layoutCameraBottomBar.setPadding(
-                binding.layoutCameraBottomBar.paddingLeft,
-                binding.layoutCameraBottomBar.paddingTop,
-                binding.layoutCameraBottomBar.paddingRight,
-                navInsets.bottom + (16 * resources.displayMetrics.density).toInt()
+            EdgeToEdgeInsetsHelper.applyBottomBarInsets(
+                binding.layoutCameraBottomBar,
+                initialBottomPadding,
+                sysInsets,
+                sysInsets.bottom
             )
 
             insets
@@ -232,15 +391,16 @@ class CameraScanActivity : AppCompatActivity() {
                 )
             } catch (e: Exception) {
                 e.printStackTrace()
-                Toast.makeText(this, "Không thể khởi động máy ảnh: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.camera_start_error, e.message ?: ""), Toast.LENGTH_SHORT).show()
             }
         }, ContextCompat.getMainExecutor(this))
     }
 
     private fun takeSuperFastPhoto() {
         val capture = imageCapture ?: return
-        if (isCapturing) return
+        if (isCapturing || isFinishingSession) return
         isCapturing = true
+        inFlightCaptureCount.incrementAndGet()
 
         // 1. Phản hồi tức thì bằng âm rung haptic + chớp màn hình (Zero Shutter Lag UX)
         triggerShutterFeedback()
@@ -248,6 +408,10 @@ class CameraScanActivity : AppCompatActivity() {
         val tempDir = FileUtils.getTempScanSessionDir(this, sessionId)
         val photoIndex = captureSequence.incrementAndGet()
         val rawFile = File(tempDir, "raw_${System.currentTimeMillis()}_$photoIndex.jpg")
+        pendingRawCaptures[photoIndex] = rawFile.absolutePath
+        lifecycleScope.launch {
+            sessionManager.recordRawCapture(photoIndex, rawFile)
+        }
         val outputOptions = ImageCapture.OutputFileOptions.Builder(rawFile).build()
 
         capture.takePicture(
@@ -259,38 +423,12 @@ class CameraScanActivity : AppCompatActivity() {
                     isCapturing = false
 
                     val job = lifecycleScope.launch {
-                        val finalPageFile = File(tempDir, "page_${photoIndex}_${System.currentTimeMillis()}.jpg")
-
-                        // 2. Tự động nhận diện & cắt viền ngầm trong luồng nền
-                        withContext(Dispatchers.IO) {
-                            try {
-                                if (isAutoCropEnabled) {
-                                    val cropped = DocumentEdgeDetector.detectAndCrop(rawFile, finalPageFile)
-                                    if (!cropped || !finalPageFile.exists() || finalPageFile.length() == 0L) {
-                                        DocumentEdgeDetector.normalizeImageOrientation(rawFile, finalPageFile)
-                                    }
-                                } else {
-                                    DocumentEdgeDetector.normalizeImageOrientation(rawFile, finalPageFile)
-                                }
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                                try {
-                                    rawFile.copyTo(finalPageFile, overwrite = true)
-                                } catch (_: Exception) {}
-                            } finally {
-                                try { rawFile.delete() } catch (_: Exception) {}
-                            }
+                        try {
+                            processCapturedRawFile(photoIndex, rawFile, tempDir)
+                        } finally {
+                            activeCropJobs.remove(photoIndex)
+                            inFlightCaptureCount.decrementAndGet()
                         }
-
-                        if (finalPageFile.exists() && finalPageFile.length() > 0L) {
-                            orderedPageMap[photoIndex] = finalPageFile.absolutePath
-                            synchronized(capturedPagePaths) {
-                                capturedPagePaths.clear()
-                                capturedPagePaths.addAll(orderedPageMap.values)
-                            }
-                            updateCapturedPagesUI(finalPageFile.absolutePath)
-                        }
-                        activeCropJobs.remove(photoIndex)
                     }
                     activeCropJobs[photoIndex] = job
                 }
@@ -298,12 +436,91 @@ class CameraScanActivity : AppCompatActivity() {
                 override fun onError(exception: ImageCaptureException) {
                     exception.printStackTrace()
                     isCapturing = false
+                    pendingRawCaptures.remove(photoIndex)
+                    inFlightCaptureCount.decrementAndGet()
                     lifecycleScope.launch {
-                        Toast.makeText(this@CameraScanActivity, "Lỗi khi chụp: ${exception.message}", Toast.LENGTH_SHORT).show()
+                        sessionManager.removePage(photoIndex)
+                        Toast.makeText(this@CameraScanActivity, getString(R.string.camera_capture_error, exception.message ?: ""), Toast.LENGTH_SHORT).show()
                     }
                 }
             }
         )
+    }
+
+    private suspend fun processCapturedRawFile(photoIndex: Int, rawFile: File, tempDir: File) {
+        val finalPageFile = File(tempDir, "page_${photoIndex}_${System.currentTimeMillis()}.jpg")
+        sessionManager.recordProcessing(photoIndex, rawFile, finalPageFile)
+        val processedOk = withContext(Dispatchers.IO) {
+            var ok = false
+            try {
+                if (isAutoCropEnabled) {
+                    val cropped = DocumentEdgeDetector.detectAndCrop(rawFile, finalPageFile)
+                    if (cropped && finalPageFile.exists() && finalPageFile.length() > 0L) {
+                        ok = true
+                    } else {
+                        val normalized = DocumentEdgeDetector.normalizeImageOrientation(rawFile, finalPageFile)
+                        if (normalized && finalPageFile.exists() && finalPageFile.length() > 0L) {
+                            ok = true
+                        }
+                    }
+                } else {
+                    val normalized = DocumentEdgeDetector.normalizeImageOrientation(rawFile, finalPageFile)
+                    if (normalized && finalPageFile.exists() && finalPageFile.length() > 0L) {
+                        ok = true
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            if (!ok) {
+                try {
+                    rawFile.copyTo(finalPageFile, overwrite = true)
+                    if (finalPageFile.exists() && finalPageFile.length() > 0L) {
+                        ok = true
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+            ok && SafeFileWriter.validateImage(finalPageFile)
+        }
+
+        // C01 Two-Phase Commit Protocol:
+        // Step 1: Document processing produces and validates finalPageFile (done above)
+        // Step 2: sessionManager.commitPageOutput persists COMMITTED status to manifest on disk
+        // Step 3: ONLY after commitPageOutput returns true, delete rawFile and update orderedPageMap
+        val committed = if (processedOk) {
+            sessionManager.commitPageOutput(photoIndex, finalPageFile)
+        } else {
+            false
+        }
+
+        if (committed) {
+            pendingRawCaptures.remove(photoIndex)
+            failedCaptures.remove(photoIndex)
+            // C01: Safely delete rawFile only AFTER finalPageFile is validated AND manifest is committed
+            withContext(Dispatchers.IO) {
+                try { rawFile.delete() } catch (_: Exception) {}
+            }
+            orderedPageMap[photoIndex] = finalPageFile.absolutePath
+            synchronized(capturedPagePaths) {
+                capturedPagePaths.clear()
+                capturedPagePaths.addAll(orderedPageMap.values)
+            }
+            updateCapturedPagesUI(finalPageFile.absolutePath)
+        } else {
+            // C01: Preserve rawFile on failure for retry/user recovery and record failure in session manifest
+            sessionManager.recordFailure(photoIndex, if (rawFile.exists()) rawFile else null)
+            pendingRawCaptures.remove(photoIndex)
+            failedCaptures[photoIndex] = if (rawFile.exists()) rawFile.absolutePath else ""
+            withContext(Dispatchers.Main) {
+                Toast.makeText(
+                    this@CameraScanActivity,
+                    getString(R.string.camera_capture_error, "Page $photoIndex"),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 
     private fun triggerShutterFeedback() {
@@ -349,17 +566,17 @@ class CameraScanActivity : AppCompatActivity() {
         // Cập nhật nút Hoàn tất và huy hiệu số trang
         binding.layoutDoneContainer.visibility = View.VISIBLE
         binding.tvDonePageCount.text = totalPages.toString()
-        binding.btnDoneScan.text = "Hoàn tất ($totalPages)"
+        binding.btnDoneScan.text = getString(R.string.camera_done_with_count, totalPages)
 
         if (isIdCardMode) {
             if (totalPages == 1) {
-                binding.tvCameraHint.text = "🪪 Đã chụp mặt trước. Hãy lật thẻ và chụp MẶT SAU"
+                binding.tvCameraHint.setText(R.string.camera_hint_id_card_back)
             } else if (totalPages >= 2) {
                 // Tự động chuyển thẳng vào màn hình ghép thẻ khi đủ 2 mặt
                 finishScanningSession()
             }
         } else {
-            binding.tvCameraHint.text = "Đã chụp $totalPages trang • Tiếp tục chụp hoặc bấm Hoàn tất"
+            binding.tvCameraHint.text = getString(R.string.camera_hint_pages_captured, totalPages)
         }
     }
 
@@ -372,14 +589,14 @@ class CameraScanActivity : AppCompatActivity() {
 
         imageCapture?.flashMode = flashMode
 
-        val (iconRes, toastMsg) = when (flashMode) {
-            ImageCapture.FLASH_MODE_ON -> Pair(R.drawable.ic_flash_on, "Đèn Flash: Bật")
-            ImageCapture.FLASH_MODE_AUTO -> Pair(R.drawable.ic_flash_auto, "Đèn Flash: Tự động")
-            else -> Pair(R.drawable.ic_flash_off, "Đèn Flash: Tắt")
+        val (iconRes, toastMsgRes) = when (flashMode) {
+            ImageCapture.FLASH_MODE_ON -> Pair(R.drawable.ic_flash_on, R.string.camera_flash_on)
+            ImageCapture.FLASH_MODE_AUTO -> Pair(R.drawable.ic_flash_auto, R.string.camera_flash_auto)
+            else -> Pair(R.drawable.ic_flash_off, R.string.camera_flash_off)
         }
 
         binding.btnFlashToggle.setImageResource(iconRes)
-        Toast.makeText(this, toastMsg, Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, toastMsgRes, Toast.LENGTH_SHORT).show()
     }
 
     private fun updateAutoCropUI() {
@@ -387,12 +604,12 @@ class CameraScanActivity : AppCompatActivity() {
             binding.ivAutoCropIcon.imageTintList = ColorStateList.valueOf(Color.parseColor("#00C28E"))
             binding.tvAutoCropLabel.setTextColor(Color.parseColor("#00C28E"))
             binding.focusOverlayView.setGuideFrameVisible(true)
-            Toast.makeText(this, "Bật tự động nhận diện & cắt viền tài liệu", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.camera_auto_crop_enabled, Toast.LENGTH_SHORT).show()
         } else {
             binding.ivAutoCropIcon.imageTintList = ColorStateList.valueOf(Color.parseColor("#8E909A"))
             binding.tvAutoCropLabel.setTextColor(Color.parseColor("#8E909A"))
             binding.focusOverlayView.setGuideFrameVisible(false)
-            Toast.makeText(this, "Tắt tự động cắt viền (Chụp toàn khung)", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.camera_auto_crop_disabled, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -402,7 +619,7 @@ class CameraScanActivity : AppCompatActivity() {
             scannerHelper.handleScanResult(
                 result = result,
                 onSuccess = { session ->
-                    if (session.tempPagePaths.isNotEmpty()) {
+                    if (session.tempPagePaths.isNotEmpty() && session.tempPagePaths.size == session.totalPagesExpected) {
                         if (isIdCardMode) {
                             IdCardComposeActivity.start(
                                 context = this@CameraScanActivity,
@@ -417,12 +634,12 @@ class CameraScanActivity : AppCompatActivity() {
                         }
                         finish()
                     } else {
-                        Toast.makeText(this@CameraScanActivity, "Không có trang nào được quét", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@CameraScanActivity, R.string.camera_no_pages_scanned, Toast.LENGTH_SHORT).show()
                     }
                 },
                 onCancelled = {},
                 onError = { err ->
-                    Toast.makeText(this@CameraScanActivity, "Lỗi quét AI: $err", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@CameraScanActivity, getString(R.string.camera_ai_scan_error, err), Toast.LENGTH_LONG).show()
                 }
             )
         }
@@ -431,31 +648,100 @@ class CameraScanActivity : AppCompatActivity() {
     private fun startGoogleAiScan() {
         if (isIdCardMode) {
             scannerHelper.startIdCardScan(aiScannerLauncher) { err ->
-                Toast.makeText(this, "Không thể mở trình Quét AI thẻ: $err", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, getString(R.string.camera_open_ai_id_card_error, err), Toast.LENGTH_LONG).show()
             }
         } else {
             scannerHelper.startScan(aiScannerLauncher) { err ->
-                Toast.makeText(this, "Không thể mở trình Quét AI: $err", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, getString(R.string.camera_open_ai_scanner_error, err), Toast.LENGTH_LONG).show()
             }
         }
     }
 
     private fun finishScanningSession() {
-        if (activeCropJobs.isNotEmpty()) {
+        if (isFinishingSession) return
+        isFinishingSession = true
+        binding.btnShutterCapture.isEnabled = false
+
+        val needsWaiting = inFlightCaptureCount.get() > 0 || activeCropJobs.isNotEmpty() || isCapturing
+        if (needsWaiting) {
             val progressDialog = MaterialAlertDialogBuilder(this)
-                .setTitle("Đang xử lý tài liệu")
-                .setMessage("Đang hoàn tất xử lý các trang vừa chụp...")
+                .setTitle(R.string.camera_processing_title)
+                .setMessage(R.string.camera_processing_message)
                 .setCancelable(false)
                 .create()
             progressDialog.show()
 
             lifecycleScope.launch {
-                activeCropJobs.values.toList().joinAll()
-                progressDialog.dismiss()
-                proceedToNextScreen()
+                while (inFlightCaptureCount.get() > 0 || activeCropJobs.isNotEmpty() || isCapturing) {
+                    activeCropJobs.values.toList().joinAll()
+                    delay(50)
+                }
+                try {
+                    progressDialog.dismiss()
+                } catch (_: Exception) {}
+                checkFailedCapturesAndProceed()
             }
         } else {
+            checkFailedCapturesAndProceed()
+        }
+    }
+
+    private fun checkFailedCapturesAndProceed() {
+        if (failedCaptures.isNotEmpty()) {
+            val failedPageListStr = failedCaptures.keys.sorted().joinToString(", ")
+            MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.camera_failed_captures_title)
+                .setMessage(getString(R.string.camera_failed_captures_msg, failedPageListStr))
+                .setCancelable(false)
+                .setPositiveButton(R.string.camera_retry_btn) { _, _ ->
+                    retryFailedCaptures()
+                }
+                .setNegativeButton(R.string.camera_skip_btn) { _, _ ->
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        failedCaptures.forEach { (idx, rawPath) ->
+                            sessionManager.removePage(idx)
+                            if (rawPath.isNotEmpty()) {
+                                try { File(rawPath).delete() } catch (_: Exception) {}
+                            }
+                        }
+                    }
+                    failedCaptures.clear()
+                    proceedToNextScreen()
+                }
+                .setNeutralButton(R.string.cancel) { _, _ ->
+                    isFinishingSession = false
+                    binding.btnShutterCapture.isEnabled = true
+                }
+                .show()
+        } else {
             proceedToNextScreen()
+        }
+    }
+
+    private fun retryFailedCaptures() {
+        val tempDir = FileUtils.getTempScanSessionDir(this, sessionId)
+        val progressDialog = MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.camera_processing_title)
+            .setMessage(R.string.camera_processing_message)
+            .setCancelable(false)
+            .create()
+        progressDialog.show()
+
+        lifecycleScope.launch {
+            val entries = failedCaptures.entries.toList()
+            for ((photoIndex, rawPath) in entries) {
+                val rawFile = File(rawPath)
+                if (rawFile.exists() && rawFile.length() > 0L) {
+                    processCapturedRawFile(photoIndex, rawFile, tempDir)
+                } else {
+                    sessionManager.removePage(photoIndex)
+                    failedCaptures.remove(photoIndex)
+                }
+            }
+            try {
+                progressDialog.dismiss()
+            } catch (_: Exception) {}
+            checkFailedCapturesAndProceed()
         }
     }
 
@@ -466,7 +752,9 @@ class CameraScanActivity : AppCompatActivity() {
         }
 
         if (capturedPagePaths.isEmpty()) {
-            Toast.makeText(this, "Chưa có trang tài liệu nào được chụp", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.camera_no_pages_captured, Toast.LENGTH_SHORT).show()
+            isFinishingSession = false
+            binding.btnShutterCapture.isEnabled = true
             return
         }
 
@@ -488,20 +776,20 @@ class CameraScanActivity : AppCompatActivity() {
     private fun handleExitAttempt() {
         if (capturedPagePaths.isNotEmpty()) {
             val message = if (isIdCardMode) {
-                "Bạn đang chụp dở thẻ ID. Thoát ra sẽ hủy ảnh chụp thẻ vừa rồi."
+                getString(R.string.camera_exit_dialog_msg_id_card)
             } else {
-                "Bạn đã chụp ${capturedPagePaths.size} trang tài liệu. Thoát ra sẽ hủy các trang vừa chụp."
+                getString(R.string.camera_exit_dialog_msg_docs, capturedPagePaths.size)
             }
             MaterialAlertDialogBuilder(this)
-                .setTitle("Hủy phiên quét?")
+                .setTitle(R.string.camera_exit_dialog_title)
                 .setMessage(message)
-                .setPositiveButton("Hủy & Thoát") { _, _ ->
+                .setPositiveButton(R.string.camera_exit_dialog_positive) { _, _ ->
                     lifecycleScope.launch(Dispatchers.IO) {
                         FileUtils.deleteTempSession(this@CameraScanActivity, sessionId)
                     }
                     finish()
                 }
-                .setNegativeButton("Tiếp tục chụp", null)
+                .setNegativeButton(R.string.camera_exit_dialog_negative, null)
                 .show()
         } else {
             finish()
@@ -519,6 +807,18 @@ class CameraScanActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_IS_ID_CARD_MODE = "extra_is_id_card_mode"
+
+        private const val KEY_SESSION_ID = "camera_session_id"
+        private const val KEY_CAPTURED_PAGES = "camera_captured_pages"
+        private const val KEY_CAPTURE_SEQ = "camera_capture_seq"
+        private const val KEY_AUTO_CROP = "camera_auto_crop"
+        private const val KEY_FLASH_MODE = "camera_flash_mode"
+        private const val KEY_PAGE_MAP_INDICES = "camera_page_map_indices"
+        private const val KEY_PAGE_MAP_PATHS = "camera_page_map_paths"
+        private const val KEY_PENDING_RAW_INDICES = "camera_pending_raw_indices"
+        private const val KEY_PENDING_RAW_PATHS = "camera_pending_raw_paths"
+        private const val KEY_FAILED_CAPTURE_INDICES = "camera_failed_capture_indices"
+        private const val KEY_FAILED_CAPTURE_PATHS = "camera_failed_capture_paths"
 
         fun start(context: Context) {
             val intent = Intent(context, CameraScanActivity::class.java).apply {

@@ -1,0 +1,10 @@
+{
+  "id": "blank_01",
+  "category": "blank_page",
+  "expectedStatus": "NO_TEXT",
+  "pageWidth": 1000,
+  "pageHeight": 1400,
+  "rotationDegrees": 0,
+  "groundTruthText": "",
+  "lines": []
+}

@@ -18,5 +18,7 @@ data class DocumentItem(
     val syncStatus: SyncStatus = if (isSynced) SyncStatus.SYNCED else SyncStatus.LOCAL_ONLY,
     val ownerId: String? = null,
     val contentRevision: Long = 0L,
-    val mimeType: String = "application/pdf"
+    val mimeType: String = "application/pdf",
+    val isConflict: Boolean = false,
+    val remoteModifiedTime: Long? = null
 ) : Serializable

@@ -24,10 +24,9 @@
             android:layout_height="36dp"
             android:padding="6dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_chevron_right"
-            android:rotation="180"
+            android:src="@drawable/ic_arrow_back"
             app:tint="@color/text_primary"
-            android:contentDescription="Hủy" />
+            android:contentDescription="@string/cancel" />
 
         <TextView
             android:layout_width="0dp"
@@ -69,7 +68,7 @@
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
-            android:contentDescription="Ảnh cần cắt" />
+            android:contentDescription="@string/crop_image_desc" />
 
         <com.tscanner.app.ui.editor.CropOverlayView
             android:id="@+id/crop_overlay_view"

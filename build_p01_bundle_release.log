@@ -1,0 +1,626 @@
+Initialized native services in: C:\Users\nguye\.gradle\native
+Initialized jansi services in: C:\Users\nguye\.gradle\native
+Removing daemon from the registry due to communication failure. Daemon information: DaemonInfo{pid=6684, address=[850f55ba-74a4-4e5d-9a8e-de13261cdce7 port:50633, addresses:[/127.0.0.1]], state=Idle, lastBusy=1790257471734, context=DefaultDaemonContext[uid=38452bef-a967-4605-b58b-e04fce0e08ab,javaHome=C:\Program Files\Java\jdk-22,javaVersion=22,javaVendor=Oracle Corporation,daemonRegistryDir=C:\Users\nguye\.gradle\daemon,pid=6684,idleTimeout=10800000,priority=NORMAL,applyInstrumentationAgent=true,nativeServicesMode=ENABLED,daemonOpts=-Xmx2048m,-Dfile.encoding=UTF-8,-Duser.country=US,-Duser.language=en,-Duser.variant]}
+Removing 1 daemon stop events from registry
+Previous Daemon (16096) stopped at Thu Sep 24 20:13:47 ICT 2026 after being idle for 6 minutes and not recently used and to reclaim system physical memory
+Previous Daemon (20900) stopped at Thu Sep 24 20:28:05 ICT 2026 stop command received
+Previous Daemon (11424) stopped at Thu Sep 24 20:13:05 ICT 2026 by user or operating system
+Previous Daemon (21624) stopped at Thu Sep 24 20:44:30 ICT 2026 by user or operating system
+Previous Daemon (6684) stopped at Thu Sep 24 20:58:46 ICT 2026 by user or operating system
+Starting a Gradle Daemon, 1 busy and 1 incompatible and 5 stopped Daemons could not be reused, use --status for details
+Starting process 'Gradle build daemon'. Working directory: C:\Users\nguye\.gradle\daemon\9.7.1 Command: C:\Program Files\Java\jdk-22\bin\java.exe --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.prefs/java.util.prefs=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED --add-opens=java.base/java.nio.charset=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED --add-opens=java.xml/javax.xml.namespace=ALL-UNNAMED --add-opens=java.base/java.time=ALL-UNNAMED -Xmx2048m -Dfile.encoding=UTF-8 -Duser.country=US -Duser.language=en -Duser.variant -cp C:\Users\nguye\.gradle\wrapper\dists\gradle-9.7.1-bin\1w1c7tv4s851m17nbqdsro2tv\gradle-9.7.1\lib\gradle-daemon-main-9.7.1.jar -javaagent:C:\Users\nguye\.gradle\wrapper\dists\gradle-9.7.1-bin\1w1c7tv4s851m17nbqdsro2tv\gradle-9.7.1\lib\agents\gradle-instrumentation-agent-9.7.1.jar org.gradle.launcher.daemon.bootstrap.GradleDaemon 9.7.1
+Successfully started process 'Gradle build daemon'
+An attempt to start the daemon took 1.649 secs.
+The client will now receive all logging from the daemon (pid: 5408). The daemon log file: C:\Users\nguye\.gradle\daemon\9.7.1\daemon-5408.out.log
+Starting build in new daemon [memory: 2 GiB]
+Using 8 worker leases.
+Operational build model parameters: {cachingModelBuilding=false, configurationCache=false, configurationCacheDisabledReason=null, configurationCacheParallelLoad=false, configurationCacheParallelStore=false, configureOnDemand=false, invalidateCoupledProjects=false, isolatedProjects=false, isolatedProjectsDiagnostics=false, isolatedProjectsDangerouslyIgnoreProblems=false, modelAsProjectDependency=false, modelBuilding=false, parallelModelBuilding=false, parallelProjectConfiguration=false, parallelProjectExecution=false, vintage=true}
+Received JVM installation metadata from 'C:\Program Files\Java\jdk-22': {JAVA_HOME=C:\Program Files\Java\jdk-22, JAVA_VERSION=22, JAVA_VENDOR=Oracle Corporation, RUNTIME_NAME=Java(TM) SE Runtime Environment, RUNTIME_VERSION=22+36-2370, VM_NAME=Java HotSpot(TM) 64-Bit Server VM, VM_VERSION=22+36-2370, VM_VENDOR=Oracle Corporation, OS_ARCH=amd64}
+Watching the file system is configured to be enabled if available
+Now considering [E:\DU AN AI\T-Scanner] as hierarchies to watch
+File system watching is active
+Starting Build
+Settings evaluated using settings file 'E:\DU AN AI\T-Scanner\settings.gradle'.
+Projects loaded. Root project using build file 'E:\DU AN AI\T-Scanner\build.gradle'.
+Included projects: [root project 'T-Scanner', project ':app']
+
+> Configure project :
+Evaluating root project 'T-Scanner' using build file 'E:\DU AN AI\T-Scanner\build.gradle'.
+Resolved plugin [id: 'com.android.application', version: '9.3.0', apply: false]
+
+> Configure project :app
+Evaluating project ':app' using build file 'E:\DU AN AI\T-Scanner\app\build.gradle'.
+Caching disabled for Groovy DSL script compilation (cp_proj) because:
+  Build cache is disabled
+  Not worth caching.
+Compiling build file 'E:\DU AN AI\T-Scanner\app\build.gradle' using SubsetScriptTransformer.
+Resolved plugin [id: 'com.android.application']
+Build 73515e2b-2ad5-4c4b-a343-263c985980d8 is started
+Using default execution profile
+Caching disabled for Groovy DSL script compilation (proj) because:
+  Build cache is disabled
+  Not worth caching.
+Compiling build file 'E:\DU AN AI\T-Scanner\app\build.gradle' using BuildScriptTransformer.
+All projects evaluated.
+Task path ':app:bundleRelease' matched project ':app'
+Task name matched 'bundleRelease'
+Selected primary task 'bundleRelease' from project :app
+Tasks to be executed: [task ':app:preBuild', task ':app:preReleaseBuild', task ':app:mapReleaseSourceSetPaths', task ':app:processReleaseNavigationResources', task ':app:compileReleaseNavigationResources', task ':app:generateReleaseResources', task ':app:mergeReleaseResources', task ':app:createReleaseCompatibleScreenManifests', task ':app:extractDeepLinksRelease', task ':app:processReleaseMainManifest', task ':app:processReleaseManifest', task ':app:processApplicationManifestReleaseForBundle', task ':app:checkReleaseAarMetadata', task ':app:packageReleaseResources', task ':app:parseReleaseLocalResources', task ':app:processReleaseManifestForPackage', task ':app:processReleaseResources', task ':app:bundleReleaseResources', task ':app:extractReleaseVersionControlInfo', task ':app:checkReleaseDuplicateClasses', task ':app:dataBindingMergeDependencyArtifactsRelease', task ':app:dataBindingGenBaseClassesRelease', task ':app:generateReleaseRFile', task ':app:compileReleaseKotlin', task ':app:javaPreCompileRelease', task ':app:compileReleaseJavaWithJavac', task ':app:dexBuilderRelease', task ':app:desugarReleaseFileDependencies', task ':app:mergeReleaseStartupProfile', task ':app:mergeExtDexRelease', task ':app:mergeDexRelease', task ':app:generateReleaseAssets', task ':app:mergeReleaseAssets', task ':app:mergeReleaseGlobalSynthetics', task ':app:processReleaseJavaRes', task ':app:mergeReleaseJavaResource', task ':app:mergeReleaseJniLibFolders', task ':app:mergeReleaseNativeLibs', task ':app:stripReleaseDebugSymbols', task ':app:writeReleaseAppMetadata', task ':app:buildReleasePreBundle', task ':app:mergeReleaseArtProfile', task ':app:compileReleaseArtProfile', task ':app:collectReleaseDependencies', task ':app:configureReleaseDependencies', task ':app:extractReleaseNativeSymbolTables', task ':app:extractProguardFiles', task ':app:generateReleaseLintVitalReportModel', task ':app:lintVitalAnalyzeRelease', task ':app:lintVitalReportRelease', task ':app:lintVitalRelease', task ':app:parseReleaseIntegrityConfig', task ':app:packageReleaseBundle', task ':app:signReleaseBundle', task ':app:produceReleaseBundleIdeListingFile', task ':app:createReleaseBundleListingFileRedirect', task ':app:bundleRelease']
+Tasks that were excluded: []
+Resolve mutations for :app:preBuild (Thread[#72,Execution worker Thread 2,5,main]) started.
+:app:preBuild (Thread[#72,Execution worker Thread 2,5,main]) started.
+
+> Task :app:preBuild UP-TO-DATE
+Skipping task ':app:preBuild' as it has no actions.
+Resolve mutations for :app:preReleaseBuild (Thread[#72,Execution worker Thread 2,5,main]) started.
+:app:preReleaseBuild (Thread[#72,Execution worker Thread 2,5,main]) started.
+
+> Task :app:preReleaseBuild UP-TO-DATE
+Skipping task ':app:preReleaseBuild' as it has no actions.
+Resolve mutations for :app:mapReleaseSourceSetPaths (Thread[#72,Execution worker Thread 2,5,main]) started.
+:app:mapReleaseSourceSetPaths (Thread[#72,Execution worker Thread 2,5,main]) started.
+
+> Task :app:mapReleaseSourceSetPaths UP-TO-DATE
+Caching disabled for task ':app:mapReleaseSourceSetPaths' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Skipping task ':app:mapReleaseSourceSetPaths' as it is up-to-date.
+Resolve mutations for :app:processReleaseNavigationResources (Thread[#72,Execution worker Thread 2,5,main]) started.
+:app:processReleaseNavigationResources (Thread[#72,Execution worker Thread 2,5,main]) started.
+
+> Task :app:processReleaseNavigationResources UP-TO-DATE
+Caching disabled for task ':app:processReleaseNavigationResources' because:
+  Build cache is disabled
+Skipping task ':app:processReleaseNavigationResources' as it is up-to-date.
+Resolve mutations for :app:compileReleaseNavigationResources (Thread[#72,Execution worker Thread 2,5,main]) started.
+:app:compileReleaseNavigationResources (Thread[#72,Execution worker Thread 2,5,main]) started.
+
+> Task :app:compileReleaseNavigationResources UP-TO-DATE
+Caching disabled for task ':app:compileReleaseNavigationResources' because:
+  Build cache is disabled
+Skipping task ':app:compileReleaseNavigationResources' as it is up-to-date.
+Resolve mutations for :app:generateReleaseResources (Thread[#72,Execution worker Thread 2,5,main]) started.
+:app:generateReleaseResources (Thread[#72,Execution worker Thread 2,5,main]) started.
+
+> Task :app:generateReleaseResources UP-TO-DATE
+Caching disabled for task ':app:generateReleaseResources' because:
+  Build cache is disabled
+Skipping task ':app:generateReleaseResources' as it is up-to-date.
+Resolve mutations for :app:mergeReleaseResources (Thread[#72,Execution worker Thread 2,5,main]) started.
+:app:mergeReleaseResources (Thread[#72,Execution worker Thread 2,5,main]) started.
+
+> Task :app:mergeReleaseResources UP-TO-DATE
+Caching disabled for task ':app:mergeReleaseResources' because:
+  Build cache is disabled
+Skipping task ':app:mergeReleaseResources' as it is up-to-date.
+Resolve mutations for :app:createReleaseCompatibleScreenManifests (Thread[#72,Execution worker Thread 2,5,main]) started.
+:app:createReleaseCompatibleScreenManifests (Thread[#72,Execution worker Thread 2,5,main]) started.
+
+> Task :app:createReleaseCompatibleScreenManifests
+Caching disabled for task ':app:createReleaseCompatibleScreenManifests' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Task ':app:createReleaseCompatibleScreenManifests' is not up-to-date because:
+  Value of input property 'variantOutputs.$0.outputFileName' has changed for task ':app:createReleaseCompatibleScreenManifests'
+Resolve mutations for :app:extractDeepLinksRelease (Thread[#76,Execution worker Thread 6,5,main]) started.
+:app:extractDeepLinksRelease (Thread[#76,Execution worker Thread 6,5,main]) started.
+
+> Task :app:extractDeepLinksRelease UP-TO-DATE
+Caching disabled for task ':app:extractDeepLinksRelease' because:
+  Build cache is disabled
+Skipping task ':app:extractDeepLinksRelease' as it is up-to-date.
+Resolve mutations for :app:processReleaseMainManifest (Thread[#76,Execution worker Thread 6,5,main]) started.
+:app:processReleaseMainManifest (Thread[#76,Execution worker Thread 6,5,main]) started.
+
+> Task :app:processReleaseMainManifest UP-TO-DATE
+Caching disabled for task ':app:processReleaseMainManifest' because:
+  Build cache is disabled
+Skipping task ':app:processReleaseMainManifest' as it is up-to-date.
+Resolve mutations for :app:processReleaseManifest (Thread[#76,Execution worker Thread 6,5,main]) started.
+:app:processReleaseManifest (Thread[#76,Execution worker Thread 6,5,main]) started.
+
+> Task :app:processReleaseManifest
+Caching disabled for task ':app:processReleaseManifest' because:
+  Build cache is disabled
+Task ':app:processReleaseManifest' is not up-to-date because:
+  Value of input property 'outputsHandler.variantOutputs.$0.outputFileName' has changed for task ':app:processReleaseManifest'
+Resolve mutations for :app:processApplicationManifestReleaseForBundle (Thread[#77,Execution worker Thread 7,5,main]) started.
+:app:processApplicationManifestReleaseForBundle (Thread[#77,Execution worker Thread 7,5,main]) started.
+
+> Task :app:processApplicationManifestReleaseForBundle
+Caching disabled for task ':app:processApplicationManifestReleaseForBundle' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Task ':app:processApplicationManifestReleaseForBundle' is not up-to-date because:
+  Value of input property 'outputsHandler.variantOutputs.$0.outputFileName' has changed for task ':app:processApplicationManifestReleaseForBundle'
+Resolve mutations for :app:checkReleaseAarMetadata (Thread[#77,Execution worker Thread 7,5,main]) started.
+:app:checkReleaseAarMetadata (Thread[#77,Execution worker Thread 7,5,main]) started.
+
+> Task :app:checkReleaseAarMetadata UP-TO-DATE
+Caching disabled for task ':app:checkReleaseAarMetadata' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Skipping task ':app:checkReleaseAarMetadata' as it is up-to-date.
+Resolve mutations for :app:packageReleaseResources (Thread[#75,Execution worker Thread 5,5,main]) started.
+:app:packageReleaseResources (Thread[#77,Execution worker Thread 7,5,main]) started.
+
+> Task :app:packageReleaseResources UP-TO-DATE
+Caching disabled for task ':app:packageReleaseResources' because:
+  Build cache is disabled
+Skipping task ':app:packageReleaseResources' as it is up-to-date.
+Resolve mutations for :app:parseReleaseLocalResources (Thread[#75,Execution worker Thread 5,5,main]) started.
+:app:parseReleaseLocalResources (Thread[#75,Execution worker Thread 5,5,main]) started.
+
+> Task :app:parseReleaseLocalResources UP-TO-DATE
+Caching disabled for task ':app:parseReleaseLocalResources' because:
+  Build cache is disabled
+Skipping task ':app:parseReleaseLocalResources' as it is up-to-date.
+Resolve mutations for :app:processReleaseManifestForPackage (Thread[#75,Execution worker Thread 5,5,main]) started.
+:app:processReleaseManifestForPackage (Thread[#75,Execution worker Thread 5,5,main]) started.
+
+> Task :app:processReleaseManifestForPackage UP-TO-DATE
+Custom actions are attached to task ':app:processReleaseManifestForPackage'.
+Caching disabled for task ':app:processReleaseManifestForPackage' because:
+  Build cache is disabled
+Skipping task ':app:processReleaseManifestForPackage' as it is up-to-date.
+Resolve mutations for :app:processReleaseResources (Thread[#75,Execution worker Thread 5,5,main]) started.
+:app:processReleaseResources (Thread[#75,Execution worker Thread 5,5,main]) started.
+Resolve mutations for :app:extractReleaseVersionControlInfo (Thread[#73,Execution worker Thread 3,5,main]) started.
+:app:extractReleaseVersionControlInfo (Thread[#73,Execution worker Thread 3,5,main]) started.
+
+> Task :app:extractReleaseVersionControlInfo UP-TO-DATE
+Caching disabled for task ':app:extractReleaseVersionControlInfo' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Skipping task ':app:extractReleaseVersionControlInfo' as it is up-to-date.
+Resolve mutations for :app:checkReleaseDuplicateClasses (Thread[#73,Execution worker Thread 3,5,main]) started.
+:app:checkReleaseDuplicateClasses (Thread[#73,Execution worker Thread 3,5,main]) started.
+
+> Task :app:checkReleaseDuplicateClasses UP-TO-DATE
+Caching disabled for task ':app:checkReleaseDuplicateClasses' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Skipping task ':app:checkReleaseDuplicateClasses' as it is up-to-date.
+Resolve mutations for :app:dataBindingMergeDependencyArtifactsRelease (Thread[#73,Execution worker Thread 3,5,main]) started.
+:app:dataBindingMergeDependencyArtifactsRelease (Thread[#73,Execution worker Thread 3,5,main]) started.
+
+> Task :app:dataBindingMergeDependencyArtifactsRelease UP-TO-DATE
+Caching disabled for task ':app:dataBindingMergeDependencyArtifactsRelease' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Skipping task ':app:dataBindingMergeDependencyArtifactsRelease' as it is up-to-date.
+Resolve mutations for :app:dataBindingGenBaseClassesRelease (Thread[#71,Execution worker,5,main]) started.
+:app:dataBindingGenBaseClassesRelease (Thread[#71,Execution worker,5,main]) started.
+
+> Task :app:dataBindingGenBaseClassesRelease UP-TO-DATE
+Caching disabled for task ':app:dataBindingGenBaseClassesRelease' because:
+  Build cache is disabled
+Skipping task ':app:dataBindingGenBaseClassesRelease' as it is up-to-date.
+Resolve mutations for :app:generateReleaseRFile (Thread[#71,Execution worker,5,main]) started.
+:app:generateReleaseRFile (Thread[#71,Execution worker,5,main]) started.
+
+> Task :app:generateReleaseRFile UP-TO-DATE
+Caching disabled for task ':app:generateReleaseRFile' because:
+  Build cache is disabled
+Skipping task ':app:generateReleaseRFile' as it is up-to-date.
+Resolve mutations for :app:compileReleaseKotlin (Thread[#73,Execution worker Thread 3,5,main]) started.
+:app:compileReleaseKotlin (Thread[#71,Execution worker,5,main]) started.
+
+> Task :app:processReleaseResources
+Caching disabled for task ':app:processReleaseResources' because:
+  Build cache is disabled
+Task ':app:processReleaseResources' is not up-to-date because:
+  Value of input property 'outputsHandler.variantOutputs.$0.outputFileName' has changed for task ':app:processReleaseResources'
+The input changes require a full rebuild for incremental task ':app:processReleaseResources'.
+AAPT2 aapt2-9.3.0-15703166-windows Daemon #0: starting
+
+Resolve mutations for :app:javaPreCompileRelease (Thread[#77,Execution worker Thread 7,5,main]) started.
+:app:javaPreCompileRelease (Thread[#77,Execution worker Thread 7,5,main]) started.
+
+> Task :app:javaPreCompileRelease UP-TO-DATE
+Caching disabled for task ':app:javaPreCompileRelease' because:
+  Build cache is disabled
+Skipping task ':app:javaPreCompileRelease' as it is up-to-date.
+Resolve mutations for :app:desugarReleaseFileDependencies (Thread[#77,Execution worker Thread 7,5,main]) started.
+:app:desugarReleaseFileDependencies (Thread[#70,included builds,5,main]) started.
+
+> Task :app:desugarReleaseFileDependencies UP-TO-DATE
+Caching disabled for task ':app:desugarReleaseFileDependencies' because:
+  Build cache is disabled
+Skipping task ':app:desugarReleaseFileDependencies' as it is up-to-date.
+Resolve mutations for :app:mergeReleaseStartupProfile (Thread[#70,included builds,5,main]) started.
+:app:mergeReleaseStartupProfile (Thread[#70,included builds,5,main]) started.
+
+> Task :app:mergeReleaseStartupProfile UP-TO-DATE
+Caching disabled for task ':app:mergeReleaseStartupProfile' because:
+  Build cache is disabled
+  Simple merging task
+Skipping task ':app:mergeReleaseStartupProfile' as it is up-to-date.
+Resolve mutations for :app:mergeExtDexRelease (Thread[#77,Execution worker Thread 7,5,main]) started.
+:app:mergeExtDexRelease (Thread[#77,Execution worker Thread 7,5,main]) started.
+
+> Task :app:compileReleaseKotlin
+file or directory 'E:\DU AN AI\T-Scanner\app\src\main\kotlin', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\java', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\kotlin', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\java', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\main\kotlin', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\java', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\kotlin', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\java', not found
+Adding -Xuse-inline-scopes-numbers Kotlin compiler flag for task :app:compileDebugKotlin
+file or directory 'E:\DU AN AI\T-Scanner\app\src\main\kotlin', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\java', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\kotlin', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\java', not found
+Custom actions are attached to task ':app:compileReleaseKotlin'.
+Caching disabled for task ':app:compileReleaseKotlin' because:
+  Build cache is disabled
+Task ':app:compileReleaseKotlin' is not up-to-date because:
+  Value of input property 'kotlinJavaToolchainProvider.javaVersion' has changed for task ':app:compileReleaseKotlin'
+The input changes require a full rebuild for incremental task ':app:compileReleaseKotlin'.
+file or directory 'E:\DU AN AI\T-Scanner\app\src\main\kotlin', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\main\kotlin', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\java', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\java', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\kotlin', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\kotlin', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\java', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\java', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\main\kotlin', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\java', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\kotlin', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\java', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\main\kotlin', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\main\kotlin', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\java', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\java', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\kotlin', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\kotlin', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\java', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\java', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\main\kotlin', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\main\kotlin', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\java', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\java', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\kotlin', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\kotlin', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\java', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\java', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\main\kotlin', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\main\kotlin', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\java', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\java', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\kotlin', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\kotlin', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\java', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\java', not found
+Kotlin source files: E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\data\model\DocumentItem.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\data\model\FolderItem.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\data\model\ManagedFileItem.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\data\model\PostScanSessionDraft.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\data\model\SyncStatus.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\data\model\UserProfile.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\data\model\VipTier.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\data\repository\DocumentRepo.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\data\repository\PostScanSessionRepository.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\MainActivity.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ocr\data\OcrDocumentRepository.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ocr\edit\OcrEditCommand.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ocr\edit\OcrEditHistory.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ocr\edit\OcrEditReducer.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ocr\engine\MlKitLayoutMapper.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ocr\export\DocxWriter.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ocr\export\XlsxWriter.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ocr\geometry\OcrCoordinateMapper.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ocr\layout\DocumentLayoutAnalyzer.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ocr\model\OcrDocument.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ocr\table\TableStructureAnalyzer.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\TScannerApplication.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\adapter\DocumentAdapter.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\adapter\FolderAdapter.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\adapter\ManagedFileAdapter.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\adapter\PdfPageAdapter.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\camera\CameraScanActivity.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\camera\CameraScanSessionManager.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\camera\FocusOverlayView.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\dialogs\AboutAppDialog.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\dialogs\AccountDetailDialog.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\dialogs\CheckUpdateDialog.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\dialogs\ConfirmDeleteDialog.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\dialogs\CreateFolderDialog.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\dialogs\CreatePdfDialog.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\dialogs\DocumentManagementDialog.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\dialogs\ExportDocDialog.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\dialogs\IdCardOptionsDialog.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\dialogs\LanguageAdapter.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\dialogs\LanguageSelectionDialog.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\dialogs\OcrEngineSelectionDialog.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\dialogs\OcrLanguageAdapter.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\dialogs\OcrLanguageSelectionDialog.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\dialogs\QrResultDialog.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\dialogs\RenameDocumentDialog.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\dialogs\SaveExportDialog.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\dialogs\VipUpgradeDialog.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\docmanagement\DocumentManagementActivity.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\editor\adapter\PostScanThumbnailAdapter.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\editor\CropOverlayView.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\editor\CropRotateActivity.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\editor\model\DocumentFilterType.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\editor\model\NormalizedCropRect.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\editor\model\PageEditState.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\editor\model\PageGeometry.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\editor\PostScanEditorActivity.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\editor\view\ZoomableImageView.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\editor\viewmodel\PostScanEditorViewModel.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\files\FilesFragment.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\home\HomeFragment.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\idcard\IdCardComposeActivity.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\idcard\IdCardSessionDraft.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\more\MoreFragment.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\ocr\editor\OcrTableEditorFragment.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\ocr\editor\OcrTextEditorFragment.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\ocr\OcrResultActivity.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\ocr\reader\OcrPageView.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\ocr\reader\OcrReaderViewModel.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\ocr\reader\OcrSelectionController.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\tools\ToolsFragment.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\ui\viewer\PdfViewerActivity.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\utils\AppAuthManager.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\utils\AppLanguageManager.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\utils\CloudBackupManager.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\utils\DocumentEdgeDetector.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\utils\DocumentImportHelper.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\utils\DocumentScannerHelper.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\utils\FileUtils.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\utils\GoogleDriveBackupWorker.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\utils\GoogleDriveService.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\utils\IdCardComposerHelper.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\utils\ImageMemoryBudgetCalculator.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\utils\ImageProcessingAlgorithms.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\utils\ImageProcessingEngine.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\utils\LegacyPaddleCleanup.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\utils\OcrLanguageIdentifier.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\utils\OcrModels.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\utils\OcrScriptProbe.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\utils\PdfConverterHelper.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\utils\QrScannerHelper.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\utils\SafeFileWriter.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\utils\TesseractOcrHelper.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\utils\TextRecognitionHelper.kt, E:\DU AN AI\T-Scanner\app\src\main\java\com\tscanner\app\utils\WatermarkHelper.kt
+Java source files: E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\ActivityCameraScanBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\ActivityCropRotateBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\ActivityDocumentManagementBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\ActivityIdCardComposeBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\ActivityMainBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\ActivityOcrResultBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\ActivityPdfViewerBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\ActivityPostScanEditorBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\DialogAboutBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\DialogAccountDetailBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\DialogCheckUpdateBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\DialogConfirmDeleteBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\DialogCreateFolderBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\DialogCreatePdfBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\DialogDocManagementBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\DialogExportDocBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\DialogIdCardOptionsBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\DialogLanguageSelectionBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\DialogOcrEngineSelectionBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\DialogOcrLanguageSelectionBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\DialogQrOptionsBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\DialogQrResultBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\DialogRenameDocumentBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\DialogSaveExportBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\DialogScanOptionsBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\DialogVipUpgradeBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\FragmentFilesBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\FragmentHomeBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\FragmentMoreBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\FragmentOcrTableEditorBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\FragmentOcrTextEditorBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\FragmentToolsBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\ItemDocumentBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\ItemFolderBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\ItemLanguageSelectionBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\ItemManagedFileBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\ItemOcrLanguageSelectionBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\ItemPdfPageBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\ItemPostScanThumbnailBinding.java, E:\DU AN AI\T-Scanner\app\build\generated\data_binding_base_class_source_out\release\out\com\tscanner\app\databinding\ItemTableRowBinding.java
+Script source files: 
+Script file extensions: 
+Using Kotlin/JVM incremental compilation
+[KOTLIN] Kotlin compilation 'jdkHome' argument: C:\Program Files\Java\jdk-22
+i: cannot connect to registry: Connection refused: connect
+Options for KOTLIN DAEMON: IncrementalCompilationOptions(super=CompilationOptions(compilerMode=INCREMENTAL_COMPILER, targetPlatform=JVM, reportCategories=[0, 3], reportSeverity=2, requestedCompilationResults=[0], kotlinScriptExtensions=[]), sourceChanges=org.jetbrains.kotlin.buildtools.api.SourcesChanges$Unknown@4aef66a8, classpathChanges=NotAvailableForNonIncrementalRun, workingDir=E:\DU AN AI\T-Scanner\app\build\kotlin\compileReleaseKotlin\cacheable, multiModuleICSettings=MultiModuleICSettings(buildHistoryFile=E:\DU AN AI\T-Scanner\app\build\kotlin\compileReleaseKotlin\local-state\build-history.bin, useModuleDetection=true), icFeatures=IncrementalCompilationFeatures(usePreciseJavaTracking=true, withAbiSnapshot=false, preciseCompilationResultsBackup=true, keepIncrementalCompilationCachesInMemory=true, enableUnsafeIncrementalCompilationForMultiplatform=false, enableMonotonousIncrementalCompileSetExpansion=true), outputFiles=[E:\DU AN AI\T-Scanner\app\build\intermediates\built_in_kotlinc\release\compileReleaseKotlin\classes, E:\DU AN AI\T-Scanner\app\build\kotlin\compileReleaseKotlin\cacheable, E:\DU AN AI\T-Scanner\app\build\kotlin\compileReleaseKotlin\local-state])
+
+> Task :app:mergeExtDexRelease UP-TO-DATE
+Caching disabled for task ':app:mergeExtDexRelease' because:
+  Build cache is disabled
+Skipping task ':app:mergeExtDexRelease' as it is up-to-date.
+Resolve mutations for :app:generateReleaseAssets (Thread[#77,Execution worker Thread 7,5,main]) started.
+:app:generateReleaseAssets (Thread[#76,Execution worker Thread 6,5,main]) started.
+
+> Task :app:generateReleaseAssets UP-TO-DATE
+Skipping task ':app:generateReleaseAssets' as it has no actions.
+Resolve mutations for :app:mergeReleaseAssets (Thread[#76,Execution worker Thread 6,5,main]) started.
+:app:mergeReleaseAssets (Thread[#76,Execution worker Thread 6,5,main]) started.
+
+> Task :app:mergeReleaseAssets UP-TO-DATE
+Caching disabled for task ':app:mergeReleaseAssets' because:
+  Build cache is disabled
+  Simple merging task
+Skipping task ':app:mergeReleaseAssets' as it is up-to-date.
+Resolve mutations for :app:mergeReleaseJniLibFolders (Thread[#70,included builds,5,main]) started.
+:app:mergeReleaseJniLibFolders (Thread[#70,included builds,5,main]) started.
+
+> Task :app:mergeReleaseJniLibFolders UP-TO-DATE
+Caching disabled for task ':app:mergeReleaseJniLibFolders' because:
+  Build cache is disabled
+  Simple merging task
+Skipping task ':app:mergeReleaseJniLibFolders' as it is up-to-date.
+Resolve mutations for :app:mergeReleaseNativeLibs (Thread[#70,included builds,5,main]) started.
+:app:mergeReleaseNativeLibs (Thread[#70,included builds,5,main]) started.
+
+> Task :app:mergeReleaseNativeLibs UP-TO-DATE
+Caching disabled for task ':app:mergeReleaseNativeLibs' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Skipping task ':app:mergeReleaseNativeLibs' as it is up-to-date.
+Resolve mutations for :app:stripReleaseDebugSymbols (Thread[#70,included builds,5,main]) started.
+:app:stripReleaseDebugSymbols (Thread[#70,included builds,5,main]) started.
+
+> Task :app:stripReleaseDebugSymbols UP-TO-DATE
+Caching disabled for task ':app:stripReleaseDebugSymbols' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Skipping task ':app:stripReleaseDebugSymbols' as it is up-to-date.
+Resolve mutations for :app:writeReleaseAppMetadata (Thread[#70,included builds,5,main]) started.
+:app:writeReleaseAppMetadata (Thread[#70,included builds,5,main]) started.
+
+> Task :app:writeReleaseAppMetadata UP-TO-DATE
+Caching disabled for task ':app:writeReleaseAppMetadata' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Skipping task ':app:writeReleaseAppMetadata' as it is up-to-date.
+Resolve mutations for :app:mergeReleaseArtProfile (Thread[#70,included builds,5,main]) started.
+:app:mergeReleaseArtProfile (Thread[#70,included builds,5,main]) started.
+
+> Task :app:mergeReleaseArtProfile UP-TO-DATE
+Caching disabled for task ':app:mergeReleaseArtProfile' because:
+  Build cache is disabled
+  Simple merging task
+Skipping task ':app:mergeReleaseArtProfile' as it is up-to-date.
+Resolve mutations for :app:collectReleaseDependencies (Thread[#70,included builds,5,main]) started.
+:app:collectReleaseDependencies (Thread[#74,Execution worker Thread 4,5,main]) started.
+
+> Task :app:collectReleaseDependencies UP-TO-DATE
+Caching disabled for task ':app:collectReleaseDependencies' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Skipping task ':app:collectReleaseDependencies' as it is up-to-date.
+Resolve mutations for :app:configureReleaseDependencies (Thread[#74,Execution worker Thread 4,5,main]) started.
+:app:configureReleaseDependencies (Thread[#74,Execution worker Thread 4,5,main]) started.
+
+> Task :app:configureReleaseDependencies UP-TO-DATE
+Caching disabled for task ':app:configureReleaseDependencies' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Skipping task ':app:configureReleaseDependencies' as it is up-to-date.
+Resolve mutations for :app:extractReleaseNativeSymbolTables (Thread[#70,included builds,5,main]) started.
+:app:extractReleaseNativeSymbolTables (Thread[#70,included builds,5,main]) started.
+
+> Task :app:extractReleaseNativeSymbolTables UP-TO-DATE
+Caching disabled for task ':app:extractReleaseNativeSymbolTables' because:
+  Build cache is disabled
+Skipping task ':app:extractReleaseNativeSymbolTables' as it is up-to-date.
+Resolve mutations for :app:extractProguardFiles (Thread[#70,included builds,5,main]) started.
+:app:extractProguardFiles (Thread[#70,included builds,5,main]) started.
+
+> Task :app:extractProguardFiles UP-TO-DATE
+Caching disabled for task ':app:extractProguardFiles' because:
+  Build cache is disabled
+  Fast task
+Skipping task ':app:extractProguardFiles' as it is up-to-date.
+Resolve mutations for :app:parseReleaseIntegrityConfig (Thread[#70,included builds,5,main]) started.
+:app:parseReleaseIntegrityConfig (Thread[#70,included builds,5,main]) started.
+
+> Task :app:parseReleaseIntegrityConfig UP-TO-DATE
+Caching disabled for task ':app:parseReleaseIntegrityConfig' because:
+  Build cache is disabled
+Skipping task ':app:parseReleaseIntegrityConfig' as it is up-to-date.
+
+> Task :app:processReleaseResources
+Aapt output file E:\DU AN AI\T-Scanner\app\build\intermediates\linked_resources_binary_format\release\processReleaseResources\linked-resources-binary-format-release.ap_
+Resolve mutations for :app:bundleReleaseResources (Thread[#75,Execution worker Thread 5,5,main]) started.
+:app:bundleReleaseResources (Thread[#75,Execution worker Thread 5,5,main]) started.
+
+> Task :app:bundleReleaseResources UP-TO-DATE
+Caching disabled for task ':app:bundleReleaseResources' because:
+  Build cache is disabled
+Skipping task ':app:bundleReleaseResources' as it is up-to-date.
+
+> Task :app:compileReleaseKotlin
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/ui/dialogs/LanguageAdapter.kt:65:49 'field locale: Locale!' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:17:8 'class GoogleSignIn : Any' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:18:8 'class GoogleSignInOptions : AbstractSafeParcelable, Api.ApiOptions.Optional, ReflectedParcelable' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:104:23 'class GoogleSignIn : Any' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:108:16 'class GoogleSignIn : Any' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:111:60 'class GoogleSignInOptions : AbstractSafeParcelable, Api.ApiOptions.Optional, ReflectedParcelable' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:112:23 'class GoogleSignInOptions : AbstractSafeParcelable, Api.ApiOptions.Optional, ReflectedParcelable' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:112:51 'class GoogleSignInOptions : AbstractSafeParcelable, Api.ApiOptions.Optional, ReflectedParcelable' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:125:16 'class GoogleSignIn : Any' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:144:24 'class GoogleSignIn : Any' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:156:17 'class GoogleSignIn : Any' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:211:19 'class GoogleSignInOptions : AbstractSafeParcelable, Api.ApiOptions.Optional, ReflectedParcelable' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:211:47 'class GoogleSignInOptions : AbstractSafeParcelable, Api.ApiOptions.Optional, ReflectedParcelable' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:217:16 'class GoogleSignIn : Any' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:230:24 'class GoogleSignIn : Any' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:396:27 'class GoogleSignInOptions : AbstractSafeParcelable, Api.ApiOptions.Optional, ReflectedParcelable' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:396:55 'class GoogleSignInOptions : AbstractSafeParcelable, Api.ApiOptions.Optional, ReflectedParcelable' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt:397:17 'class GoogleSignIn : Any' is deprecated. Deprecated in Java.
+w: file:///E:/DU%20AN%20AI/T-Scanner/app/src/main/java/com/tscanner/app/utils/GoogleDriveService.kt:146:28 'static fun getToken(p0: Context, p1: String, p2: String): String' is deprecated. Deprecated in Java.
+Finished executing kotlin compiler using DAEMON strategy
+Resolve mutations for :app:compileReleaseJavaWithJavac (Thread[#71,Execution worker,5,main]) started.
+:app:compileReleaseJavaWithJavac (Thread[#75,Execution worker Thread 5,5,main]) started.
+
+> Task :app:compileReleaseJavaWithJavac
+Custom actions are attached to task ':app:compileReleaseJavaWithJavac'.
+Caching disabled for task ':app:compileReleaseJavaWithJavac' because:
+  Build cache is disabled
+Task ':app:compileReleaseJavaWithJavac' is not up-to-date because:
+  Value of input property 'javaCompiler.metadata.languageVersion' has changed for task ':app:compileReleaseJavaWithJavac'
+  Value of input property 'javaCompiler.metadata.taskInputs.languageVersion' has changed for task ':app:compileReleaseJavaWithJavac'
+  Value of input property 'javaVersion' has changed for task ':app:compileReleaseJavaWithJavac'
+The input changes require a full rebuild for incremental task ':app:compileReleaseJavaWithJavac'.
+Compilation mode: in-process compilation
+Full recompilation is required because no incremental change information is available. This is usually caused by clean builds or changing compiler arguments.
+Compiling with toolchain 'C:\Program Files\Java\jdk-22'.
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\java', not found
+Compiling with JDK Java compiler API.
+Class dependency analysis for incremental compilation took 0.079 secs.
+Created classpath snapshot for incremental compilation in 0.459 secs.
+Resolve mutations for :app:dexBuilderRelease (Thread[#75,Execution worker Thread 5,5,main]) started.
+:app:dexBuilderRelease (Thread[#75,Execution worker Thread 5,5,main]) started.
+
+> Task :app:dexBuilderRelease
+Caching disabled for task ':app:dexBuilderRelease' because:
+  Build cache is disabled
+Task ':app:dexBuilderRelease' is not up-to-date because:
+  Value of input property 'dexParams.errorFormatMode' has changed for task ':app:dexBuilderRelease'
+The input changes require a full rebuild for incremental task ':app:dexBuilderRelease'.
+Dex builder is incremental : false 
+Processing input E:\DU AN AI\T-Scanner\app\build\intermediates\built_in_kotlinc\release\compileReleaseKotlin\classes
+Processing input E:\DU AN AI\T-Scanner\app\build\intermediates\javac\release\compileReleaseJavaWithJavac\classes
+Dexing E:\DU AN AI\T-Scanner\app\build\intermediates\built_in_kotlinc\release\compileReleaseKotlin\classes
+Dexing E:\DU AN AI\T-Scanner\app\build\intermediates\javac\release\compileReleaseJavaWithJavac\classes
+Processing input E:\DU AN AI\T-Scanner\app\build\intermediates\compile_and_runtime_r_class_jar\release\processReleaseResources\R.jar
+Dexing E:\DU AN AI\T-Scanner\app\build\intermediates\compile_and_runtime_r_class_jar\release\processReleaseResources\R.jar
+Dexing 'E:\DU AN AI\T-Scanner\app\build\intermediates\built_in_kotlinc\release\compileReleaseKotlin\classes' to 'E:\DU AN AI\T-Scanner\app\build\intermediates\project_dex_archive\release\dexBuilderRelease\out'
+Dexing 'E:\DU AN AI\T-Scanner\app\build\intermediates\javac\release\compileReleaseJavaWithJavac\classes' to 'E:\DU AN AI\T-Scanner\app\build\intermediates\project_dex_archive\release\dexBuilderRelease\out'
+Dexing 'E:\DU AN AI\T-Scanner\app\build\intermediates\compile_and_runtime_r_class_jar\release\processReleaseResources\R.jar' to 'E:\DU AN AI\T-Scanner\app\build\intermediates\project_dex_archive\release\dexBuilderRelease\out\7cbd3c16b41f47eb984cd63a49ad887ec6b6564d133a6ddce3d8b27aa5657b4e_2.jar'
+Dexing 'E:\DU AN AI\T-Scanner\app\build\intermediates\built_in_kotlinc\release\compileReleaseKotlin\classes' to 'E:\DU AN AI\T-Scanner\app\build\intermediates\project_dex_archive\release\dexBuilderRelease\out'
+Dexing 'E:\DU AN AI\T-Scanner\app\build\intermediates\built_in_kotlinc\release\compileReleaseKotlin\classes' to 'E:\DU AN AI\T-Scanner\app\build\intermediates\project_dex_archive\release\dexBuilderRelease\out'
+Dexing 'E:\DU AN AI\T-Scanner\app\build\intermediates\built_in_kotlinc\release\compileReleaseKotlin\classes' to 'E:\DU AN AI\T-Scanner\app\build\intermediates\project_dex_archive\release\dexBuilderRelease\out'
+Dexing 'E:\DU AN AI\T-Scanner\app\build\intermediates\compile_and_runtime_r_class_jar\release\processReleaseResources\R.jar' to 'E:\DU AN AI\T-Scanner\app\build\intermediates\project_dex_archive\release\dexBuilderRelease\out\7cbd3c16b41f47eb984cd63a49ad887ec6b6564d133a6ddce3d8b27aa5657b4e_1.jar'
+Dexing 'E:\DU AN AI\T-Scanner\app\build\intermediates\compile_and_runtime_r_class_jar\release\processReleaseResources\R.jar' to 'E:\DU AN AI\T-Scanner\app\build\intermediates\project_dex_archive\release\dexBuilderRelease\out\7cbd3c16b41f47eb984cd63a49ad887ec6b6564d133a6ddce3d8b27aa5657b4e_0.jar'
+Dexing 'E:\DU AN AI\T-Scanner\app\build\intermediates\javac\release\compileReleaseJavaWithJavac\classes' to 'E:\DU AN AI\T-Scanner\app\build\intermediates\project_dex_archive\release\dexBuilderRelease\out'
+Dexing 'E:\DU AN AI\T-Scanner\app\build\intermediates\javac\release\compileReleaseJavaWithJavac\classes' to 'E:\DU AN AI\T-Scanner\app\build\intermediates\project_dex_archive\release\dexBuilderRelease\out'
+Dexing 'E:\DU AN AI\T-Scanner\app\build\intermediates\javac\release\compileReleaseJavaWithJavac\classes' to 'E:\DU AN AI\T-Scanner\app\build\intermediates\project_dex_archive\release\dexBuilderRelease\out'
+Dexing 'E:\DU AN AI\T-Scanner\app\build\intermediates\compile_and_runtime_r_class_jar\release\processReleaseResources\R.jar' to 'E:\DU AN AI\T-Scanner\app\build\intermediates\project_dex_archive\release\dexBuilderRelease\out\7cbd3c16b41f47eb984cd63a49ad887ec6b6564d133a6ddce3d8b27aa5657b4e_3.jar'
+Done with all dex archive conversions
+Resolve mutations for :app:mergeDexRelease (Thread[#75,Execution worker Thread 5,5,main]) started.
+:app:mergeDexRelease (Thread[#75,Execution worker Thread 5,5,main]) started.
+
+> Task :app:mergeDexRelease UP-TO-DATE
+Caching disabled for task ':app:mergeDexRelease' because:
+  Build cache is disabled
+Skipping task ':app:mergeDexRelease' as it is up-to-date.
+Resolve mutations for :app:mergeReleaseGlobalSynthetics (Thread[#75,Execution worker Thread 5,5,main]) started.
+:app:mergeReleaseGlobalSynthetics (Thread[#75,Execution worker Thread 5,5,main]) started.
+
+> Task :app:mergeReleaseGlobalSynthetics UP-TO-DATE
+Caching disabled for task ':app:mergeReleaseGlobalSynthetics' because:
+  Build cache is disabled
+Skipping task ':app:mergeReleaseGlobalSynthetics' as it is up-to-date.
+Resolve mutations for :app:processReleaseJavaRes (Thread[#71,Execution worker,5,main]) started.
+:app:processReleaseJavaRes (Thread[#71,Execution worker,5,main]) started.
+
+> Task :app:processReleaseJavaRes UP-TO-DATE
+file or directory 'E:\DU AN AI\T-Scanner\app\src\main\resources', not found
+file or directory 'E:\DU AN AI\T-Scanner\app\src\release\resources', not found
+Caching disabled for task ':app:processReleaseJavaRes' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Skipping task ':app:processReleaseJavaRes' as it is up-to-date.
+Resolve mutations for :app:mergeReleaseJavaResource (Thread[#75,Execution worker Thread 5,5,main]) started.
+:app:mergeReleaseJavaResource (Thread[#71,Execution worker,5,main]) started.
+
+> Task :app:mergeReleaseJavaResource UP-TO-DATE
+Caching disabled for task ':app:mergeReleaseJavaResource' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Skipping task ':app:mergeReleaseJavaResource' as it is up-to-date.
+Resolve mutations for :app:buildReleasePreBundle (Thread[#71,Execution worker,5,main]) started.
+:app:buildReleasePreBundle (Thread[#71,Execution worker,5,main]) started.
+
+> Task :app:buildReleasePreBundle UP-TO-DATE
+Caching disabled for task ':app:buildReleasePreBundle' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Skipping task ':app:buildReleasePreBundle' as it is up-to-date.
+Resolve mutations for :app:compileReleaseArtProfile (Thread[#71,Execution worker,5,main]) started.
+:app:compileReleaseArtProfile (Thread[#71,Execution worker,5,main]) started.
+
+> Task :app:compileReleaseArtProfile UP-TO-DATE
+Caching disabled for task ':app:compileReleaseArtProfile' because:
+  Build cache is disabled
+Skipping task ':app:compileReleaseArtProfile' as it is up-to-date.
+Resolve mutations for :app:generateReleaseLintVitalReportModel (Thread[#74,Execution worker Thread 4,5,main]) started.
+:app:generateReleaseLintVitalReportModel (Thread[#74,Execution worker Thread 4,5,main]) started.
+
+> Task :app:generateReleaseLintVitalReportModel
+Caching disabled for task ':app:generateReleaseLintVitalReportModel' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Task ':app:generateReleaseLintVitalReportModel' is not up-to-date because:
+  Input property 'projectInputs.buildFile' file E:\DU AN AI\T-Scanner\app\build.gradle has changed.
+Resolve mutations for :app:lintVitalAnalyzeRelease (Thread[#74,Execution worker Thread 4,5,main]) started.
+:app:lintVitalAnalyzeRelease (Thread[#76,Execution worker Thread 6,5,main]) started.
+
+> Task :app:lintVitalAnalyzeRelease
+Caching disabled for task ':app:lintVitalAnalyzeRelease' because:
+  Build cache is disabled
+Task ':app:lintVitalAnalyzeRelease' is not up-to-date because:
+  Value of input property 'offline' has changed for task ':app:lintVitalAnalyzeRelease'
+  Value of input property 'systemPropertyInputs.javaVersion' has changed for task ':app:lintVitalAnalyzeRelease'
+Android Lint: Creating lint class loader 32.3.0_3f5a03c65271aa713489dbf66e28dc73_true
+Resolve mutations for :app:lintVitalReportRelease (Thread[#76,Execution worker Thread 6,5,main]) started.
+:app:lintVitalReportRelease (Thread[#76,Execution worker Thread 6,5,main]) started.
+
+> Task :app:lintVitalReportRelease
+Caching disabled for task ':app:lintVitalReportRelease' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Task ':app:lintVitalReportRelease' is not up-to-date because:
+  Value of input property 'offline' has changed for task ':app:lintVitalReportRelease'
+  Value of input property 'systemPropertyInputs.javaVersion' has changed for task ':app:lintVitalReportRelease'
+Android Lint: Reusing lint classloader 32.3.0_3f5a03c65271aa713489dbf66e28dc73_true
+Resolve mutations for :app:lintVitalRelease (Thread[#72,Execution worker Thread 2,5,main]) started.
+:app:lintVitalRelease (Thread[#72,Execution worker Thread 2,5,main]) started.
+
+> Task :app:lintVitalRelease
+Caching disabled for task ':app:lintVitalRelease' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Task ':app:lintVitalRelease' is not up-to-date because:
+  Task.upToDateWhen is false.
+Resolve mutations for :app:packageReleaseBundle (Thread[#72,Execution worker Thread 2,5,main]) started.
+:app:packageReleaseBundle (Thread[#72,Execution worker Thread 2,5,main]) started.
+
+> Task :app:packageReleaseBundle UP-TO-DATE
+Caching disabled for task ':app:packageReleaseBundle' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Skipping task ':app:packageReleaseBundle' as it is up-to-date.
+Resolve mutations for :app:signReleaseBundle (Thread[#72,Execution worker Thread 2,5,main]) started.
+:app:signReleaseBundle (Thread[#72,Execution worker Thread 2,5,main]) started.
+
+> Task :app:signReleaseBundle
+Caching disabled for task ':app:signReleaseBundle' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Task ':app:signReleaseBundle' is not up-to-date because:
+  Input property 'signingConfigData.signingConfigData' has been removed for task ':app:signReleaseBundle'
+  Input property 'signingConfigData.signingConfigData.keyAlias' has been removed for task ':app:signReleaseBundle'
+  Input property 'signingConfigData.signingConfigData.keyPasswordHash' has been removed for task ':app:signReleaseBundle'
+  and more...
+Resolve mutations for :app:produceReleaseBundleIdeListingFile (Thread[#72,Execution worker Thread 2,5,main]) started.
+:app:produceReleaseBundleIdeListingFile (Thread[#72,Execution worker Thread 2,5,main]) started.
+
+> Task :app:produceReleaseBundleIdeListingFile
+Caching disabled for task ':app:produceReleaseBundleIdeListingFile' because:
+  Build cache is disabled
+  Fast task
+Task ':app:produceReleaseBundleIdeListingFile' is not up-to-date because:
+  Input property 'finalBundleFile' file E:\DU AN AI\T-Scanner\app\build\outputs\bundle\release\app-release.aab has changed.
+Resolve mutations for :app:createReleaseBundleListingFileRedirect (Thread[#72,Execution worker Thread 2,5,main]) started.
+:app:createReleaseBundleListingFileRedirect (Thread[#72,Execution worker Thread 2,5,main]) started.
+
+> Task :app:createReleaseBundleListingFileRedirect
+Caching disabled for task ':app:createReleaseBundleListingFileRedirect' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Task ':app:createReleaseBundleListingFileRedirect' is not up-to-date because:
+  Input property 'listingFile' file E:\DU AN AI\T-Scanner\app\build\intermediates\bundle_ide_model\release\produceReleaseBundleIdeListingFile\output-metadata.json has changed.
+Resolve mutations for :app:bundleRelease (Thread[#71,Execution worker,5,main]) started.
+:app:bundleRelease (Thread[#71,Execution worker,5,main]) started.
+
+> Task :app:bundleRelease
+Skipping task ':app:bundleRelease' as it has no actions.
+AAPT2 aapt2-9.3.0-15703166-windows Daemon #0: shutdown
+Android Lint: Disposing Uast application environment in lint classloader [32.3.0_3f5a03c65271aa713489dbf66e28dc73_true]
+Build 73515e2b-2ad5-4c4b-a343-263c985980d8 is closed
+
+[Incubating] Problems report is available at: file:///E:/DU%20AN%20AI/T-Scanner/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.7.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 2m 10s
+53 actionable tasks: 14 executed, 39 up-to-date
+Watched directory hierarchies: [E:\DU AN AI\T-Scanner]
+Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.7.1/userguide/configuration_cache_enabling.html

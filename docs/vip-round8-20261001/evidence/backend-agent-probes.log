@@ -1,0 +1,217 @@
+(node:16208) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✖ B801 known RTDN linked 503 must remain retryable with the identical event in the same process (7.9629ms)
+✖ B802 known RTDN failed linked step must resume after close/reopen and a new handler (1377.589ms)
+✖ B803 unknown paid yearly upgrade RTDN must preserve ACTIVE new entitlement after old monthly expires (27.5351ms)
+✖ B804 unknown ACTIVE unacknowledged upgrade RTDN must enqueue acknowledgement for the paid new token (2.91ms)
+✖ B805 unknown canceled-token storage rejection must not be acknowledged as PROCESSED or consumed (1.9587ms)
+✖ B806 restore known canceled new then known linked old must have one result per purchase token (2.1817ms)
+✔ B807 control unknown canceled pending query transient is retryable before any new bind (1.5074ms)
+✔ B808 control ordinary authenticated paid upgrade verification binds ACTIVE and durable ack job (2.5321ms)
+✖ B809 identical RTDN redelivery on a second SQLite connection must finish failed linked work (1176.8462ms)
+✖ B810 current Google PubSub pending-canceled envelope without subscriptionId must persist unknown canceled receipt (4.751ms)
+✔ B811 control same Google no-subscriptionId pending-canceled envelope works for an already-known receipt (2.2633ms)
+✖ B812 current Google full voided-purchase refund envelope must revoke verified lifetime VIP (1.0216ms)
+✔ B813 control ordinary account restore observes the same full lifetime refund and revokes it (1.0317ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 4
+ℹ fail 9
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2795.3164
+
+✖ failing tests:
+
+test at docs\vip-round8-20261001\backend-round8-probes.test.ts:49:1
+✖ B801 known RTDN linked 503 must remain retryable with the identical event in the same process (7.9629ms)
+  AssertionError [ERR_ASSERTION]: Retry=SKIPPED_STALE; old queries=1; failed linked step was consumed by event watermark
+  + actual - expected
+  
+  + 'VERIFIED_ACTIVE'
+  - 'EXPIRED'
+  
+      at TestContext.<anonymous> (file:///E:/DU%20AN%20AI/T-Scanner/docs/vip-round8-20261001/backend-round8-probes.test.ts:65:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'VERIFIED_ACTIVE',
+    expected: 'EXPIRED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs\vip-round8-20261001\backend-round8-probes.test.ts:70:1
+✖ B802 known RTDN failed linked step must resume after close/reopen and a new handler (1377.589ms)
+  AssertionError [ERR_ASSERTION]: After restart retry=SKIPPED_STALE; old queries=1; persisted new-token event time hides unfinished linked work
+  + actual - expected
+  
+  + 'VERIFIED_ACTIVE'
+  - 'EXPIRED'
+  
+      at TestContext.<anonymous> (file:///E:/DU%20AN%20AI/T-Scanner/docs/vip-round8-20261001/backend-round8-probes.test.ts:87:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'VERIFIED_ACTIVE',
+    expected: 'EXPIRED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs\vip-round8-20261001\backend-round8-probes.test.ts:127:1
+✖ B803 unknown paid yearly upgrade RTDN must preserve ACTIVE new entitlement after old monthly expires (27.5351ms)
+  AssertionError [ERR_ASSERTION]: Paid ACTIVE token remained absent while response claimed PROCESSED/REVOKED; all stored states=EXPIRED
+  + actual - expected
+  
+  + undefined
+  - 'VERIFIED_ACTIVE'
+  
+      at TestContext.<anonymous> (file:///E:/DU%20AN%20AI/T-Scanner/docs/vip-round8-20261001/backend-round8-probes.test.ts:133:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'VERIFIED_ACTIVE',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs\vip-round8-20261001\backend-round8-probes.test.ts:137:1
+✖ B804 unknown ACTIVE unacknowledged upgrade RTDN must enqueue acknowledgement for the paid new token (2.91ms)
+  AssertionError [ERR_ASSERTION]: Paid new purchase was unacknowledged; RTDN=PROCESSED/REVOKED; durable outbox=[]
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///E:/DU%20AN%20AI/T-Scanner/docs/vip-round8-20261001/backend-round8-probes.test.ts:143:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs\vip-round8-20261001\backend-round8-probes.test.ts:147:1
+✖ B805 unknown canceled-token storage rejection must not be acknowledged as PROCESSED or consumed (1.9587ms)
+  AssertionError [ERR_ASSERTION]: Failed bind was ignored: first=PROCESSED; stored initially=false; redelivery=SKIPPED_STALE
+  + actual - expected
+  
+  + undefined
+  - 'REVOKED'
+  
+      at TestContext.<anonymous> (file:///E:/DU%20AN%20AI/T-Scanner/docs/vip-round8-20261001/backend-round8-probes.test.ts:170:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'REVOKED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs\vip-round8-20261001\backend-round8-probes.test.ts:174:1
+✖ B806 restore known canceled new then known linked old must have one result per purchase token (2.1817ms)
+  AssertionError [ERR_ASSERTION]: Duplicated linked result inflates UI resolved receipt count: [{"purchaseToken":"new-canceled","status":"REVOKED","reason":"PURCHASE_REVOKED"},{"purchaseToken":"old-linked","status":"SUCCESS"},{"purchaseToken":"old-linked","status":"SUCCESS"}]
+  
+  3 !== 2
+  
+      at TestContext.<anonymous> (file:///E:/DU%20AN%20AI/T-Scanner/docs/vip-round8-20261001/backend-round8-probes.test.ts:181:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs\vip-round8-20261001\backend-round8-probes.test.ts:223:1
+✖ B809 identical RTDN redelivery on a second SQLite connection must finish failed linked work (1176.8462ms)
+  AssertionError [ERR_ASSERTION]: Different worker and physical DB connection retry=SKIPPED_STALE; old queries=1; durable stale guard suppressed required linked work
+  + actual - expected
+  
+  + 'VERIFIED_ACTIVE'
+  - 'EXPIRED'
+  
+      at TestContext.<anonymous> (file:///E:/DU%20AN%20AI/T-Scanner/docs/vip-round8-20261001/backend-round8-probes.test.ts:239:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'VERIFIED_ACTIVE',
+    expected: 'EXPIRED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs\vip-round8-20261001\backend-round8-probes.test.ts:271:1
+✖ B810 current Google PubSub pending-canceled envelope without subscriptionId must persist unknown canceled receipt (4.751ms)
+  AssertionError [ERR_ASSERTION]: Current Google schema has no subscriptionId; production handler threw after valid V2 response: TypeError: Provided value cannot be bound to SQLite parameter 4.
+  + actual - expected
+  
+  + TypeError: Provided value cannot be bound to SQLite parameter 4.
+  +     at SqliteStorageDriver.bindOrUpdate (file:///E:/DU%20AN%20AI/T-Scanner/backend/billing-verifier/src/storage/sqliteDriver.ts:205:18)
+  +     at EntitlementStore.bindOrUpdate (file:///E:/DU%20AN%20AI/T-Scanner/backend/billing-verifier/src/store.ts:61:24)
+  +     at RtdnHandler.processDeveloperNotification (file:///E:/DU%20AN%20AI/T-Scanner/backend/billing-verifier/src/rtdnHandler.ts:262:32)
+  +     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+  +     at async TestContext.<anonymous> (file:///E:/DU%20AN%20AI/T-Scanner/docs/vip-round8-20261001/backend-round8-probes.test.ts:281:16)
+  +     at async Test.run (node:internal/test_runner/test:1125:7)
+  +     at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+  +   code: 'ERR_INVALID_ARG_TYPE'
+  + }
+  - undefined
+  
+      at TestContext.<anonymous> (file:///E:/DU%20AN%20AI/T-Scanner/docs/vip-round8-20261001/backend-round8-probes.test.ts:283:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: TypeError: Provided value cannot be bound to SQLite parameter 4.
+        at SqliteStorageDriver.bindOrUpdate (file:///E:/DU%20AN%20AI/T-Scanner/backend/billing-verifier/src/storage/sqliteDriver.ts:205:18)
+        at EntitlementStore.bindOrUpdate (file:///E:/DU%20AN%20AI/T-Scanner/backend/billing-verifier/src/store.ts:61:24)
+        at RtdnHandler.processDeveloperNotification (file:///E:/DU%20AN%20AI/T-Scanner/backend/billing-verifier/src/rtdnHandler.ts:262:32)
+        at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+        at async TestContext.<anonymous> (file:///E:/DU%20AN%20AI/T-Scanner/docs/vip-round8-20261001/backend-round8-probes.test.ts:281:16)
+        at async Test.run (node:internal/test_runner/test:1125:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:787:7),
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs\vip-round8-20261001\backend-round8-probes.test.ts:328:1
+✖ B812 current Google full voided-purchase refund envelope must revoke verified lifetime VIP (1.0216ms)
+  AssertionError [ERR_ASSERTION]: Full paid lifetime refund was ignored as PROCESSED/Non-billing notification noted; stored lifetime remains active without expiry
+  + actual - expected
+  
+  + 'VERIFIED_ACTIVE'
+  - 'REVOKED'
+  
+      at TestContext.<anonymous> (file:///E:/DU%20AN%20AI/T-Scanner/docs/vip-round8-20261001/backend-round8-probes.test.ts:333:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'VERIFIED_ACTIVE',
+    expected: 'REVOKED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

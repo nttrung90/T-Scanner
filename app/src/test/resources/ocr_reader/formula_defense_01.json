@@ -1,0 +1,26 @@
+{
+  "id": "formula_inj_01",
+  "category": "formula_defense",
+  "language": "en",
+  "pageWidth": 1000,
+  "pageHeight": 1200,
+  "rotationDegrees": 0,
+  "table": {
+    "tableId": "tbl_formula_01",
+    "rowCount": 5,
+    "columnCount": 2,
+    "boundingBox": {"left": 0.1, "top": 0.1, "right": 0.9, "bottom": 0.5},
+    "cells": [
+      {"cellId": "c_r0_c0", "rowIndex": 0, "colIndex": 0, "rowSpan": 1, "colSpan": 1, "text": "Raw Input", "cellType": "TEXT"},
+      {"cellId": "c_r0_c1", "rowIndex": 0, "colIndex": 1, "rowSpan": 1, "colSpan": 1, "text": "Safe Sanitized", "cellType": "TEXT"},
+      {"cellId": "c_r1_c0", "rowIndex": 1, "colIndex": 0, "rowSpan": 1, "colSpan": 1, "text": "=SUM(A1:A10)", "cellType": "TEXT"},
+      {"cellId": "c_r1_c1", "rowIndex": 1, "colIndex": 1, "rowSpan": 1, "colSpan": 1, "text": "'=SUM(A1:A10)", "cellType": "TEXT"},
+      {"cellId": "c_r2_c0", "rowIndex": 2, "colIndex": 0, "rowSpan": 1, "colSpan": 1, "text": "+123456789", "cellType": "TEXT"},
+      {"cellId": "c_r2_c1", "rowIndex": 2, "colIndex": 1, "rowSpan": 1, "colSpan": 1, "text": "'+123456789", "cellType": "TEXT"},
+      {"cellId": "c_r3_c0", "rowIndex": 3, "colIndex": 0, "rowSpan": 1, "colSpan": 1, "text": "-500.00", "cellType": "TEXT"},
+      {"cellId": "c_r3_c1", "rowIndex": 3, "colIndex": 1, "rowSpan": 1, "colSpan": 1, "text": "'-500.00", "cellType": "TEXT"},
+      {"cellId": "c_r4_c0", "rowIndex": 4, "colIndex": 0, "rowSpan": 1, "colSpan": 1, "text": "@cmd|'/c calc'!A0", "cellType": "TEXT"},
+      {"cellId": "c_r4_c1", "rowIndex": 4, "colIndex": 1, "rowSpan": 1, "colSpan": 1, "text": "'@cmd|'/c calc'!A0", "cellType": "TEXT"}
+    ]
+  }
+}

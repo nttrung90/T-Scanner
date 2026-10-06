@@ -33,8 +33,10 @@ import com.tscanner.app.ui.editor.adapter.PostScanThumbnailAdapter
 import com.tscanner.app.ui.editor.model.DocumentFilterType
 import com.tscanner.app.ui.editor.model.NormalizedCropRect
 import com.tscanner.app.ui.editor.viewmodel.ActiveEditorTool
+import com.tscanner.app.ui.editor.viewmodel.ExportErrorCode
 import com.tscanner.app.ui.editor.viewmodel.PostScanEditorViewModel
 import com.tscanner.app.ui.viewer.PdfViewerActivity
+import com.tscanner.app.utils.EdgeToEdgeInsetsHelper
 import kotlinx.coroutines.launch
 import java.io.File
 import java.util.ArrayList
@@ -78,7 +80,7 @@ class PostScanEditorActivity : AppCompatActivity() {
         val docTitle = intent.getStringExtra(EXTRA_DOCUMENT_TITLE)
 
         if (sessionId.isEmpty() || pagePaths.isEmpty()) {
-            Toast.makeText(this, "Không có dữ liệu trang để chỉnh sửa", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.post_scan_no_data, Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -87,25 +89,32 @@ class PostScanEditorActivity : AppCompatActivity() {
     }
 
     private fun setupWindowInsets() {
+        val initialToolbarPadding = EdgeToEdgeInsetsHelper.recordInitialPadding(binding.layoutEditorToolbar)
+        val initialToolsPadding = EdgeToEdgeInsetsHelper.recordInitialPadding(binding.layoutEditorTools)
+        val initialThumbnailsPadding = EdgeToEdgeInsetsHelper.recordInitialPadding(binding.rvEditorThumbnails)
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
-            val statusBarInsets = insets.getInsets(
-                WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.displayCutout()
-            )
-            val navInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            val sysInsets = EdgeToEdgeInsetsHelper.getSystemBarAndCutoutInsets(insets)
 
-            binding.layoutEditorToolbar.setPadding(
-                binding.layoutEditorToolbar.paddingLeft,
-                statusBarInsets.top,
-                binding.layoutEditorToolbar.paddingRight,
-                binding.layoutEditorToolbar.paddingBottom
+            EdgeToEdgeInsetsHelper.applyTopBarInsets(
+                binding.layoutEditorToolbar,
+                initialToolbarPadding,
+                sysInsets
             )
 
-            binding.layoutEditorTools.setPadding(
-                binding.layoutEditorTools.paddingLeft,
-                binding.layoutEditorTools.paddingTop,
-                binding.layoutEditorTools.paddingRight,
-                navInsets.bottom + (6 * resources.displayMetrics.density).toInt()
+            EdgeToEdgeInsetsHelper.applyBottomBarInsets(
+                binding.layoutEditorTools,
+                initialToolsPadding,
+                sysInsets,
+                sysInsets.bottom
             )
+
+            EdgeToEdgeInsetsHelper.applyContentHorizontalInsets(
+                binding.rvEditorThumbnails,
+                initialThumbnailsPadding,
+                sysInsets
+            )
+
             insets
         }
         ViewCompat.requestApplyInsets(binding.root)
@@ -239,7 +248,7 @@ class PostScanEditorActivity : AppCompatActivity() {
         binding.btnUndoPage.setOnClickListener {
             viewModel.undoCurrentPage()
             binding.cropOverlayView.resetToFull()
-            Toast.makeText(this, "Đã hoàn tác trang về ban đầu", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.post_scan_undo_success, Toast.LENGTH_SHORT).show()
         }
 
         binding.btnApplyTool.setOnClickListener {
@@ -263,7 +272,7 @@ class PostScanEditorActivity : AppCompatActivity() {
 
             if (binding.cbApplyAllPages.isChecked) {
                 viewModel.applyToAllPages()
-                Toast.makeText(this, "Đã áp dụng thiết lập cho tất cả các trang", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.post_scan_apply_all_success, Toast.LENGTH_SHORT).show()
             }
 
             viewModel.closeCustomizationPanel()
@@ -446,8 +455,7 @@ class PostScanEditorActivity : AppCompatActivity() {
     }
 
     private fun handleBackExit() {
-        val anyModified = viewModel.uiState.value.currentPageState?.isModified == true
-        if (anyModified) {
+        if (viewModel.isDirty()) {
             MaterialAlertDialogBuilder(this)
                 .setTitle(getString(R.string.discard_session_title))
                 .setMessage(getString(R.string.discard_session_msg))
@@ -457,16 +465,34 @@ class PostScanEditorActivity : AppCompatActivity() {
                         finish()
                     }
                 }
+                .setNeutralButton(getString(R.string.save)) { _, _ ->
+                    lifecycleScope.launch {
+                        val saved = viewModel.flushPendingChanges()
+                        if (saved) {
+                            Toast.makeText(this@PostScanEditorActivity, R.string.save_file_success, Toast.LENGTH_SHORT).show()
+                            finish()
+                        } else {
+                            Toast.makeText(this@PostScanEditorActivity, R.string.save_file_error, Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
                 .setNegativeButton(getString(R.string.keep_editing_btn), null)
                 .show()
         } else {
-            finish()
+            lifecycleScope.launch {
+                val saved = viewModel.flushPendingChanges()
+                if (saved) {
+                    finish()
+                } else {
+                    Toast.makeText(this@PostScanEditorActivity, R.string.save_file_error, Toast.LENGTH_LONG).show()
+                }
+            }
         }
     }
 
     private fun exportAndOpenViewer() {
         val progressDialog = MaterialAlertDialogBuilder(this)
-            .setTitle("Đang chuẩn bị tài liệu")
+            .setTitle(R.string.post_scan_exporting_title)
             .setMessage(getString(R.string.rendering_full_res))
             .setCancelable(false)
             .create()
@@ -476,7 +502,7 @@ class PostScanEditorActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val result = viewModel.exportFullResolutionPages { current, total ->
                 runOnUiThread {
-                    progressDialog.setMessage("Đang xử lý trang $current/$total...")
+                    progressDialog.setMessage(getString(R.string.post_scan_processing_page_progress, current, total))
                 }
             }
             progressDialog.dismiss()
@@ -493,13 +519,23 @@ class PostScanEditorActivity : AppCompatActivity() {
                     viewerLauncher.launch(intent)
                 }
                 is com.tscanner.app.ui.editor.viewmodel.ExportResult.Failure -> {
+                    val errorMsg = when (result.errorCode) {
+                        ExportErrorCode.NO_PAGES -> getString(R.string.post_scan_export_no_pages)
+                        ExportErrorCode.PROCESS_PAGE_FAILED -> getString(R.string.post_scan_export_page_failed_format, result.pageIndex)
+                        ExportErrorCode.PAGE_COUNT_MISMATCH -> getString(
+                            R.string.post_scan_export_count_mismatch_format,
+                            result.errorArgs.getOrNull(0) ?: "",
+                            result.errorArgs.getOrNull(1) ?: ""
+                        )
+                        ExportErrorCode.UNKNOWN -> result.message.ifBlank { getString(R.string.post_scan_export_failed_title) }
+                    }
                     MaterialAlertDialogBuilder(this@PostScanEditorActivity)
-                        .setTitle("Xuất tài liệu thất bại")
-                        .setMessage(result.message)
-                        .setPositiveButton("Thử lại") { _, _ ->
+                        .setTitle(R.string.post_scan_export_failed_title)
+                        .setMessage(errorMsg)
+                        .setPositiveButton(R.string.retry) { _, _ ->
                             exportAndOpenViewer()
                         }
-                        .setNegativeButton("Đóng", null)
+                        .setNegativeButton(R.string.close, null)
                         .show()
                 }
                 is com.tscanner.app.ui.editor.viewmodel.ExportResult.Cancelled -> {}

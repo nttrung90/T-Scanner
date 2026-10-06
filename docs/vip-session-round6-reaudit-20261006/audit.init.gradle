@@ -1,0 +1,10 @@
+allprojects {
+    afterEvaluate { p ->
+        if (p.path == ':app') {
+            ['vip-session-round6-reaudit-20261006', 'vip-session-round5-fix', 'vip-session-round4-reaudit-20261005', 'vip-session-round3-reaudit-20261004', 'vip-session-reaudit-20261004'].each {
+                p.android.sourceSets.test.kotlin.srcDir(new File(p.rootDir, 'docs/' + it))
+            }
+            p.tasks.withType(org.gradle.api.tasks.testing.Test).configureEach { outputs.upToDateWhen { false } }
+        }
+    }
+}

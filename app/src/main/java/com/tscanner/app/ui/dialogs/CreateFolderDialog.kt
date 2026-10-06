@@ -34,7 +34,7 @@ class CreateFolderDialog(
                 onFolderCreated()
                 dismiss()
             } else {
-                Toast.makeText(context, "Vui lòng nhập tên thư mục", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.enter_folder_name_prompt), Toast.LENGTH_SHORT).show()
             }
         }
     }

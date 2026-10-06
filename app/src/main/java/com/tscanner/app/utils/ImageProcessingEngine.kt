@@ -238,7 +238,23 @@ object ImageProcessingEngine {
 
             if (cropRect.width() <= 0 || cropRect.height() <= 0) return@withContext null
 
-            // Dùng BitmapRegionDecoder để chỉ đọc vùng cần thiết, tiết kiệm RAM
+            // 2. Tính bán kính chuẩn của ảnh gốc và kích thước viền đệm an toàn (apron padding)
+            val fullResRadius = ImageProcessingAlgorithms.calculateScaledRadius(origW, origH)
+            val padding = (fullResRadius * 2).coerceIn(8, 32)
+
+            val padLeft = min(cropRect.left, padding)
+            val padTop = min(cropRect.top, padding)
+            val padRight = min(origW - cropRect.right, padding)
+            val padBottom = min(origH - cropRect.bottom, padding)
+
+            val paddedRect = Rect(
+                cropRect.left - padLeft,
+                cropRect.top - padTop,
+                cropRect.right + padRight,
+                cropRect.bottom + padBottom
+            )
+
+            // Dùng BitmapRegionDecoder để chỉ đọc vùng cần thiết kèm viền đệm, tiết kiệm RAM
             val decoder = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
                 File(sourceImagePath).inputStream().use { input ->
                     android.graphics.BitmapRegionDecoder.newInstance(input)
@@ -247,7 +263,8 @@ object ImageProcessingEngine {
                 @Suppress("DEPRECATION")
                 android.graphics.BitmapRegionDecoder.newInstance(sourceImagePath, false)
             } ?: return@withContext null
-            val roiBmp = decoder.decodeRegion(cropRect, BitmapFactory.Options().apply {
+
+            val paddedRoiBmp = decoder.decodeRegion(paddedRect, BitmapFactory.Options().apply {
                 inPreferredConfig = Bitmap.Config.ARGB_8888
             }) ?: run {
                 decoder.recycle()
@@ -257,7 +274,54 @@ object ImageProcessingEngine {
 
             coroutineContext.ensureActive()
 
-            // Chuẩn hóa EXIF rotation cho vùng ROI nếu cần
+            // 3. Áp dụng các thuật toán xử lý điểm ảnh trên vùng có viền đệm
+            val pw = paddedRoiBmp.width
+            val ph = paddedRoiBmp.height
+            val pixels = IntArray(pw * ph)
+            paddedRoiBmp.getPixels(pixels, 0, pw, 0, 0, pw, ph)
+
+            if (state.shadowRemovalIntensity > 0 || state.backgroundLightenIntensity > 0) {
+                ImageProcessingAlgorithms.applyPaperWhitening(
+                    pixels, pw, ph, state.shadowRemovalIntensity, state.backgroundLightenIntensity
+                ) { coroutineContext.ensureActive() }
+            }
+
+            if (state.sharpnessIntensity > 0) {
+                ImageProcessingAlgorithms.applyThresholdedUnsharpMask(
+                    pixels = pixels,
+                    width = pw,
+                    height = ph,
+                    intensity = state.sharpnessIntensity,
+                    radius = fullResRadius, // Sử dụng cùng bán kính chuẩn với ảnh xuất độ phân giải đầy đủ!
+                    checkActive = { coroutineContext.ensureActive() }
+                )
+            }
+
+            when (state.filterType) {
+                DocumentFilterType.GRAYSCALE -> ImageProcessingAlgorithms.applyGrayscale(pixels, pw, ph) { coroutineContext.ensureActive() }
+                DocumentFilterType.BLACK_AND_WHITE -> ImageProcessingAlgorithms.applyAdaptiveBinarization(pixels, pw, ph) { coroutineContext.ensureActive() }
+                DocumentFilterType.ORIGINAL -> {}
+            }
+
+            paddedRoiBmp.setPixels(pixels, 0, pw, 0, 0, pw, ph)
+
+            coroutineContext.ensureActive()
+
+            // 4. Cắt bỏ viền đệm để trả về đúng vùng viewport ban đầu không bị méo viền
+            val unpaddedRoi = Bitmap.createBitmap(
+                paddedRoiBmp,
+                padLeft,
+                padTop,
+                cropRect.width(),
+                cropRect.height()
+            )
+            if (unpaddedRoi != paddedRoiBmp) {
+                paddedRoiBmp.recycle()
+            }
+
+            coroutineContext.ensureActive()
+
+            // 5. Chuẩn hóa góc quay EXIF và góc quay người dùng cho vùng ROI
             val exifRotation = getExifRotation(sourceImagePath)
             val matrix = Matrix()
             if (exifRotation != 0f) matrix.postRotate(exifRotation)
@@ -265,44 +329,14 @@ object ImageProcessingEngine {
             if (stateRot != 0) matrix.postRotate(stateRot.toFloat())
 
             val orientedRoi = if (!matrix.isIdentity) {
-                val r = Bitmap.createBitmap(roiBmp, 0, 0, roiBmp.width, roiBmp.height, matrix, true)
-                if (r != roiBmp) roiBmp.recycle()
+                val r = Bitmap.createBitmap(unpaddedRoi, 0, 0, unpaddedRoi.width, unpaddedRoi.height, matrix, true)
+                if (r != unpaddedRoi) unpaddedRoi.recycle()
                 r
             } else {
-                roiBmp
+                unpaddedRoi
             }
 
-            coroutineContext.ensureActive()
-
-            // Áp dụng thuật toán lên vùng ROI
-            val w = orientedRoi.width
-            val h = orientedRoi.height
-            val pixels = IntArray(w * h)
-            orientedRoi.getPixels(pixels, 0, w, 0, 0, w, h)
-
-            if (state.shadowRemovalIntensity > 0 || state.backgroundLightenIntensity > 0) {
-                ImageProcessingAlgorithms.applyPaperWhitening(
-                    pixels, w, h, state.shadowRemovalIntensity, state.backgroundLightenIntensity
-                ) { coroutineContext.ensureActive() }
-            }
-
-            if (state.sharpnessIntensity > 0) {
-                ImageProcessingAlgorithms.applyThresholdedUnsharpMask(
-                    pixels, w, h, state.sharpnessIntensity
-                ) { coroutineContext.ensureActive() }
-            }
-
-            when (state.filterType) {
-                DocumentFilterType.GRAYSCALE -> ImageProcessingAlgorithms.applyGrayscale(pixels, w, h) { coroutineContext.ensureActive() }
-                DocumentFilterType.BLACK_AND_WHITE -> ImageProcessingAlgorithms.applyAdaptiveBinarization(pixels, w, h) { coroutineContext.ensureActive() }
-                DocumentFilterType.ORIGINAL -> {}
-            }
-
-            val resultRoi = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
-            resultRoi.setPixels(pixels, 0, w, 0, 0, w, h)
-            if (orientedRoi != resultRoi) orientedRoi.recycle()
-
-            resultRoi
+            orientedRoi
         } catch (e: Exception) {
             if (e is kotlinx.coroutines.CancellationException) throw e
             Log.e(TAG, "Lỗi renderDetailRoi: ${e.message}")
@@ -311,20 +345,24 @@ object ImageProcessingEngine {
     }
 
     /**
-     * R05: Kiểm tra ngân sách bộ nhớ trước khi xử lý ảnh full-resolution.
+     * R05: Kiểm tra ngân sách bộ nhớ theo từng nhánh xử lý trước khi xử lý ảnh full-resolution.
      */
+    fun checkMemoryBudget(width: Int, height: Int, state: PageEditState): Boolean {
+        return ImageMemoryBudgetCalculator.hasSufficientRuntimeMemory(width, height, state)
+    }
+
     fun checkMemoryBudget(width: Int, height: Int): Boolean {
-        val estimatedBytes = width.toLong() * height.toLong() * 4L * 3L
-        val runtime = Runtime.getRuntime()
-        val availableHeap = runtime.maxMemory() - (runtime.totalMemory() - runtime.freeMemory())
-        val safetyReserve = 48 * 1024 * 1024L // 48MB dự phòng cho hệ thống và UI
-        return (availableHeap - estimatedBytes) >= safetyReserve
+        return ImageMemoryBudgetCalculator.hasSufficientRuntimeMemory(
+            width,
+            height,
+            PageEditState(pageIndex = 0, inputImagePath = "")
+        )
     }
 
     /**
      * Xuất trang ở độ phân giải đầy đủ (Full Resolution) cho bản lưu PDF/xuất file.
      * R04: Sử dụng SafeFileWriter để thay thế an toàn và nguyên tử (atomic replace).
-     * R05: Kiểm tra ngân sách bộ nhớ trước khi decode.
+     * R05: Kiểm tra ngân sách bộ nhớ trước khi decode theo đúng nhánh hiệu ứng.
      */
     suspend fun processAndSaveFullResolution(
         sourceImagePath: String,
@@ -339,8 +377,11 @@ object ImageProcessingEngine {
         BitmapFactory.decodeFile(sourceImagePath, boundsOptions)
         if (boundsOptions.outWidth <= 0 || boundsOptions.outHeight <= 0) return@withContext false
 
-        if (!checkMemoryBudget(boundsOptions.outWidth, boundsOptions.outHeight)) {
-            Log.w(TAG, "Không đủ ngân sách bộ nhớ cho ảnh ${boundsOptions.outWidth}x${boundsOptions.outHeight}")
+        if (!checkMemoryBudget(boundsOptions.outWidth, boundsOptions.outHeight, state)) {
+            Log.w(
+                TAG,
+                "Không đủ ngân sách bộ nhớ cho ảnh ${boundsOptions.outWidth}x${boundsOptions.outHeight} (nhánh ${state.filterType}, sharpen=${state.sharpnessIntensity})"
+            )
             return@withContext false
         }
 

@@ -1,0 +1,13 @@
+(node:14212) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ B01 unresolved known receipt must not return fresh full restore success (5.6561ms)
+✔ B02 canonical pending-purchase-canceled state must be parsed for linked-token recovery (34.554ms)
+✔ B03 control mixed restore accurately declares PARTIAL on transient refresh (2.3678ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 383.7208

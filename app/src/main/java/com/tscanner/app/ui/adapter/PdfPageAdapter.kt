@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.tscanner.app.R
 import com.tscanner.app.databinding.ItemPdfPageBinding
 import java.io.File
 
@@ -26,7 +27,7 @@ class PdfPageAdapter(
     inner class PdfPageViewHolder(private val binding: ItemPdfPageBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(path: String, position: Int, total: Int) {
-            binding.tvPageNumber.text = "Trang ${position + 1} / $total"
+            binding.tvPageNumber.text = binding.root.context.getString(R.string.page_indicator_format, position + 1, total)
 
             Glide.with(binding.root.context)
                 .load(File(path))

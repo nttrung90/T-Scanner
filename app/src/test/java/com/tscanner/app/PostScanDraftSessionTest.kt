@@ -91,7 +91,7 @@ class PostScanDraftSessionTest {
 
         val recovered = PostScanSessionDraft.fromJson(malformedJson)
         assertEquals("session-corrupt", recovered.sessionId)
-        assertEquals("Tài liệu mới", recovered.documentTitle)
+        assertEquals("", recovered.documentTitle)
         assertEquals(1, recovered.schemaVersion)
         assertEquals(1L, recovered.revision)
         assertTrue(recovered.pageStates.isEmpty())

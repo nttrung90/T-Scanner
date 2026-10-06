@@ -10,6 +10,8 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tscanner.app.databinding.DialogLanguageSelectionBinding
 import com.tscanner.app.utils.AppLanguageManager
+import com.tscanner.app.utils.UiLanguageMode
+import java.util.Locale
 
 class LanguageSelectionDialog(
     private val activity: Activity,
@@ -45,27 +47,36 @@ class LanguageSelectionDialog(
         val isSystemDefault = AppLanguageManager.isSystemDefaultSelected(context)
         binding.ivCheckSystem.visibility = if (isSystemDefault) View.VISIBLE else View.GONE
 
-        val sysCode = AppLanguageManager.getSystemLanguageCode()
-        val sysLang = AppLanguageManager.getLanguage(sysCode)
-        val isSysSupported = AppLanguageManager.isSupported(sysCode)
+        val trueSystemLocales = AppLanguageManager.getTrueSystemLocales(context)
+        val targetAutoTag = AppLanguageManager.resolvePrimaryAutoUiLanguage(trueSystemLocales)
+        val autoLang = AppLanguageManager.getAutoUiLanguage(targetAutoTag)
+        val resolvedNativeName = autoLang?.nativeName ?: "English"
 
-        val desc = if (isSysSupported) {
-            "Tự động theo máy: ${sysLang?.nativeName ?: sysCode} (Hỗ trợ chuẩn)"
+        val primaryLocale = trueSystemLocales.firstOrNull() ?: Locale.getDefault()
+        val primaryNormalized = AppLanguageManager.normalizeTag(primaryLocale.language)
+
+        val desc = if (primaryNormalized != null) {
+            context.getString(com.tscanner.app.R.string.language_system_supported_format, resolvedNativeName)
         } else {
-            "Máy hiện tại ($sysCode) ngoài ngôn ngữ hỗ trợ -> Dùng Tiếng Anh"
+            val rawName = primaryLocale.getDisplayLanguage(primaryLocale).ifBlank { primaryLocale.language }
+            context.getString(com.tscanner.app.R.string.language_system_unsupported_format, rawName)
         }
         binding.tvSystemDesc.text = desc
     }
 
     private fun setupRecyclerView() {
         val isSystemDefault = AppLanguageManager.isSystemDefaultSelected(context)
-        val activeCode = if (isSystemDefault) null else AppLanguageManager.getCurrentLanguageCode(context)
+        val activeCode = if (isSystemDefault) null else AppLanguageManager.getManualUiTag(context)
 
         adapter = LanguageAdapter(
             allLanguages = AppLanguageManager.SUPPORTED_LANGUAGES,
             selectedCode = activeCode,
+            onFilterChanged = { isEmpty ->
+                binding.tvEmptySearch.visibility = if (isEmpty) View.VISIBLE else View.GONE
+                binding.rvLanguages.visibility = if (isEmpty) View.GONE else View.VISIBLE
+            },
             onLanguageSelected = { selectedLang ->
-                changeLanguage(selectedLang.code)
+                changeLanguage(selectedLang.tag)
             }
         )
 
@@ -75,7 +86,7 @@ class LanguageSelectionDialog(
 
     private fun setupSearch() {
         binding.etSearchLanguage.doAfterTextChanged { text ->
-            adapter.filter(text?.toString().orEmpty())
+            adapter.filter(text?.toString().orEmpty(), context)
         }
     }
 
@@ -91,7 +102,11 @@ class LanguageSelectionDialog(
 
     private fun changeLanguage(languageCode: String?) {
         dismiss()
-        AppLanguageManager.applyLanguage(activity, languageCode)
+        if (languageCode == null || languageCode == AppLanguageManager.CODE_SYSTEM) {
+            AppLanguageManager.setUiLanguage(activity, UiLanguageMode.SYSTEM)
+        } else {
+            AppLanguageManager.setUiLanguage(activity, UiLanguageMode.MANUAL, languageCode)
+        }
         onLanguageChanged?.invoke()
     }
 }

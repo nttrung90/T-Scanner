@@ -1,16 +1,17 @@
 package com.tscanner.app.data.model
 
+import com.tscanner.app.R
 import java.io.File
 import java.io.Serializable
 
-enum class ManagedFileType(val displayName: String, val extension: String) {
-    ALL("Tất cả", ""),
-    PDF("PDF", "pdf"),
-    WORD("Word", "doc"),
-    EXCEL("Excel", "csv"),
-    PPT("PPT", "html"),
-    IMAGE("Hình ảnh", "jpg"),
-    OTHER("Khác", "")
+enum class ManagedFileType(val displayNameRes: Int, val extension: String) {
+    ALL(R.string.filter_all, ""),
+    PDF(R.string.filter_pdf, "pdf"),
+    WORD(R.string.filter_word, "doc"),
+    EXCEL(R.string.filter_excel, "csv"),
+    PPT(R.string.filter_ppt, "html"),
+    IMAGE(R.string.filter_image, "jpg"),
+    OTHER(R.string.filter_other, "")
 }
 
 data class ManagedFileItem(

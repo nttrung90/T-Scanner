@@ -1,0 +1,3 @@
+allprojects { afterEvaluate { p ->
+ if (p.path == ':app') p.android.sourceSets.test.kotlin.srcDir(new File(p.rootDir, 'docs/vip-round6-20261001'))
+} }

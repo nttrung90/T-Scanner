@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tscanner.app.VipEntryPointsRecoveryIntegrationTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-10-06T03:37:15.885Z" hostname="NTT-LAPTOPACER" time="0.032">
+  <properties/>
+  <testcase name="entryPoint5_accountDetailToVip_wiresRecoveryCallback" classname="com.tscanner.app.VipEntryPointsRecoveryIntegrationTest" time="0.016"/>
+  <testcase name="entryPoint3_directIdCard_providerBusyThenAccepted_contextPreserved" classname="com.tscanner.app.VipEntryPointsRecoveryIntegrationTest" time="0.002"/>
+  <testcase name="entryPoint4_homeToMore_registryPreservesContext_discardRefuses_acceptCommits" classname="com.tscanner.app.VipEntryPointsRecoveryIntegrationTest" time="0.003"/>
+  <testcase name="entryPoint2_directPdfViewer_providerBusyThenAccepted_contextPreserved" classname="com.tscanner.app.VipEntryPointsRecoveryIntegrationTest" time="0.002"/>
+  <testcase name="entryPoint1_directMore_providerBusyThenAccepted_contextPreserved" classname="com.tscanner.app.VipEntryPointsRecoveryIntegrationTest" time="0.003"/>
+  <testcase name="entryPoint6_createPdfToVip_preservesNameAndWatermark_wiresRecoveryCallback" classname="com.tscanner.app.VipEntryPointsRecoveryIntegrationTest" time="0.005"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

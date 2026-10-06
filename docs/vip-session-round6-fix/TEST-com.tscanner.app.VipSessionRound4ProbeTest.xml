@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tscanner.app.VipSessionRound4ProbeTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-06T03:31:20.327Z" hostname="NTT-LAPTOPACER" time="0.079">
+  <properties/>
+  <testcase name="P02_noListenerMustNotSpendRecoveryBeforeUserCanAuthenticate" classname="com.tscanner.app.VipSessionRound4ProbeTest" time="0.048"/>
+  <testcase name="C01_firstInteractiveEventIsNotRetryAndDoesNotGrantVip" classname="com.tscanner.app.VipSessionRound4ProbeTest" time="0.002"/>
+  <testcase name="P05_oldGuestNavigationMustNotRunInNewGuestSession" classname="com.tscanner.app.VipSessionRound4ProbeTest" time="0.006"/>
+  <testcase name="C02_matchingGuestNavigationIsAccepted" classname="com.tscanner.app.VipSessionRound4ProbeTest" time="0.001"/>
+  <testcase name="P01_backgroundVerificationMustNotSpendInteractiveRecoveryAttempt" classname="com.tscanner.app.VipSessionRound4ProbeTest" time="0.004"/>
+  <testcase name="P04_sessionChangeDuringDispatchMustSuppressRemainingOldEvents" classname="com.tscanner.app.VipSessionRound4ProbeTest" time="0.013"/>
+  <testcase name="P03_newExplicitOperationMustNotInheritReceiptLifetimeRetryFlag" classname="com.tscanner.app.VipSessionRound4ProbeTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

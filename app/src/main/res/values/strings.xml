@@ -19,6 +19,8 @@
     <string name="copy">Copy</string>
     <string name="copied">Copied to clipboard</string>
     <string name="close">Close</string>
+    <string name="btn_back" tools:ignore="MissingTranslation">Back</string>
+    <string name="btn_next" tools:ignore="MissingTranslation">Next</string>
     <string name="btn_understood">Got it</string>
 
     <!-- Home Tab -->
@@ -30,6 +32,7 @@
     <string name="action_import_file">Import File</string>
     <string name="action_ocr">Extract Text</string>
     <string name="action_create_pdf">Create PDF</string>
+    <string name="action_all_tools">All</string>
     <string name="action_long_image">Long Image</string>
     <string name="recent_header">Recent</string>
     <string name="see_all">See all ></string>
@@ -151,8 +154,11 @@
     <string name="vip_perk_1">✓ Unlimited HD document scanning</string>
     <string name="vip_perk_2">✓ Unlimited page text extraction (OCR)</string>
     <string name="vip_perk_3">✓ Accurate Word, Excel, PPT conversion</string>
-    <string name="vip_perk_4">✓ No watermark on exported files</string>
-    <string name="vip_perk_5">✓ Auto backup to personal Google Drive (15GB)</string>
+    <string name="vip_perk_4">✓ Remove T-Scanner watermark when exporting files</string>
+    <string name="vip_perk_5">✓ Auto backup &amp; sync to personal Google Drive</string>
+    <string name="vip_badge_free">FREE</string>
+    <string name="vip_home_desc_free">Free account, tap to view VIP perks</string>
+    <string name="vip_home_desc_active">VIP member, tap to view VIP perks</string>
     <string name="vip_price_monthly">99,000 VND / month</string>
     <string name="vip_price_yearly">20,000 VND / year</string>
     <string name="vip_tier_pro_name">VIP PRO</string>
@@ -173,9 +179,9 @@
 
     <!-- About Dialog -->
     <string name="about_title">About T-Scanner</string>
-    <string name="about_version">Version: 0.6.0 (Build 11)</string>
+    <string name="about_version">Version %1$s (Build %2$d)</string>
     <string name="about_sdk">Config: SDK 36 (Android 16), Android 8.0+ supported</string>
-    <string name="about_engine">Scan Engine: Google Document Scanner | OCR: PaddleOCR v4 Mobile &amp; Tesseract OCR v5</string>
+    <string name="about_engine">Scan Engine: Google Document Scanner | OCR: Google ML Kit &amp; Tesseract OCR v5</string>
     <string name="about_copyright">© 2026 T-Scanner. Powered by advanced AI technology.</string>
 
     <!-- Settings & OCR Engine Selection -->
@@ -184,17 +190,22 @@
     <string name="ocr_engine_title">OCR Engine Settings</string>
     <string name="ocr_engine_subtitle">Choose text recognition engine (Default: Auto)</string>
     <string name="ocr_engine_auto">Auto (Recommended) [Default]</string>
-    <string name="ocr_engine_auto_desc">Auto selects: Vietnamese &amp; English use Tesseract v5; Asian languages use PaddleOCR v4; Latin uses ML Kit.</string>
+    <string name="ocr_engine_auto_desc">Intelligently selects the best engine based on document language (Tesseract v5 or Google ML Kit).</string>
     <string name="ocr_engine_tesseract">Tesseract OCR v5 (LSTM)</string>
-    <string name="ocr_engine_tesseract_desc" formatted="false">Best for: Vietnamese &amp; English. 100% full Vietnamese accents &amp; English vocabulary, fully offline.</string>
-    <string name="ocr_engine_paddle">PaddleOCR v4 Mobile (Baidu AI)</string>
-    <string name="ocr_engine_paddle_desc">Best for: English, Chinese, Japanese, Korean. Skewed angles, tables &amp; fast text (no Vietnamese accents).</string>
-    <string name="ocr_engine_mlkit">Google ML Kit (Offline)</string>
-    <string name="ocr_engine_mlkit_desc">Best for: 29 Latin alphabet languages (French, German, Spanish, Italian...). Standard Google OCR.</string>
+    <string name="ocr_engine_tesseract_desc">Optimized for: Vietnamese &amp; English with full accent support, runs fully on-device.</string>
+    <string name="ocr_engine_legacy_paddle">PaddleOCR (Legacy)</string>
+    <string name="ocr_engine_mlkit">Google ML Kit</string>
+    <string name="ocr_engine_mlkit_desc">Optimized for: Chinese, Japanese, Korean, Hindi, and 29 Latin alphabet languages.</string>
 
     <!-- Error & Success messages -->
     <string name="scanner_error">Cannot launch document scanner: %1$s</string>
     <string name="scanner_cancelled">Document scan cancelled</string>
+    <string name="scanner_err_failed_to_start" tools:ignore="MissingTranslation">Failed to start scanner</string>
+    <string name="scanner_err_general" tools:ignore="MissingTranslation">Scanner error</string>
+    <string name="scanner_err_scan_failed" tools:ignore="MissingTranslation">Scan failed</string>
+    <string name="scanner_err_parse_failed" tools:ignore="MissingTranslation">Could not parse scan result</string>
+    <string name="scanner_err_no_pages" tools:ignore="MissingTranslation">No pages captured from scanner</string>
+    <string name="scanner_err_import_pages_failed" tools:ignore="MissingTranslation">Failed to import page(s): %1$s of %2$d</string>
     <string name="ocr_processing">Extracting text...</string>
     <string name="ocr_result_title">Text Extraction Result</string>
     <string name="no_text_found">No text found in image</string>
@@ -220,6 +231,9 @@
     <string name="language_subtitle">Choose your preferred language</string>
     <string name="language_system_default">System Default</string>
     <string name="language_system_default_desc">Follow device language automatically</string>
+    <string name="language_system_supported_format" tools:ignore="MissingTranslation">Follow system: %1$s</string>
+    <string name="language_system_unsupported_format" tools:ignore="MissingTranslation">Device language (%1$s) not supported • Using English</string>
+    <string name="language_search_empty" tools:ignore="MissingTranslation">No matching language found</string>
     <string name="language_vietnamese">Tiếng Việt</string>
     <string name="language_vietnamese_sub">Vietnamese</string>
     <string name="language_english">English</string>
@@ -284,4 +298,528 @@
     <string name="discard_session_btn" tools:ignore="MissingTranslation">Discard</string>
     <string name="keep_editing_btn" tools:ignore="MissingTranslation">Keep editing</string>
     <string name="rendering_full_res" tools:ignore="MissingTranslation">Rendering high quality document...</string>
+
+    <!-- Camera & Scan Options (L04a) -->
+    <string name="scan_options_title" tools:ignore="MissingTranslation">Scan Document</string>
+    <string name="scan_options_subtitle" tools:ignore="MissingTranslation">Choose the scanning method that fits your needs</string>
+    <string name="scan_option_ai" tools:ignore="MissingTranslation">AI Scan (Default)</string>
+    <string name="scan_badge_recommended" tools:ignore="MissingTranslation">Recommended</string>
+    <string name="scan_option_ai_desc" tools:ignore="MissingTranslation">Google AI automatically detects 3D borders, removes shadows and stains</string>
+    <string name="scan_google_ai_language_note" tools:ignore="MissingTranslation">Google AI scanner interface follows device system language</string>
+    <string name="scan_option_fast" tools:ignore="MissingTranslation">Fast Camera</string>
+    <string name="scan_badge_optional" tools:ignore="MissingTranslation">Optional</string>
+    <string name="scan_option_fast_desc" tools:ignore="MissingTranslation">Instant shutter (&lt; 50ms), continuous focus, batch document capture</string>
+    <string name="scan_fast_camera_language_note" tools:ignore="MissingTranslation">Fast Camera interface follows T-Scanner app language</string>
+    <string name="scan_options_tip" tools:ignore="MissingTranslation">💡 Tip: AI Scan is optimized for single documents needing fine adjustment. Fast Camera is optimized for quickly capturing multi-page document batches.</string>
+    <string name="id_card_option_ai" tools:ignore="MissingTranslation">AI Card Scan (Default)</string>
+    <string name="id_card_option_ai_desc" tools:ignore="MissingTranslation">Google AI automatically corrects 3D angles, removes shadows and fingers</string>
+    <string name="id_card_option_fast" tools:ignore="MissingTranslation">Fast Card Camera</string>
+    <string name="id_card_option_fast_desc" tools:ignore="MissingTranslation">Standard card guide frame, instant capture and auto compose to A4</string>
+    <string name="id_card_option_gallery_desc" tools:ignore="MissingTranslation">Select 2 photos of front and back sides already on your device</string>
+    <string name="camera_flash_desc" tools:ignore="MissingTranslation">Flash</string>
+    <string name="camera_auto_crop" tools:ignore="MissingTranslation">Auto Crop</string>
+    <string name="camera_ai_scan" tools:ignore="MissingTranslation">AI Scan</string>
+    <string name="camera_hint_default" tools:ignore="MissingTranslation">⚡ Tap screen to focus • Align document within frame</string>
+    <string name="camera_shutter_desc" tools:ignore="MissingTranslation">Shutter capture</string>
+    <string name="camera_done" tools:ignore="MissingTranslation">Done</string>
+    <string name="camera_permission_required" tools:ignore="MissingTranslation">Camera permission is required to scan documents</string>
+    <string name="camera_hint_id_card_front" tools:ignore="MissingTranslation">🪪 Capture FRONT side of card (align card with frame)</string>
+    <string name="camera_start_error" tools:ignore="MissingTranslation">Unable to start camera: %s</string>
+    <string name="camera_capture_error" tools:ignore="MissingTranslation">Capture error: %s</string>
+    <string name="camera_done_with_count" tools:ignore="MissingTranslation">Done (%1$d)</string>
+    <string name="camera_hint_id_card_back" tools:ignore="MissingTranslation">🪪 Front side captured. Flip card and capture BACK side</string>
+    <string name="camera_hint_pages_captured" tools:ignore="MissingTranslation">Captured %1$d pages • Continue capturing or tap Done</string>
+    <string name="camera_flash_on" tools:ignore="MissingTranslation">Flash: On</string>
+    <string name="camera_flash_auto" tools:ignore="MissingTranslation">Flash: Auto</string>
+    <string name="camera_flash_off" tools:ignore="MissingTranslation">Flash: Off</string>
+    <string name="camera_auto_crop_enabled" tools:ignore="MissingTranslation">Auto document border detection &amp; crop enabled</string>
+    <string name="camera_auto_crop_disabled" tools:ignore="MissingTranslation">Auto crop disabled (Full frame capture)</string>
+    <string name="camera_no_pages_scanned" tools:ignore="MissingTranslation">No pages were scanned</string>
+    <string name="camera_ai_scan_error" tools:ignore="MissingTranslation">AI scan error: %s</string>
+    <string name="camera_open_ai_id_card_error" tools:ignore="MissingTranslation">Cannot open AI ID card scanner: %s</string>
+    <string name="camera_open_ai_scanner_error" tools:ignore="MissingTranslation">Cannot open AI scanner: %s</string>
+    <string name="camera_processing_title" tools:ignore="MissingTranslation">Processing documents</string>
+    <string name="camera_processing_message" tools:ignore="MissingTranslation">Completing processing of captured pages...</string>
+    <string name="camera_no_pages_captured" tools:ignore="MissingTranslation">No document pages captured yet</string>
+    <string name="camera_exit_dialog_msg_id_card" tools:ignore="MissingTranslation">You are currently scanning an ID card. Exiting will discard the captured card photos.</string>
+    <string name="camera_exit_dialog_msg_docs" tools:ignore="MissingTranslation">You have captured %1$d document pages. Exiting will discard the captured pages.</string>
+    <string name="camera_exit_dialog_title" tools:ignore="MissingTranslation">Cancel scanning session?</string>
+    <string name="camera_exit_dialog_positive" tools:ignore="MissingTranslation">Discard &amp; Exit</string>
+    <string name="camera_exit_dialog_negative" tools:ignore="MissingTranslation">Continue scanning</string>
+
+    <!-- Post-Scan Editor & Crop (L04b) -->
+    <string name="reset" tools:ignore="MissingTranslation">Reset</string>
+    <string name="retry" tools:ignore="MissingTranslation">Retry</string>
+    <string name="editor_default_doc_title" tools:ignore="MissingTranslation">New Document</string>
+    <string name="editor_current_page_desc" tools:ignore="MissingTranslation">Current page image</string>
+    <string name="crop_image_desc" tools:ignore="MissingTranslation">Image to crop</string>
+    <string name="thumbnail_page_desc" tools:ignore="MissingTranslation">Thumbnail page</string>
+    <string name="post_scan_no_data" tools:ignore="MissingTranslation">No page data to edit</string>
+    <string name="post_scan_undo_success" tools:ignore="MissingTranslation">Page reset to original</string>
+    <string name="post_scan_apply_all_success" tools:ignore="MissingTranslation">Settings applied to all pages</string>
+    <string name="post_scan_exporting_title" tools:ignore="MissingTranslation">Preparing document</string>
+    <string name="post_scan_processing_page_progress" tools:ignore="MissingTranslation">Processing page %1$d/%2$d...</string>
+    <string name="post_scan_export_failed_title" tools:ignore="MissingTranslation">Document export failed</string>
+    <string name="crop_image_not_found" tools:ignore="MissingTranslation">Image to edit not found</string>
+    <string name="crop_image_read_error" tools:ignore="MissingTranslation">Cannot read image file</string>
+    <string name="crop_save_success" tools:ignore="MissingTranslation">Cropped and saved page successfully</string>
+    <string name="crop_save_error" tools:ignore="MissingTranslation">Error saving cropped image</string>
+    <string name="document_title_prefix" tools:ignore="MissingTranslation">Document </string>
+
+    <!-- PDF Viewer & OCR Result (L04c) -->
+    <string name="pdf_page_desc" tools:ignore="MissingTranslation">Document page</string>
+    <string name="pdf_page_updated" tools:ignore="MissingTranslation">Updated page %1$d!</string>
+    <string name="pdf_page_update_failed" tools:ignore="MissingTranslation">Failed to update page in PDF</string>
+    <string name="pdf_default_title" tools:ignore="MissingTranslation">PDF Document</string>
+    <string name="vip_unlocked_toast" tools:ignore="MissingTranslation">🎉 VIP unlocked! Watermark automatically removed.</string>
+    <string name="watermark_toggled_on_vip" tools:ignore="MissingTranslation">Watermark On (VIP)</string>
+    <string name="pdf_not_found" tools:ignore="MissingTranslation">PDF file not found</string>
+    <string name="document_access_denied" tools:ignore="MissingTranslation">Access denied or document not found</string>
+    <string name="ocr_extracting_title" tools:ignore="MissingTranslation">Extracting Text (OCR)</string>
+    <string name="ocr_preparing_message" tools:ignore="MissingTranslation">Preparing recognition...</string>
+    <string name="ocr_rendering_pdf_pages" tools:ignore="MissingTranslation">Rendering pages from PDF document...</string>
+    <string name="ocr_no_pages_found" tools:ignore="MissingTranslation">No document pages found to extract</string>
+    <string name="ocr_recognizing_page_progress" tools:ignore="MissingTranslation">Recognizing page %1$d/%2$d (%3$s)...</string>
+    <string name="ocr_page_header_format" tools:ignore="MissingTranslation">--- PAGE %1$d ---\n\n</string>
+    <string name="long_image_merging" tools:ignore="MissingTranslation">Merging pages into long image...</string>
+    <string name="long_image_success" tools:ignore="MissingTranslation">Long image merged successfully!</string>
+    <string name="share_long_image" tools:ignore="MissingTranslation">Share long image</string>
+    <string name="long_image_failed" tools:ignore="MissingTranslation">Cannot create long image</string>
+    <string name="pdf_pages_not_ready" tools:ignore="MissingTranslation">Document pages not yet loaded to create PDF</string>
+    <string name="pdf_creating" tools:ignore="MissingTranslation">Creating PDF file...</string>
+    <string name="pdf_created_with_drive_backup" tools:ignore="MissingTranslation">PDF file created: %1$s (Backing up to Google Drive)</string>
+    <string name="pdf_created_success" tools:ignore="MissingTranslation">PDF file created: %1$s</string>
+    <string name="pdf_create_failed" tools:ignore="MissingTranslation">Cannot create PDF file</string>
+    <string name="pdf_save_not_ready" tools:ignore="MissingTranslation">Document pages not yet loaded to save</string>
+    <string name="pdf_saving_to_device" tools:ignore="MissingTranslation">Saving document to device...</string>
+    <string name="pdf_saved_with_drive_backup" tools:ignore="MissingTranslation">Saved to Document Management! (Backing up to personal Google Drive)</string>
+    <string name="pdf_saved_success" tools:ignore="MissingTranslation">Saved to Document Management!</string>
+    <string name="pdf_save_error" tools:ignore="MissingTranslation">Error saving document</string>
+    <string name="pdf_success_dialog_title" tools:ignore="MissingTranslation">PDF Created Successfully</string>
+    <string name="pdf_success_dialog_message" tools:ignore="MissingTranslation">File has been saved:\n%1$s\n\nWould you like to share or open the file?</string>
+    <string name="share_pdf_title" tools:ignore="MissingTranslation">Share PDF file</string>
+    <string name="pdf_no_reader_app" tools:ignore="MissingTranslation">No PDF reader application found</string>
+    <string name="ocr_engine_label_format" tools:ignore="MissingTranslation">Engine: %1$s</string>
+    <string name="export_word_title" tools:ignore="MissingTranslation">Export Word File</string>
+    <string name="export_word_desc" tools:ignore="MissingTranslation">Choose to save to device or share Word document (.docx)</string>
+    <string name="saved_to_downloads_file" tools:ignore="MissingTranslation">Saved to Downloads folder: %1$s</string>
+    <string name="saved_to_downloads_and_sharing" tools:ignore="MissingTranslation">Saved to Downloads and opening share...</string>
+    <string name="export_word_failed" tools:ignore="MissingTranslation">Error exporting Word file</string>
+    <string name="export_excel_title" tools:ignore="MissingTranslation">Export Excel File</string>
+    <string name="export_excel_desc" tools:ignore="MissingTranslation">Choose to save to device or share Excel spreadsheet (.xlsx)</string>
+    <string name="export_excel_failed" tools:ignore="MissingTranslation">Error exporting Excel file</string>
+    <string name="export_success_title" tools:ignore="MissingTranslation">Export %1$s Successful</string>
+    <string name="export_success_message" tools:ignore="MissingTranslation">File has been saved to Downloads folder:\n%1$s\n\nWould you like to open or share the file now?</string>
+    <string name="open_file_with" tools:ignore="MissingTranslation">Open file with...</string>
+    <string name="no_app_to_open_file" tools:ignore="MissingTranslation">No suitable app found to open file</string>
+    <string name="share_file_title" tools:ignore="MissingTranslation">Share file</string>
+    <string name="cannot_share_file" tools:ignore="MissingTranslation">Cannot share file</string>
+
+    <!-- L04d: Document Management & Files -->
+    <string name="search_files_hint" tools:ignore="MissingTranslation">Search by file name or path...</string>
+    <string name="stat_total_storage" tools:ignore="MissingTranslation">Total File Storage</string>
+    <string name="stat_total_count" tools:ignore="MissingTranslation">Total Documents</string>
+    <string name="stat_by_type_title" tools:ignore="MissingTranslation">Statistics by file format:</string>
+    <string name="doc_list_detail_title" tools:ignore="MissingTranslation">Detailed document list:</string>
+    <string name="filter_all" tools:ignore="MissingTranslation">All</string>
+    <string name="filter_pdf" tools:ignore="MissingTranslation">PDF</string>
+    <string name="filter_word" tools:ignore="MissingTranslation">Word</string>
+    <string name="filter_excel" tools:ignore="MissingTranslation">Excel</string>
+    <string name="filter_ppt" tools:ignore="MissingTranslation">PPT</string>
+    <string name="filter_image" tools:ignore="MissingTranslation">Image</string>
+    <string name="filter_other" tools:ignore="MissingTranslation">Other</string>
+    <string name="empty_documents_title" tools:ignore="MissingTranslation">No documents yet</string>
+    <string name="empty_documents_desc" tools:ignore="MissingTranslation">Documents scanned, imported or converted from the app will appear here automatically.</string>
+    <string name="file_path_label" tools:ignore="MissingTranslation">File path:</string>
+    <string name="copy_path" tools:ignore="MissingTranslation">Copy path</string>
+    <string name="back_to_root_folder" tools:ignore="MissingTranslation">Root folder</string>
+    <string name="cleared_cache_format" tools:ignore="MissingTranslation">Cleaned up %1$s of cache!</string>
+    <string name="files_count_format" tools:ignore="MissingTranslation">%1$d files</string>
+    <string name="stat_type_detail_format" tools:ignore="MissingTranslation">%1$s: %2$d files (%3$s)</string>
+    <string name="copied_path_format" tools:ignore="MissingTranslation">Copied path:\n%1$s</string>
+    <string name="confirm_delete_title" tools:ignore="MissingTranslation">Confirm Delete File</string>
+    <string name="confirm_delete_message" tools:ignore="MissingTranslation">Are you sure you want to permanently delete this file?\n\n📄 %1$s\n📍 %2$s</string>
+    <string name="deleted_file_format" tools:ignore="MissingTranslation">Deleted %1$s</string>
+    <string name="cannot_delete_file" tools:ignore="MissingTranslation">Cannot delete file</string>
+    <string name="delete_folder_title" tools:ignore="MissingTranslation">Delete Folder</string>
+    <string name="delete_folder_message" tools:ignore="MissingTranslation">Are you sure you want to delete folder \'%1$s\'? Documents inside will be moved out.</string>
+    <string name="delete_document_named_message" tools:ignore="MissingTranslation">Are you sure you want to delete document \'%1$s\'?</string>
+    <string name="folder_deleted" tools:ignore="MissingTranslation">Folder deleted</string>
+    <string name="downloading_from_drive_title" tools:ignore="MissingTranslation">Download Document from Google Drive</string>
+    <string name="downloading_from_drive_message" tools:ignore="MissingTranslation">Downloading %1$s from cloud to device...</string>
+    <string name="download_from_drive_failed" tools:ignore="MissingTranslation">Cannot download document from Google Drive. Please check your network connection.</string>
+    <string name="doc_deleted_toast" tools:ignore="MissingTranslation">Document deleted</string>
+    <string name="doc_renamed_toast" tools:ignore="MissingTranslation">Renamed</string>
+    <string name="root_folder_default" tools:ignore="MissingTranslation">Root folder (Default)</string>
+    <string name="move_to_folder_title" tools:ignore="MissingTranslation">Move to folder</string>
+    <string name="moved_doc_to_folder_format" tools:ignore="MissingTranslation">Moved \'%1$s\' to %2$s</string>
+    <string name="downloading_from_drive_toast" tools:ignore="MissingTranslation">Downloading document from Google Drive...</string>
+    <string name="extracting_pages_toast" tools:ignore="MissingTranslation">Extracting pages...</string>
+    <string name="no_pages_for_ocr" tools:ignore="MissingTranslation">No content found for text recognition</string>
+    <string name="extracting_and_converting_word" tools:ignore="MissingTranslation">Extracting and converting to Word...</string>
+    <string name="word_saved_format" tools:ignore="MissingTranslation">Word file created and saved: %1$s</string>
+    <string name="imported_images_title" tools:ignore="MissingTranslation">Imported Images</string>
+    <string name="imported_images_count_format" tools:ignore="MissingTranslation">Imported %1$d images into folder!</string>
+    <string name="import_file_failed" tools:ignore="MissingTranslation">Cannot import file</string>
+    <string name="page_count_format" tools:ignore="MissingTranslation">%1$d pages</string>
+    <string name="sync_status_synced" tools:ignore="MissingTranslation">Document backed up to personal Google Drive</string>
+    <string name="sync_status_syncing" tools:ignore="MissingTranslation">Syncing document to Google Drive...</string>
+    <string name="sync_status_retrying" tools:ignore="MissingTranslation">Retrying backup to Google Drive...</string>
+    <string name="sync_status_vip_required" tools:ignore="MissingTranslation">Upgrade to VIP to back up documents to Google Drive</string>
+    <string name="menu_open_view_pdf" tools:ignore="MissingTranslation">Open / View PDF</string>
+    <string name="menu_ocr_extract" tools:ignore="MissingTranslation">Extract Text (OCR)</string>
+    <string name="menu_rename" tools:ignore="MissingTranslation">Rename</string>
+    <string name="menu_convert_word" tools:ignore="MissingTranslation">Convert to Word</string>
+    <string name="menu_move_to_folder" tools:ignore="MissingTranslation">Move to folder...</string>
+    <string name="enter_document_name_prompt" tools:ignore="MissingTranslation">Please enter document name</string>
+    <string name="enter_folder_name_prompt" tools:ignore="MissingTranslation">Please enter folder name</string>
+    <string name="menu_open_folder" tools:ignore="MissingTranslation">Open folder</string>
+    <string name="folder_info_format" tools:ignore="MissingTranslation">%1$d documents • %2$s</string>
+    <string name="sync_status" tools:ignore="MissingTranslation">Sync status</string>
+
+    <!-- L04e: Home, Tools, Dialogs and ID Card Compose strings -->
+    <string name="opening_fast_scan_toast" tools:ignore="MissingTranslation">Opening Fast Camera...</string>
+    <string name="opening_fast_id_card_scan_toast" tools:ignore="MissingTranslation">Opening Fast ID Card Scan...</string>
+    <string name="select_images_create_pdf_prompt" tools:ignore="MissingTranslation">Select images from gallery to create PDF</string>
+    <string name="doc_file_not_found" tools:ignore="MissingTranslation">Document file not found</string>
+    <string name="imported_images_success_format" tools:ignore="MissingTranslation">Imported %1$d images successfully!</string>
+    <string name="cannot_read_id_card_images" tools:ignore="MissingTranslation">Cannot read selected ID card images</string>
+    <string name="pdf_tool_create_from_images" tools:ignore="MissingTranslation">Create PDF from gallery images</string>
+    <string name="pdf_tool_import_view" tools:ignore="MissingTranslation">Import &amp; View PDF file</string>
+    <string name="pdf_tool_merge" tools:ignore="MissingTranslation">Merge PDF documents</string>
+    <string name="select_images_to_merge_prompt" tools:ignore="MissingTranslation">Select images to merge into a single PDF</string>
+    <string name="reading_qr_code_toast" tools:ignore="MissingTranslation">Reading QR code...</string>
+    <string name="search_tools_hint" tools:ignore="MissingTranslation">Search tools</string>
+    <string name="tool_prompt_word" tools:ignore="MissingTranslation">Select image to extract text and create Word file</string>
+    <string name="tool_prompt_excel" tools:ignore="MissingTranslation">Select invoice / table image to export Excel</string>
+    <string name="tool_prompt_ppt" tools:ignore="MissingTranslation">Select images to export PPT presentation</string>
+    <string name="tool_prompt_pdf_to_images" tools:ignore="MissingTranslation">Select PDF file to extract images</string>
+    <string name="tool_prompt_pdf_to_long_image" tools:ignore="MissingTranslation">Select PDF file to merge into a long image</string>
+    <string name="importing_and_creating_doc_format" tools:ignore="MissingTranslation">Importing and creating document from %1$d images...</string>
+    <string name="ocr_lang_vi_en" tools:ignore="MissingTranslation">Vietnamese + English</string>
+    <string name="ocr_lang_multilingual" tools:ignore="MissingTranslation">Multilingual</string>
+    <string name="recognizing_text_with_lang_format" tools:ignore="MissingTranslation">Recognizing text (%1$s)...</string>
+    <string name="create_word_failed" tools:ignore="MissingTranslation">Error creating Word file</string>
+    <string name="cannot_recognize_text" tools:ignore="MissingTranslation">Cannot recognize text</string>
+    <string name="recognizing_spreadsheet_with_lang_format" tools:ignore="MissingTranslation">Recognizing spreadsheet (%1$s)...</string>
+    <string name="create_excel_failed" tools:ignore="MissingTranslation">Error creating Excel file</string>
+    <string name="creating_ppt_from_images_format" tools:ignore="MissingTranslation">Creating PPT presentation from %1$d images...</string>
+    <string name="cannot_create_ppt" tools:ignore="MissingTranslation">Cannot create presentation</string>
+    <string name="extracting_pdf_to_images_loading" tools:ignore="MissingTranslation">Extracting PDF pages to images...</string>
+    <string name="cannot_read_pdf_file" tools:ignore="MissingTranslation">Cannot read PDF file</string>
+    <string name="cannot_extract_images_from_pdf" tools:ignore="MissingTranslation">Cannot extract images from PDF</string>
+    <string name="merging_pdf_to_long_image_loading" tools:ignore="MissingTranslation">Merging PDF pages into a long image...</string>
+    <string name="cannot_create_long_image_from_pdf" tools:ignore="MissingTranslation">Cannot create long image from PDF</string>
+    <string name="convert_file_type_complete_format" tools:ignore="MissingTranslation">Convert %1$s completed</string>
+    <string name="file_ready_choose_location" tools:ignore="MissingTranslation">File is ready. Please choose a storage location:</string>
+    <string name="saved_file_type_success_format" tools:ignore="MissingTranslation">Saved %1$s successfully</string>
+    <string name="cannot_save_to_downloads" tools:ignore="MissingTranslation">Cannot save to Downloads</string>
+    <string name="extract_pdf_images_complete" tools:ignore="MissingTranslation">Extract images from PDF completed</string>
+    <string name="extracted_images_count_desc_format" tools:ignore="MissingTranslation">Extracted %1$d images from PDF. Please choose a storage location:</string>
+    <string name="created_images_count_format" tools:ignore="MissingTranslation">Created %1$d images (.jpg)</string>
+    <string name="save_success_dialog_message_format" tools:ignore="MissingTranslation">File saved successfully:\n📁 Location: %1$s\n📄 File: %2$s\n\nDo you want to open or share it now?</string>
+    <string name="save_multi_images_success_dialog_message_format" tools:ignore="MissingTranslation">Saved %1$d images successfully into folder:\n📁 %2$s\n\nDo you want to view the first image or share them now?</string>
+    <string name="open_file_with_chooser" tools:ignore="MissingTranslation">Open file with...</string>
+    <string name="share_result_chooser" tools:ignore="MissingTranslation">Share result</string>
+    <string name="selected_folder" tools:ignore="MissingTranslation">Selected folder</string>
+    <string name="save_file_error" tools:ignore="MissingTranslation">Error saving file</string>
+    <string name="save_images_to_folder_error" tools:ignore="MissingTranslation">Error saving images to folder</string>
+    <string name="save_file_to_folder_error" tools:ignore="MissingTranslation">Error saving file to folder</string>
+    <string name="file_generic_label" tools:ignore="MissingTranslation">File</string>
+    <string name="pdf_extracted_images_title" tools:ignore="MissingTranslation">Images from PDF</string>
+    <string name="long_image_title" tools:ignore="MissingTranslation">Long Image</string>
+    <string name="enter_valid_file_name_error" tools:ignore="MissingTranslation">Please enter a valid file name</string>
+    <string name="vip_watermark_removed_toast" tools:ignore="MissingTranslation">🎉 VIP upgraded! Watermark removed.</string>
+    <string name="enter_valid_pdf_name_error" tools:ignore="MissingTranslation">Please enter a valid PDF file name</string>
+    <string name="watermark_status_enabled_vip" tools:ignore="MissingTranslation">Watermark enabled (VIP)</string>
+    <string name="id_card_a4_subtitle" tools:ignore="MissingTranslation">A4 Size • 210 × 297 mm</string>
+    <string name="id_card_a4_preview_desc" tools:ignore="MissingTranslation">A4 Preview</string>
+    <string name="id_card_section_layout" tools:ignore="MissingTranslation">Layout</string>
+    <string name="id_card_section_scale" tools:ignore="MissingTranslation">Scale</string>
+    <string name="cannot_load_image" tools:ignore="MissingTranslation">Cannot load image</string>
+    <string name="watermark_btn_enable_vip" tools:ignore="MissingTranslation">Enable watermark (VIP)</string>
+    <string name="id_card_swap_need_both_sides" tools:ignore="MissingTranslation">Both sides needed to swap position</string>
+    <string name="id_card_swapped_toast" tools:ignore="MissingTranslation">Swapped Front and Back sides</string>
+    <string name="id_card_crop_rotate_front_option" tools:ignore="MissingTranslation">✂️ Crop / Rotate front side</string>
+    <string name="id_card_pick_other_front_option" tools:ignore="MissingTranslation">🖼️ Pick another image from gallery</string>
+    <string name="id_card_front_title" tools:ignore="MissingTranslation">Front side</string>
+    <string name="id_card_crop_rotate_back_option" tools:ignore="MissingTranslation">✂️ Crop / Rotate back side</string>
+    <string name="id_card_pick_other_back_option" tools:ignore="MissingTranslation">🖼️ Pick another image from gallery</string>
+    <string name="id_card_back_title" tools:ignore="MissingTranslation">Back side</string>
+    <string name="id_card_print_need_at_least_one" tools:ignore="MissingTranslation">Please select at least one card side to print</string>
+    <string name="vip_all_watermarks_removed_toast" tools:ignore="MissingTranslation">🎉 VIP unlocked! All watermarks removed.</string>
+    <string name="id_card_need_at_least_one" tools:ignore="MissingTranslation">Please select at least one card side to continue</string>
+    <string name="id_card_save_pdf_option" tools:ignore="MissingTranslation">📄 Save PDF file (Standard A4)</string>
+    <string name="id_card_save_hd_image_option" tools:ignore="MissingTranslation">🖼️ Save HD A4 image to Gallery</string>
+    <string name="id_card_share_pdf_option" tools:ignore="MissingTranslation">↗️ Share PDF file</string>
+    <string name="id_card_save_dialog_title" tools:ignore="MissingTranslation">Save ID card document</string>
+    <string name="id_card_doc_title_format" tools:ignore="MissingTranslation">ID Card %1$s</string>
+    <string name="cannot_create_pdf" tools:ignore="MissingTranslation">Cannot create PDF file</string>
+    <string name="id_card_saved_hd_to_downloads" tools:ignore="MissingTranslation">Saved HD A4 image to Downloads!</string>
+    <string name="id_card_created_image_at_format" tools:ignore="MissingTranslation">Created image at %1$s</string>
+    <string name="id_card_save_image_error" tools:ignore="MissingTranslation">Error saving image</string>
+    <string name="share_id_card_title" tools:ignore="MissingTranslation">Share ID card</string>
+    <string name="cannot_create_pdf_to_share" tools:ignore="MissingTranslation">Cannot create PDF file to share</string>
+
+    <!-- L04f: More, VIP, QR & Update strings -->
+    <string name="vip_upgrade_btn_price" tools:ignore="MissingTranslation">Upgrade to VIP (20,000 VND/year)</string>
+    <string name="account_status_vip_pro_max" tools:ignore="MissingTranslation">VIP PRO MAX Member</string>
+    <string name="account_status_vip_pro" tools:ignore="MissingTranslation">VIP PRO Member</string>
+    <string name="drive_permission_not_granted_tag" tools:ignore="MissingTranslation">⚠️ Drive Permission Not Granted</string>
+    <string name="drive_permission_not_granted_desc" tools:ignore="MissingTranslation">⚠️ Google Drive permission is not granted. Tap here to grant permission and back up documents.</string>
+    <string name="unknown" tools:ignore="MissingTranslation">Unknown</string>
+    <string name="vip_expiry_remaining_format" tools:ignore="MissingTranslation">⏱️ VIP status: %1$d days remaining (Expires: %2$s)</string>
+    <string name="vip_extend_one_year_btn" tools:ignore="MissingTranslation">Extend 1 more year (20,000 VND)</string>
+    <string name="cloud_tag_not_activated" tools:ignore="MissingTranslation">🔒 Not activated</string>
+    <string name="vip_upgrade_prompt_desc" tools:ignore="MissingTranslation">💡 Upgrade to VIP to automatically back up data to your personal Google Drive.</string>
+    <string name="current_version_format" tools:ignore="MissingTranslation">Current version: %1$s</string>
+    <string name="update_in_progress_desc" tools:ignore="MissingTranslation">Update is in progress in the background. You can continue updating now.</string>
+    <string name="continue_update_action" tools:ignore="MissingTranslation">Continue update</string>
+    <string name="wifi_ssid_format" tools:ignore="MissingTranslation">Network (SSID): %1$s (%2$s)</string>
+    <string name="wifi_password_format" tools:ignore="MissingTranslation">Password: %1$s</string>
+    <string name="wifi_no_password" tools:ignore="MissingTranslation">(No password)</string>
+    <string name="copied_wifi_password" tools:ignore="MissingTranslation">Copied Wi-Fi password!</string>
+    <string name="copied_id_card_info" tools:ignore="MissingTranslation">Copied ID card info!</string>
+    <string name="cannot_open_link_format" tools:ignore="MissingTranslation">Cannot open link: %1$s</string>
+    <string name="wifi_network_no_password_toast" tools:ignore="MissingTranslation">This Wi-Fi network does not have a password</string>
+    <string name="cannot_make_call_toast" tools:ignore="MissingTranslation">Cannot make phone call</string>
+    <string name="cannot_open_email_app_toast" tools:ignore="MissingTranslation">Cannot open email app</string>
+    <string name="cannot_open_sms_app_toast" tools:ignore="MissingTranslation">Cannot open SMS messaging app</string>
+    <string name="copied_vietqr_code" tools:ignore="MissingTranslation">Copied VietQR code!</string>
+    <string name="qr_play_services_downloading" tools:ignore="MissingTranslation">Google Play Services is downloading barcode scanner data. Please try again shortly or pick an image from gallery.</string>
+    <string name="qr_scan_cancelled" tools:ignore="MissingTranslation">Scan cancelled</string>
+    <string name="wifi_enc_open" tools:ignore="MissingTranslation">Open network</string>
+    <string name="wifi_enc_secure" tools:ignore="MissingTranslation">Secured</string>
+    <string name="qr_send_sms" tools:ignore="MissingTranslation">Send SMS</string>
+    <string name="qr_id_card_header" tools:ignore="MissingTranslation">🪪 IDENTITY CARD INFORMATION\n</string>
+    <string name="qr_id_card_number_format" tools:ignore="MissingTranslation">• ID Number: %1$s\n</string>
+    <string name="qr_old_id_number_format" tools:ignore="MissingTranslation">• Old ID Number: %1$s\n</string>
+    <string name="qr_id_fullname_format" tools:ignore="MissingTranslation">• Full name: %1$s\n</string>
+    <string name="qr_id_dob_format" tools:ignore="MissingTranslation">• Date of birth: %1$s\n</string>
+    <string name="qr_id_gender_format" tools:ignore="MissingTranslation">• Gender: %1$s\n</string>
+    <string name="qr_id_address_format" tools:ignore="MissingTranslation">• Permanent address: %1$s</string>
+    <string name="qr_id_issue_date_format" tools:ignore="MissingTranslation">\n• Issue date: %1$s</string>
+    <string name="qr_type_chip_id_card" tools:ignore="MissingTranslation">Chip-based Citizen ID Card</string>
+    <string name="qr_copy_id_card_info" tools:ignore="MissingTranslation">Copy Citizen ID info</string>
+    <string name="qr_type_vietqr" tools:ignore="MissingTranslation">VietQR Payment Code</string>
+    <string name="qr_vietqr_desc_format" tools:ignore="MissingTranslation">VietQR / EMVCo bank transfer payment code\n\nCode string content:\n%1$s</string>
+    <string name="qr_copy_vietqr" tools:ignore="MissingTranslation">Copy VietQR code</string>
+    <string name="vip_expired_dialog_title" tools:ignore="MissingTranslation">VIP Subscription Expiration Notice</string>
+    <string name="vip_expired_dialog_message" formatted="false" tools:ignore="MissingTranslation">Your 1-year (365 days) VIP subscription has expired. Your account has now been switched to the FREE tier.\n\n✓ All documents backed up to your Google Drive remain 100% safe.\n✓ New scans will be stored directly on your device.\n\nWould you like to renew VIP (only 20,000 VND/year) to continue automatically backing up new documents to Google Drive?</string>
+    <string name="account_cloud_sync_tag" tools:ignore="MissingTranslation">Cloud Sync</string>
+    <string name="vip_renew_now_btn" tools:ignore="MissingTranslation">Renew now (20,000 VND)</string>
+    <string name="error_occurred_format" tools:ignore="MissingTranslation">Error: %1$s</string>
+    <string name="cannot_start_google_signin_format" tools:ignore="MissingTranslation">Cannot launch Google Sign-In: %1$s</string>
+    <string name="demo_account_prompt_format" tools:ignore="MissingTranslation">%1$s\n\nDo you want to log in with a Demo Account to explore all features and user interface?</string>
+    <string name="sign_in_demo_action" tools:ignore="MissingTranslation">Sign in Demo</string>
+    <string name="vip_upgrade_subtitle" tools:ignore="MissingTranslation">Protect your data &amp; Boost your productivity</string>
+    <string name="vip_official_plan_title" tools:ignore="MissingTranslation">OFFICIAL VIP PLAN</string>
+    <string name="vip_most_popular_badge" tools:ignore="MissingTranslation">Most popular</string>
+    <string name="vip_price_monthly_sub" tools:ignore="MissingTranslation">Only ~1,600 VND / month • Cancel anytime</string>
+    <string name="vip_advanced_roadmap_title" tools:ignore="MissingTranslation">ADVANCED EXPANSION ROADMAP</string>
+    <string name="vip_pro_title" tools:ignore="MissingTranslation">💎 VIP PRO</string>
+    <string name="vip_pro_desc" tools:ignore="MissingTranslation">AI Document Summarization, Advanced Bilingual Translation &amp; Accurate Handwriting Recognition.</string>
+    <string name="vip_pro_max_title" tools:ignore="MissingTranslation">👑 VIP PRO MAX</string>
+    <string name="vip_pro_max_desc" tools:ignore="MissingTranslation">Team document collaboration (Team Sync), Bulk secure digital signature &amp; 24/7 priority support.</string>
+    <string name="activate_vip_trial_email_format" tools:ignore="MissingTranslation">Activate VIP Trial (%1$s)</string>
+    <string name="sign_in_to_activate_vip_trial" tools:ignore="MissingTranslation">Sign in to activate VIP Trial</string>
+    <string name="vip_trial_activated_format" tools:ignore="MissingTranslation">🎉 Activated VIP Trial Mode (Testing) for account %1$s!</string>
+    <string name="grant_drive_permission_prompt" tools:ignore="MissingTranslation">Please grant Google Drive permission to start automatically backing up documents!</string>
+    <string name="grant_permission" tools:ignore="MissingTranslation">Grant</string>
+    <string name="auto_syncing_docs_to_drive_format" tools:ignore="MissingTranslation">Automatically backing up %1$d documents to Google Drive...</string>
+    <string name="synced_docs_from_drive_format" tools:ignore="MissingTranslation">Synced %1$d documents from Google Drive!</string>
+    <string name="sync_catalog_partial_format" tools:ignore="MissingTranslation">Partially synced: %1$d/%2$d document(s)</string>
+    <string name="sync_catalog_auth_required" tools:ignore="MissingTranslation">Google Drive permission required to sync documents</string>
+    <string name="sync_catalog_failed_format" tools:ignore="MissingTranslation">Cloud sync failed: %1$s</string>
+    <string name="sign_in_to_activate_vip_prompt" tools:ignore="MissingTranslation">Please sign in with your Google account in the More tab to link and activate the VIP package!</string>
+    <string name="vip_session_expired_reauth_prompt">Authentication session has expired. Please re-authenticate your Google account to continue.</string>
+    <string name="drive_permission_granted_toast" tools:ignore="MissingTranslation">Google Drive backup permission granted successfully!</string>
+    <string name="drive_permission_account_mismatch" tools:ignore="MissingTranslation">Authorized Google account does not match the currently signed-in account.</string>
+    <string name="vip_pro_coming_soon_toast" tools:ignore="MissingTranslation">✨ VIP PRO plan with AI Assistant and Advanced Translation will be available in the next update!</string>
+    <string name="vip_pro_max_coming_soon_toast" tools:ignore="MissingTranslation">👑 VIP PRO MAX plan with Team Sync and Enterprise features will be available in the next update!</string>
+    <string name="vip_restore_purchases_btn">Restore purchases</string>
+    <string name="vip_restore_success">VIP package successfully restored from Google Play!</string>
+    <string name="vip_restore_not_found">No active VIP subscription found on your Google Play account.</string>
+    <string name="vip_purchase_success">Payment successful! VIP package has been activated.</string>
+    <string name="vip_purchase_failed">Payment transaction was not successful or was canceled.</string>
+    <string name="vip_billing_not_ready">Google Play Billing service is not ready. Please try again later.</string>
+
+    <!-- L06 & L07: Decouple UI from OCR & Structured Routing -->
+    <string name="ocr_engine_incompatible" tools:ignore="MissingTranslation">The selected OCR engine (%1$s) does not support document language %2$s. Please switch to Auto mode.</string>
+    <string name="ocr_lang_unsupported" tools:ignore="MissingTranslation">Document language %1$s is not supported for on-device text recognition.</string>
+    <string name="ocr_model_downloading" tools:ignore="MissingTranslation">OCR language model is downloading. Please try again shortly.</string>
+    <string name="ocr_model_not_enough_space" tools:ignore="MissingTranslation">Insufficient storage space to download or initialize OCR model. Please free up space.</string>
+    <string name="ocr_model_network_error" tools:ignore="MissingTranslation">Network error while preparing OCR model. Please check your internet connection.</string>
+    <string name="ocr_model_missing" tools:ignore="MissingTranslation">Required OCR model files are missing on this device.</string>
+    <string name="ocr_model_init_failed" tools:ignore="MissingTranslation">Failed to initialize local OCR engine.</string>
+    <string name="ocr_error_generic" tools:ignore="MissingTranslation">Failed to extract text. Please try again.</string>
+    <string name="ocr_no_text_to_copy" tools:ignore="MissingTranslation">No text content to copy</string>
+    <string name="ocr_no_text_to_share" tools:ignore="MissingTranslation">No text content to share</string>
+    <string name="ocr_no_text_to_export" tools:ignore="MissingTranslation">No text content to export</string>
+    <string name="ocr_doc_language_title" tools:ignore="MissingTranslation">Document Language</string>
+    <string name="ocr_lang_mode_auto" tools:ignore="MissingTranslation">Auto-detect</string>
+    <string name="ocr_lang_mode_auto_desc" tools:ignore="MissingTranslation">Prioritizes Vietnamese and English. You can select a language if needed.</string>
+    <string name="ocr_lang_mode_vi_en" tools:ignore="MissingTranslation">Vietnamese + English</string>
+    <string name="ocr_lang_mode_vi_en_desc" tools:ignore="MissingTranslation">Fixed bilingual Vietnamese &amp; English mode</string>
+    <string name="ocr_lang_mode_manual_header" tools:ignore="MissingTranslation">Select Specific Language</string>
+    <string name="ocr_detected_format" tools:ignore="MissingTranslation">Detected: %1$s</string>
+    <string name="ocr_detected_vi_en" tools:ignore="MissingTranslation">Detected: Vietnamese + English</string>
+    <string name="ocr_detected_uncertain" tools:ignore="MissingTranslation">Uncertain language</string>
+    <string name="ocr_action_select_and_re_recognize" tools:ignore="MissingTranslation">Change language &amp; re-scan</string>
+    <string name="ocr_selected_format" tools:ignore="MissingTranslation">Selected: %1$s</string>
+    <string name="ocr_source_unavailable" tools:ignore="MissingTranslation">Cannot re-recognize: image source unavailable</string>
+    <string name="ocr_fallback_badge" tools:ignore="MissingTranslation">Fallback</string>
+    <string name="ocr_confirm_overwrite_title" tools:ignore="MissingTranslation">Discard Changes?</string>
+    <string name="ocr_confirm_overwrite_desc" tools:ignore="MissingTranslation">Re-recognizing text will replace your manual edits with the new OCR results. Do you want to continue?</string>
+    <string name="ocr_confirm_overwrite_keep" tools:ignore="MissingTranslation">Keep Edits</string>
+    <string name="ocr_confirm_overwrite_replace" tools:ignore="MissingTranslation">Re-recognize</string>
+    <string name="ocr_tab_scan" tools:ignore="MissingTranslation">Scan</string>
+    <string name="ocr_tab_text" tools:ignore="MissingTranslation">Text</string>
+    <string name="ocr_tab_table" tools:ignore="MissingTranslation">Table</string>
+    <string name="ocr_image_missing" tools:ignore="MissingTranslation">Source scan image unavailable</string>
+    <string name="ocr_page_indicator" tools:ignore="MissingTranslation">Page %1$d / %2$d</string>
+    <string name="ocr_editor_undo" tools:ignore="MissingTranslation">Undo</string>
+    <string name="ocr_editor_redo" tools:ignore="MissingTranslation">Redo</string>
+    <string name="ocr_editor_status_edited" tools:ignore="MissingTranslation">Edited</string>
+    <string name="ocr_editor_status_saved" tools:ignore="MissingTranslation">Saved</string>
+    <string name="ocr_table_empty_desc" tools:ignore="MissingTranslation">No table detected on this page</string>
+    <string name="ocr_table_create_manual" tools:ignore="MissingTranslation">Create Table</string>
+    <string name="ocr_cell_edit_title" tools:ignore="MissingTranslation">Edit Cell</string>
+    <string name="ocr_cell_type_text" tools:ignore="MissingTranslation">Text</string>
+    <string name="ocr_cell_type_number" tools:ignore="MissingTranslation">Number</string>
+    <string name="ocr_table_prev" tools:ignore="MissingTranslation">Previous table</string>
+    <string name="ocr_table_next" tools:ignore="MissingTranslation">Next table</string>
+    <string name="ocr_table_indicator" tools:ignore="MissingTranslation">Table %1$d / %2$d</string>
+    <string name="ocr_table_merge_cells" tools:ignore="MissingTranslation">Merge</string>
+    <string name="ocr_table_split_cell" tools:ignore="MissingTranslation">Split Cell</string>
+    <string name="ocr_table_merge_right" tools:ignore="MissingTranslation">Merge with right cell (Col %1$d)</string>
+    <string name="ocr_table_merge_below" tools:ignore="MissingTranslation">Merge with cell below (Row %1$d)</string>
+    <string name="ocr_table_delete_row" tools:ignore="MissingTranslation">Delete row %1$d</string>
+    <string name="ocr_table_delete_col" tools:ignore="MissingTranslation">Delete column %1$d</string>
+    <string name="ocr_table_delete_confirm_title" tools:ignore="MissingTranslation">Confirm Deletion</string>
+    <string name="ocr_table_delete_row_msg" tools:ignore="MissingTranslation">Are you sure you want to delete row %1$d?</string>
+    <string name="ocr_table_delete_col_msg" tools:ignore="MissingTranslation">Are you sure you want to delete column %1$d?</string>
+    <string name="ocr_cell_type_format" tools:ignore="MissingTranslation">Type: %1$s</string>
+    <string name="ocr_table_cancel_selection" tools:ignore="MissingTranslation">Deselect</string>
+    <string name="ocr_table_merge_selected_format" tools:ignore="MissingTranslation">Merge (%1$d)</string>
+
+    <!-- L08: Plurals Resources -->
+    <plurals name="files_count_plurals" tools:ignore="MissingTranslation">
+        <item quantity="one">%1$d file</item>
+        <item quantity="other">%1$d files</item>
+    </plurals>
+    <plurals name="pages_count_plurals" tools:ignore="MissingTranslation">
+        <item quantity="one">%1$d page</item>
+        <item quantity="other">%1$d pages</item>
+    </plurals>
+    <plurals name="items_count_plurals" tools:ignore="MissingTranslation">
+        <item quantity="one">%1$d item</item>
+        <item quantity="other">%1$d items</item>
+    </plurals>
+    <plurals name="folder_info_documents_plurals" tools:ignore="MissingTranslation">
+        <item quantity="one">%1$d document • %2$s</item>
+        <item quantity="other">%1$d documents • %2$s</item>
+    </plurals>
+    <plurals name="extracted_images_count_plurals" tools:ignore="MissingTranslation">
+        <item quantity="one">Extracted %1$d image from PDF</item>
+        <item quantity="other">Extracted %1$d images from PDF</item>
+    </plurals>
+    <plurals name="auto_syncing_docs_to_drive_plurals" tools:ignore="MissingTranslation">
+        <item quantity="one">Automatically backing up %1$d document to Google Drive...</item>
+        <item quantity="other">Automatically backing up %1$d documents to Google Drive...</item>
+    </plurals>
+    <plurals name="synced_docs_from_drive_plurals" tools:ignore="MissingTranslation">
+        <item quantity="one">Synced %1$d document from Google Drive!</item>
+        <item quantity="other">Synced %1$d documents from Google Drive!</item>
+    </plurals>
+
+    <string name="ocr_doc_language_unselected" tools:ignore="MissingTranslation">Not selected</string>
+    <string name="ocr_doc_language_prompt_title" tools:ignore="MissingTranslation">Select Document Language</string>
+    <string name="ocr_doc_language_prompt_desc" tools:ignore="MissingTranslation">Your app language does not have on-device OCR support. Please select the document language before extracting text.</string>
+    <string name="ocr_page_error_format" tools:ignore="MissingTranslation">Page %1$d: %2$s</string>
+    <string name="ocr_partial_blank_pages_notice" tools:ignore="MissingTranslation">Extracted %1$d pages (%2$d pages with no text)</string>
+    <string name="camera_no_id_cards_captured" tools:ignore="MissingTranslation">No ID card photos were captured</string>
+    <string name="camera_opening_fast_scanner" tools:ignore="MissingTranslation">Opening Fast Camera...</string>
+    <string name="post_scan_export_no_pages" tools:ignore="MissingTranslation">No document pages to export</string>
+    <string name="post_scan_export_page_failed_format" tools:ignore="MissingTranslation">Failed to process page %1$d. Draft is safely saved.</string>
+    <string name="post_scan_export_count_mismatch_format" tools:ignore="MissingTranslation">Exported page count mismatch (%1$s/%2$s)</string>
+
+    <!-- OCR Document Languages (E02) -->
+    <string name="ocr_doc_lang_vi">Vietnamese</string>
+    <string name="ocr_doc_lang_en">English</string>
+    <string name="ocr_doc_lang_zh_hans">Chinese (Simplified)</string>
+    <string name="ocr_doc_lang_zh_hant">Chinese (Traditional)</string>
+    <string name="ocr_doc_lang_ja">Japanese</string>
+    <string name="ocr_doc_lang_ko">Korean</string>
+    <string name="ocr_doc_lang_hi">Hindi</string>
+    <string name="ocr_doc_lang_fr">French</string>
+    <string name="ocr_doc_lang_de">German</string>
+    <string name="ocr_doc_lang_es">Spanish</string>
+    <string name="ocr_doc_lang_it">Italian</string>
+    <string name="ocr_doc_lang_pt">Portuguese</string>
+    <string name="ocr_doc_lang_nl">Dutch</string>
+    <string name="ocr_doc_lang_pl">Polish</string>
+    <string name="ocr_doc_lang_tr">Turkish</string>
+    <string name="ocr_doc_lang_id">Indonesian</string>
+    <string name="ocr_doc_lang_ms">Malay</string>
+    <string name="ocr_doc_lang_fil">Filipino</string>
+    <string name="ocr_doc_lang_cs">Czech</string>
+    <string name="ocr_doc_lang_da">Danish</string>
+    <string name="ocr_doc_lang_sv">Swedish</string>
+    <string name="ocr_doc_lang_nb">Norwegian Bokmål</string>
+    <string name="ocr_doc_lang_fi">Finnish</string>
+    <string name="ocr_doc_lang_hu">Hungarian</string>
+    <string name="ocr_doc_lang_ro">Romanian</string>
+    <string name="ocr_doc_lang_hr">Croatian</string>
+    <string name="ocr_doc_lang_sk">Slovak</string>
+    <string name="ocr_doc_lang_sl">Slovenian</string>
+    <string name="ocr_doc_lang_sq">Albanian</string>
+    <string name="ocr_doc_lang_ca">Catalan</string>
+    <string name="ocr_doc_lang_et">Estonian</string>
+    <string name="ocr_doc_lang_lv">Latvian</string>
+    <string name="ocr_doc_lang_lt">Lithuanian</string>
+    <string name="ocr_doc_lang_is">Icelandic</string>
+    <string name="ocr_doc_lang_af">Afrikaans</string>
+    <string name="ocr_doc_lang_sr_latn">Serbian (Latin)</string>
+
+    <!-- Default Export & Image File Prefixes (E05) -->
+    <string name="default_doc_filename_prefix" tools:ignore="MissingTranslation">Document_</string>
+    <string name="default_sheet_filename_prefix" tools:ignore="MissingTranslation">Spreadsheet_</string>
+    <string name="default_id_card_img_prefix" tools:ignore="MissingTranslation">ID_Card_A4_</string>
+    <string name="default_id_card_pdf_prefix" tools:ignore="MissingTranslation">ID_Card_</string>
+
+    <!-- Document Scan Pipeline Resiliency (B01-B05) -->
+    <string name="camera_failed_captures_title">Photo processing error</string>
+    <string name="camera_failed_captures_msg">Page(s) %1$s could not be processed. Would you like to retry or skip them?</string>
+    <string name="camera_retry_btn">Retry</string>
+    <string name="camera_skip_btn">Skip</string>
+    <string name="draft_resume_title">Unfinished draft</string>
+    <string name="draft_resume_subtitle">%1$s • %2$d pages</string>
+    <string name="draft_resume_btn">Resume</string>
+    <string name="draft_discard_confirm_title">Discard draft?</string>
+    <string name="draft_discard_confirm_msg">Are you sure you want to discard this draft session?</string>
+
+    <!-- Metadata & Deletion (V11) -->
+    <string name="page_count_unknown" tools:ignore="MissingTranslation">-- pages</string>
+    <string name="delete_document_synced_message" tools:ignore="MissingTranslation">Delete \'%1$s\' from this device? Your Google Drive backup will remain safe.</string>
+
+    <!-- Google Sign-In Result Router (V01) -->
+    <string name="google_signin_error_config_10">Google service configuration error (Error code: 10). Please verify app configuration in Google Play or Google Cloud Console.</string>
+    <string name="google_signin_error_play_services_12500">Google Play authentication error (Error code: 12500). Please check Google Play Services on your device.</string>
+    <string name="google_signin_error_general_format">Google Sign-In failed (Error code: %1$d)</string>
+    <string name="google_signin_error_no_account">Unable to retrieve Google account details.</string>
+
+    <!-- VIP Offer Presentation (F10) -->
+    <string name="vip_price_loading">Loading price…</string>
+    <string name="vip_product_unavailable">Unavailable on Google Play</string>
+    <string name="vip_cancel_anytime">Cancel anytime on Google Play</string>
+    <string name="vip_trial_recurring_format">Free trial %1$s, then %2$s • Cancel anytime</string>
+    <string name="vip_period_yearly">year</string>
+    <string name="vip_period_monthly">month</string>
+    <string name="vip_period_7_days">7 days</string>
+    <string name="vip_period_14_days">14 days</string>
+    <string name="vip_btn_upgrade_email_format">Upgrade VIP (%1$s)</string>
+    <string name="vip_btn_trial_email_format">Start Free Trial (%1$s)</string>
+    <string name="vip_btn_sign_in_to_upgrade">Sign in to upgrade VIP</string>
+    <string name="vip_btn_sign_in_for_trial">Sign in to start Free Trial</string>
 </resources>

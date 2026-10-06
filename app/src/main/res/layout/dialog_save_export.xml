@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -40,7 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Tập tin đã được chuyển đổi thành công. Vui lòng chọn thư mục để lưu:"
+        tools:text="Tập tin đã được chuyển đổi thành công. Vui lòng chọn thư mục để lưu:"
         android:textColor="@color/text_secondary"
         android:textSize="13sp" />
 

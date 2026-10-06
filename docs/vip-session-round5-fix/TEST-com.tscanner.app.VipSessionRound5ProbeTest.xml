@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tscanner.app.VipSessionRound5ProbeTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-06T02:33:57.283Z" hostname="NTT-LAPTOPACER" time="0.024">
+  <properties/>
+  <testcase name="P02_providerRefusalMustNotSpendAcceptedAttempt" classname="com.tscanner.app.VipSessionRound5ProbeTest" time="0.014"/>
+  <testcase name="P03_twoConsumersMustNotStartRecoveryTwiceForSameOperation" classname="com.tscanner.app.VipSessionRound5ProbeTest" time="0.004"/>
+  <testcase name="P01_deferredUiMustAllowFirstActualProviderStart" classname="com.tscanner.app.VipSessionRound5ProbeTest" time="0.003"/>
+  <testcase name="C01_oneActiveConsumerStartsOnce" classname="com.tscanner.app.VipSessionRound5ProbeTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

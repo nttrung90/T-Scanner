@@ -1,0 +1,43 @@
+(node:14140) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✖ B01 unresolved known receipt must not return fresh full restore success (4.2755ms)
+✖ B02 canonical pending-purchase-canceled state must be parsed for linked-token recovery (21.4659ms)
+✔ B03 control mixed restore accurately declares PARTIAL on transient refresh (1.9516ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 1
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 177.1935
+
+✖ failing tests:
+
+test at docs\vip-round6-20261001\backend-probes.test.ts:8:1
+✖ B01 unresolved known receipt must not return fresh full restore success (4.2755ms)
+  AssertionError [ERR_ASSERTION]: Rejected refresh was reported as fresh SUCCESS containing stale ACTIVE
+      at TestContext.<anonymous> (file:///E:/DU%20AN%20AI/T-Scanner/docs/vip-round6-20261001/backend-probes.test.ts:14:9)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'SUCCESS',
+    expected: 'SUCCESS',
+    operator: 'notStrictEqual',
+    diff: 'simple'
+  }
+
+test at docs\vip-round6-20261001\backend-probes.test.ts:17:1
+✖ B02 canonical pending-purchase-canceled state must be parsed for linked-token recovery (21.4659ms)
+  Error [GooglePlayApiError]: Subscription is in invalid or unknown state: SUBSCRIPTION_STATE_PENDING_PURCHASE_CANCELED
+      at ProductionGooglePlayBillingApi.parseSubscriptionV2 (file:///E:/DU%20AN%20AI/T-Scanner/backend/billing-verifier/src/googlePlayClient.ts:335:13)
+      at ProductionGooglePlayBillingApi.getSubscription (file:///E:/DU%20AN%20AI/T-Scanner/backend/billing-verifier/src/googlePlayClient.ts:287:19)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///E:/DU%20AN%20AI/T-Scanner/docs/vip-round6-20261001/backend-probes.test.ts:19:15)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    statusCode: 400,
+    isTransient: false
+  }

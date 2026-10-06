@@ -1,0 +1,19 @@
+(node:2356) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ B701 first-bind linked query must not overwrite a newer authoritative EXPIRED receipt (7.9785ms)
+✔ B702 canceled yearly upgrade must recover authoritative linked monthly receipt (34.7229ms)
+✔ B703 unresolved linked upstream failure must not be reported as complete restore SUCCESS (1.9689ms)
+✔ B704 RTDN after a real pending verification must refresh the canceled purchases linked old receipt (3.5594ms)
+✔ B705 all-pending restore must preserve per-token PENDING semantics (1.3869ms)
+✔ B706 all unknown rejected restore candidates must not be reported as full SUCCESS (1.2951ms)
+✔ B709 control same-SKU linked ACTIVE receipt is resolved and owned correctly (1.5064ms)
+✔ B710 control linked receipt already owned by another account is preserved (1.6793ms)
+✔ B711 linked first-bind race must remain protected across two SQLite connections and restart (761.3983ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1107.6092

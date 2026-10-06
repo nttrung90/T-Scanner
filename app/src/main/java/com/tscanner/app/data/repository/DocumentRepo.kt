@@ -12,7 +12,9 @@ import com.tscanner.app.data.model.FileTypeStat
 import com.tscanner.app.data.model.FolderItem
 import com.tscanner.app.data.model.ManagedFileItem
 import com.tscanner.app.data.model.ManagedFileType
+import com.tscanner.app.data.model.SyncStatus
 import com.tscanner.app.utils.FileUtils
+import com.tscanner.app.utils.SafeFileWriter
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -21,7 +23,6 @@ import java.io.FileOutputStream
 class DocumentRepo private constructor(private val context: Context) {
 
     private val dataFile = File(context.filesDir, "tscanner_data.json")
-    private val atomicDataFile = AtomicFile(dataFile)
 
     private val memoryDocs = mutableListOf<DocumentItem>()
     private val memoryFolders = mutableListOf<FolderItem>()
@@ -32,21 +33,53 @@ class DocumentRepo private constructor(private val context: Context) {
     private val _folders = MutableLiveData<List<FolderItem>>(emptyList())
     val folders: LiveData<List<FolderItem>> = _folders
 
+    private val prefs by lazy { context.getSharedPreferences("tscanner_docs_prefs", Context.MODE_PRIVATE) }
+    private val localTombstones = mutableSetOf<String>()
+
+    @androidx.annotation.VisibleForTesting
+    var backupDispatcher: kotlinx.coroutines.CoroutineDispatcher = kotlinx.coroutines.Dispatchers.IO
+
+    @androidx.annotation.VisibleForTesting
+    var backupScope: kotlinx.coroutines.CoroutineScope? = null
+
+    @androidx.annotation.VisibleForTesting
+    var autoBackupEnabled: Boolean = true
+
+    private fun dispatchCloudBackup(docItem: DocumentItem) {
+        if (!autoBackupEnabled) return
+        val currentUser = com.tscanner.app.utils.AppAuthManager.getCurrentUser()
+        val currentSessionGen = com.tscanner.app.utils.AppAuthManager.getSessionGeneration()
+        val scope = backupScope ?: com.tscanner.app.utils.CloudBackupManager.getOrCreateSessionScope()
+        com.tscanner.app.utils.CloudBackupManager.enqueueBackupAsync(
+            context = context,
+            docItem = docItem,
+            coroutineScope = scope,
+            ioDispatcher = backupDispatcher,
+            expectedUserId = currentUser?.id,
+            expectedSessionGen = currentSessionGen
+        )
+    }
+
     init {
         loadData()
     }
 
     @Synchronized
     private fun loadData() {
+        try {
+            localTombstones.clear()
+            localTombstones.addAll(prefs.getStringSet("key_local_tombstones", emptySet()) ?: emptySet())
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to load local tombstones", e)
+        }
         var needsCleanup = false
         val backupFile = File(dataFile.parentFile, "${dataFile.name}.bak")
         val exists = dataFile.exists() || backupFile.exists()
 
         if (exists) {
             try {
-                val jsonStr = atomicDataFile.openRead().use { stream ->
-                    stream.bufferedReader(Charsets.UTF_8).readText()
-                }
+                val fileToRead = if (dataFile.exists()) dataFile else backupFile
+                val jsonStr = fileToRead.readText(Charsets.UTF_8)
                 val root = JSONObject(jsonStr)
 
                 val parsedFolders = mutableListOf<FolderItem>()
@@ -90,6 +123,7 @@ class DocumentRepo private constructor(private val context: Context) {
                     val ownerId = if (d.has("ownerId") && !d.isNull("ownerId")) d.getString("ownerId") else null
                     val revision = d.optLong("contentRevision", 0L)
                     val mimeType = d.optString("mimeType", if (pdfPath != null) "application/pdf" else "image/jpeg")
+                    val isConflict = d.optBoolean("isConflict", false)
 
                     if (pdfExists || pagesExist || thumbExists || isCloudOnly) {
                         parsedDocs.add(
@@ -109,7 +143,8 @@ class DocumentRepo private constructor(private val context: Context) {
                                 syncStatus = syncStatus,
                                 ownerId = ownerId,
                                 contentRevision = revision,
-                                mimeType = mimeType
+                                mimeType = mimeType,
+                                isConflict = isConflict
                             )
                         )
                     } else {
@@ -177,9 +212,9 @@ class DocumentRepo private constructor(private val context: Context) {
     }
 
     @Synchronized
-    private fun saveData() {
+    private fun saveData(): Boolean {
         var fos: FileOutputStream? = null
-        try {
+        return try {
             val root = JSONObject()
 
             val foldersJson = JSONArray()
@@ -211,6 +246,7 @@ class DocumentRepo private constructor(private val context: Context) {
                     put("ownerId", d.ownerId)
                     put("contentRevision", d.contentRevision)
                     put("mimeType", d.mimeType)
+                    put("isConflict", d.isConflict)
                     val pagesArr = JSONArray()
                     d.pagePaths.forEach { pagesArr.put(it) }
                     put("pagePaths", pagesArr)
@@ -219,14 +255,21 @@ class DocumentRepo private constructor(private val context: Context) {
             }
             root.put("documents", docsJson)
 
-            fos = atomicDataFile.startWrite()
-            fos.write(root.toString().toByteArray(Charsets.UTF_8))
-            atomicDataFile.finishWrite(fos)
-        } catch (e: Exception) {
-            if (fos != null) {
-                atomicDataFile.failWrite(fos)
+            val parent = dataFile.parentFile ?: context.filesDir
+            if (!parent.exists()) parent.mkdirs()
+            val tempFile = File(parent, "data_tmp_${System.currentTimeMillis()}_${java.util.UUID.randomUUID()}.json")
+            tempFile.writeText(root.toString(), Charsets.UTF_8)
+            val success = SafeFileWriter.commitAtomic(tempFile, dataFile)
+            if (!success) {
+                try { tempFile.delete() } catch (_: Exception) {}
+                Log.e(TAG, "Failed to atomically commit document repository")
+                false
+            } else {
+                true
             }
-            Log.e(TAG, "Failed to atomically save document repository", e)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to save document repository", e)
+            false
         }
     }
 
@@ -249,30 +292,68 @@ class DocumentRepo private constructor(private val context: Context) {
     }
 
     @Synchronized
-    fun addDocument(doc: DocumentItem) {
-        val existingIndex = memoryDocs.indexOfFirst { it.id == doc.id }
-        if (existingIndex != -1) {
-            memoryDocs[existingIndex] = doc
+    fun addDocument(doc: DocumentItem): Boolean {
+        val currentUserId = com.tscanner.app.utils.AppAuthManager.getCurrentUser()?.id
+        val targetDoc = if (doc.ownerId == null && currentUserId != null) {
+            doc.copy(ownerId = currentUserId)
         } else {
-            memoryDocs.add(0, doc)
+            doc
         }
-        saveData()
+        val backupDocs = ArrayList(memoryDocs)
+        val existingIndex = memoryDocs.indexOfFirst { it.id == targetDoc.id }
+        if (existingIndex != -1) {
+            memoryDocs[existingIndex] = targetDoc
+        } else {
+            memoryDocs.add(0, targetDoc)
+        }
+        val saveSuccess = saveData()
+        if (!saveSuccess) {
+            memoryDocs.clear()
+            memoryDocs.addAll(backupDocs)
+            Log.e(TAG, "Failed to persist document to storage, rolled back memory docs")
+            return false
+        }
         publishDocuments()
 
         // Auto-backup to Google Drive if user is VIP
-        if (doc.syncStatus != com.tscanner.app.data.model.SyncStatus.SYNCED &&
+        if (targetDoc.syncStatus != com.tscanner.app.data.model.SyncStatus.SYNCED &&
             com.tscanner.app.utils.AppAuthManager.isUserVip() &&
-            doc.pdfPath != null
+            targetDoc.pdfPath != null
         ) {
-            com.tscanner.app.utils.CloudBackupManager.enqueueBackup(context, doc)
+            dispatchCloudBackup(targetDoc)
         }
+        return true
     }
 
     @Synchronized
-    fun deleteDocument(docId: String): Boolean {
+    fun deleteDocument(docId: String, userId: String? = null): Boolean {
         val index = memoryDocs.indexOfFirst { it.id == docId }
         if (index != -1) {
-            val doc = memoryDocs.removeAt(index)
+            val doc = memoryDocs[index]
+            val hasAccess = if (userId == null) {
+                doc.ownerId == null
+            } else {
+                doc.ownerId == null || doc.ownerId == userId
+            }
+            if (!hasAccess) {
+                Log.w(TAG, "Cannot delete document $docId owned by ${doc.ownerId} by user $userId")
+                return false
+            }
+            memoryDocs.removeAt(index)
+
+            // V11c: Record local tombstone for deleted document so subsequent Drive catalog sync doesn't resurrect it
+            doc.driveFileId?.let { driveId ->
+                localTombstones.add(driveId)
+            }
+            localTombstones.add(docId)
+            persistTombstones()
+
+            // Immediately persist changes to disk
+            val saved = saveData()
+            if (!saved) {
+                memoryDocs.add(index, doc)
+                return false
+            }
 
             // Delete associated physical files safely ONLY if no other document in memoryDocs references them
             try {
@@ -301,8 +382,6 @@ class DocumentRepo private constructor(private val context: Context) {
                 e.printStackTrace()
             }
 
-            // Immediately persist changes to disk
-            saveData()
             publishDocuments()
             return true
         }
@@ -310,25 +389,96 @@ class DocumentRepo private constructor(private val context: Context) {
     }
 
     @Synchronized
-    fun renameDocument(docId: String, newTitle: String) {
-        val index = memoryDocs.indexOfFirst { it.id == docId }
-        if (index != -1) {
-            val doc = memoryDocs[index]
-            memoryDocs[index] = doc.copy(title = newTitle)
-            saveData()
-            publishDocuments()
+    fun isLocalTombstoned(driveFileIdOrDocId: String): Boolean {
+        return localTombstones.contains(driveFileIdOrDocId)
+    }
+
+    @Synchronized
+    fun addLocalTombstone(driveFileIdOrDocId: String) {
+        localTombstones.add(driveFileIdOrDocId)
+        persistTombstones()
+    }
+
+    @Synchronized
+    fun clearLocalTombstone(driveFileIdOrDocId: String) {
+        localTombstones.remove(driveFileIdOrDocId)
+        persistTombstones()
+    }
+
+    @Synchronized
+    fun getLocalTombstones(): Set<String> = HashSet(localTombstones)
+
+    private fun persistTombstones() {
+        try {
+            prefs.edit().putStringSet("key_local_tombstones", HashSet(localTombstones)).apply()
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to persist local tombstones", e)
         }
     }
 
     @Synchronized
-    fun moveDocumentToFolder(docId: String, folderId: String?) {
+    fun renameDocument(docId: String, newTitle: String, userId: String? = null): Boolean {
         val index = memoryDocs.indexOfFirst { it.id == docId }
         if (index != -1) {
             val doc = memoryDocs[index]
-            memoryDocs[index] = doc.copy(folderId = folderId)
-            saveData()
-            publishDocuments()
+            val hasAccess = if (userId == null) {
+                doc.ownerId == null
+            } else {
+                doc.ownerId == null || doc.ownerId == userId
+            }
+            if (!hasAccess) {
+                Log.w(TAG, "Cannot rename document $docId owned by ${doc.ownerId} by user $userId")
+                return false
+            }
+            // V11b: Bumping contentRevision and resetting sync status so that remote Drive metadata gets updated
+            val updated = doc.copy(
+                title = newTitle,
+                contentRevision = doc.contentRevision + 1L,
+                syncStatus = SyncStatus.LOCAL_ONLY,
+                isSynced = false
+            )
+            memoryDocs[index] = updated
+            val saved = saveData()
+            if (saved) {
+                publishDocuments()
+                if (com.tscanner.app.utils.AppAuthManager.isUserVip() && updated.pdfPath != null) {
+                    dispatchCloudBackup(updated)
+                }
+                return true
+            } else {
+                memoryDocs[index] = doc
+                return false
+            }
         }
+        return false
+    }
+
+    @Synchronized
+    fun moveDocumentToFolder(docId: String, folderId: String?, userId: String? = null): Boolean {
+        val index = memoryDocs.indexOfFirst { it.id == docId }
+        if (index != -1) {
+            val doc = memoryDocs[index]
+            val hasAccess = if (userId == null) {
+                doc.ownerId == null
+            } else {
+                doc.ownerId == null || doc.ownerId == userId
+            }
+            if (!hasAccess) {
+                Log.w(TAG, "Cannot move document $docId owned by ${doc.ownerId} by user $userId")
+                return false
+            }
+            val updated = doc.copy(folderId = folderId)
+            memoryDocs[index] = updated
+            val saved = saveData()
+            if (saved) {
+                publishDocuments()
+                return true
+            } else {
+                memoryDocs[index] = doc
+                return false
+            }
+        }
+        return false
     }
 
     @Synchronized
@@ -363,19 +513,116 @@ class DocumentRepo private constructor(private val context: Context) {
     }
 
     @Synchronized
-    fun getRecentDocuments(limit: Int = 10): List<DocumentItem> {
-        return memoryDocs.take(limit)
+    fun getDocumentByPdfPath(path: String): DocumentItem? {
+        return memoryDocs.find { it.pdfPath == path }
+    }
+
+    /**
+     * Retrieves a document checking that [userId] has access to it.
+     * Accessible if document is owned by [userId], or if [allowGuest] is true and document has no owner.
+     */
+    @Synchronized
+    fun getDocumentForUser(docId: String, userId: String?, allowGuest: Boolean = true): DocumentItem? {
+        val doc = memoryDocs.find { it.id == docId } ?: return null
+        val hasAccess = if (userId == null) {
+            doc.ownerId == null
+        } else {
+            doc.ownerId == userId || (allowGuest && doc.ownerId == null)
+        }
+        return if (hasAccess) doc else null
+    }
+
+    /**
+     * Returns documents scoped to [userId].
+     * If [userId] is null, returns only guest (unowned) documents.
+     * If [userId] is provided, returns documents owned by [userId] (plus guest docs if [includeGuest] is true).
+     */
+    @Synchronized
+    fun getDocumentsForUser(userId: String?, includeGuest: Boolean = true): List<DocumentItem> {
+        return memoryDocs.filter { doc ->
+            if (userId == null) {
+                doc.ownerId == null
+            } else {
+                doc.ownerId == userId || (includeGuest && doc.ownerId == null)
+            }
+        }
+    }
+
+    /**
+     * Permanently assigns an owner to a document if it does not already have a different owner.
+     * Returns true if ownership was assigned and saved.
+     */
+    @Synchronized
+    fun setDocumentOwner(docId: String, newOwnerId: String): Boolean {
+        if (newOwnerId.isBlank()) return false
+        val index = memoryDocs.indexOfFirst { it.id == docId }
+        if (index == -1) return false
+        val doc = memoryDocs[index]
+        if (doc.ownerId != null && doc.ownerId != newOwnerId) {
+            Log.w(TAG, "Cannot reassign document ${doc.id} owned by ${doc.ownerId} to $newOwnerId")
+            return false
+        }
+        if (doc.ownerId == newOwnerId) return true
+        memoryDocs[index] = doc.copy(ownerId = newOwnerId)
+        val saved = saveData()
+        if (saved) {
+            publishDocuments()
+            return true
+        } else {
+            memoryDocs[index] = doc
+            return false
+        }
+    }
+
+    /**
+     * Claims all unowned (guest) documents for [targetOwnerId].
+     * Documents already owned by any user are strictly preserved and untouched.
+     * Returns the number of documents claimed.
+     */
+    @Synchronized
+    fun claimGuestDocuments(targetOwnerId: String): Int {
+        if (targetOwnerId.isBlank()) return 0
+        val originalDocs = ArrayList(memoryDocs)
+        var claimedCount = 0
+        for (i in memoryDocs.indices) {
+            val doc = memoryDocs[i]
+            if (doc.ownerId == null) {
+                memoryDocs[i] = doc.copy(ownerId = targetOwnerId)
+                claimedCount++
+            }
+        }
+        if (claimedCount > 0) {
+            val saved = saveData()
+            if (saved) {
+                publishDocuments()
+                Log.i(TAG, "Claimed $claimedCount guest document(s) for user $targetOwnerId")
+                return claimedCount
+            } else {
+                memoryDocs.clear()
+                memoryDocs.addAll(originalDocs)
+                return 0
+            }
+        }
+        return 0
     }
 
     @Synchronized
-    fun getDocumentsInFolder(folderId: String?): List<DocumentItem> {
-        return memoryDocs.filter { it.folderId == folderId }
+    fun getRecentDocuments(limit: Int = 10, userId: String? = null): List<DocumentItem> {
+        val baseList = getDocumentsForUser(userId, includeGuest = false)
+        return baseList.take(limit)
     }
 
     @Synchronized
-    fun searchDocuments(query: String): List<DocumentItem> {
-        if (query.isBlank()) return ArrayList(memoryDocs)
-        return memoryDocs.filter { it.title.contains(query, ignoreCase = true) }
+    fun getDocumentsInFolder(folderId: String?, userId: String? = null): List<DocumentItem> {
+        val baseList = getDocumentsForUser(userId, includeGuest = false)
+        return baseList.filter { it.folderId == folderId }
+    }
+
+    @Synchronized
+    fun searchDocuments(query: String, userId: String? = null): List<DocumentItem> {
+        val baseList = getDocumentsForUser(userId, includeGuest = false)
+        if (query.isBlank()) return ArrayList(baseList)
+        return baseList.filter { it.title.contains(query, ignoreCase = true) }
     }
 
     @Synchronized
@@ -383,16 +630,18 @@ class DocumentRepo private constructor(private val context: Context) {
         docId: String,
         status: com.tscanner.app.data.model.SyncStatus,
         driveFileId: String? = null,
-        syncedAt: Long? = null
+        syncedAt: Long? = null,
+        clearDriveFileId: Boolean = false
     ) {
         val index = memoryDocs.indexOfFirst { it.id == docId }
         if (index != -1) {
             val doc = memoryDocs[index]
             val isSynced = (status == com.tscanner.app.data.model.SyncStatus.SYNCED)
+            val newDriveId = if (clearDriveFileId) null else (driveFileId ?: doc.driveFileId)
             memoryDocs[index] = doc.copy(
                 syncStatus = status,
-                driveFileId = driveFileId ?: doc.driveFileId,
-                isSynced = isSynced || doc.isSynced,
+                driveFileId = newDriveId,
+                isSynced = isSynced,
                 lastSyncedAt = if (isSynced) (syncedAt ?: System.currentTimeMillis()) else doc.lastSyncedAt
             )
             saveData()
@@ -400,60 +649,280 @@ class DocumentRepo private constructor(private val context: Context) {
         }
     }
 
+    /**
+     * Atomically commits a sync status update using Compare-And-Swap (CAS).
+     * The update will only succeed if:
+     * 1. The document exists in memoryDocs.
+     * 2. The document's ownerId matches [expectedOwnerId] (or both null).
+     * 3. The document's contentRevision matches [expectedRevision].
+     *
+     * If the document was modified (contentRevision changed) while the upload was in-flight,
+     * this call returns false and does NOT overwrite the newer dirty state.
+     */
     @Synchronized
-    fun markDocumentModified(docId: String, newSizeBytes: Long? = null, newThumbnailPath: String? = null) {
+    fun updateSyncStatusCas(
+        docId: String,
+        expectedOwnerId: String?,
+        expectedRevision: Long,
+        status: com.tscanner.app.data.model.SyncStatus,
+        driveFileId: String? = null,
+        syncedAt: Long? = null,
+        clearDriveFileId: Boolean = false
+    ): Boolean {
+        val index = memoryDocs.indexOfFirst { it.id == docId }
+        if (index == -1) {
+            Log.w(TAG, "updateSyncStatusCas: Document $docId not found")
+            return false
+        }
+        val doc = memoryDocs[index]
+
+        // 1. Verify owner matches
+        if (doc.ownerId != expectedOwnerId) {
+            Log.w(TAG, "updateSyncStatusCas: Owner mismatch for $docId. Expected '$expectedOwnerId' but was '${doc.ownerId}'")
+            return false
+        }
+
+        // 2. Verify revision matches (CAS)
+        if (expectedRevision != -1L && doc.contentRevision != expectedRevision) {
+            Log.w(TAG, "updateSyncStatusCas: Revision mismatch for $docId. Expected rev $expectedRevision but was rev ${doc.contentRevision}. Newer local edits exist!")
+            return false
+        }
+
+        val isSynced = (status == com.tscanner.app.data.model.SyncStatus.SYNCED)
+        val newDriveId = if (clearDriveFileId) null else (driveFileId ?: doc.driveFileId)
+        val remoteBaseline = doc.remoteModifiedTime ?: doc.lastSyncedAt
+        val updated = doc.copy(
+            syncStatus = status,
+            driveFileId = newDriveId,
+            isSynced = isSynced,
+            lastSyncedAt = if (isSynced) (syncedAt ?: System.currentTimeMillis()) else doc.lastSyncedAt,
+            remoteModifiedTime = remoteBaseline
+        )
+        memoryDocs[index] = updated
+        val saved = saveData()
+        if (saved) {
+            publishDocuments()
+            return true
+        } else {
+            memoryDocs[index] = doc
+            return false
+        }
+    }
+
+    @Synchronized
+    fun markDocumentModified(docId: String, newSizeBytes: Long? = null, newThumbnailPath: String? = null, userId: String? = null): Boolean {
+        val index = memoryDocs.indexOfFirst { it.id == docId }
+        if (index == -1) return false
+        val doc = memoryDocs[index]
+        val hasAccess = if (userId == null) {
+            doc.ownerId == null
+        } else {
+            doc.ownerId == null || doc.ownerId == userId
+        }
+        if (!hasAccess) {
+            Log.w(TAG, "Cannot modify document $docId owned by ${doc.ownerId} by user $userId")
+            return false
+        }
+        val updated = doc.copy(
+            isSynced = false,
+            syncStatus = com.tscanner.app.data.model.SyncStatus.LOCAL_ONLY,
+            contentRevision = doc.contentRevision + 1L,
+            sizeBytes = newSizeBytes ?: doc.sizeBytes,
+            thumbnailPath = newThumbnailPath ?: doc.thumbnailPath
+        )
+        memoryDocs[index] = updated
+        val saved = saveData()
+        if (saved) {
+            publishDocuments()
+            if (com.tscanner.app.utils.AppAuthManager.isUserVip() && updated.pdfPath != null) {
+                dispatchCloudBackup(updated)
+            }
+            return true
+        } else {
+            memoryDocs[index] = doc
+            return false
+        }
+    }
+
+    @Synchronized
+    fun updateDocumentPdfPath(
+        docId: String,
+        newPath: String,
+        fileSize: Long,
+        thumbPath: String? = null,
+        pageCount: Int? = null,
+        expectedOwnerId: String? = null,
+        expectedRevision: Long? = null
+    ): Boolean {
         val index = memoryDocs.indexOfFirst { it.id == docId }
         if (index != -1) {
+            val file = File(newPath)
+            if (!file.exists() || file.length() == 0L) {
+                return false
+            }
             val doc = memoryDocs[index]
+            if (expectedOwnerId != null && doc.ownerId != expectedOwnerId) {
+                Log.w(TAG, "updateDocumentPdfPath: Owner mismatch for $docId (expected=$expectedOwnerId, current=${doc.ownerId})")
+                return false
+            }
+            if (expectedRevision != null && expectedRevision != -1L && doc.contentRevision != expectedRevision) {
+                Log.w(TAG, "updateDocumentPdfPath: Revision mismatch for $docId (expected=$expectedRevision, current=${doc.contentRevision})")
+                return false
+            }
+            // V11a: Resolve real page count from PDF or provided count
+            val resolvedPageCount = pageCount?.takeIf { it > 0 }
+                ?: SafeFileWriter.getPdfPageCount(file).takeIf { it > 0 }
+                ?: doc.pageCount.takeIf { it > 0 }
+                ?: 1
             val updated = doc.copy(
-                isSynced = false,
-                syncStatus = com.tscanner.app.data.model.SyncStatus.LOCAL_ONLY,
-                contentRevision = doc.contentRevision + 1L,
-                sizeBytes = newSizeBytes ?: doc.sizeBytes,
-                thumbnailPath = newThumbnailPath ?: doc.thumbnailPath
+                pdfPath = newPath,
+                sizeBytes = fileSize,
+                thumbnailPath = thumbPath ?: doc.thumbnailPath,
+                pageCount = resolvedPageCount
             )
             memoryDocs[index] = updated
-            saveData()
-            publishDocuments()
+            val saved = saveData()
+            if (saved) {
+                publishDocuments()
+                return true
+            } else {
+                memoryDocs[index] = doc
+                return false
+            }
+        }
+        return false
+    }
 
-            if (com.tscanner.app.utils.AppAuthManager.isUserVip() && updated.pdfPath != null) {
-                com.tscanner.app.utils.CloudBackupManager.enqueueBackup(context, updated)
+data class UpsertResult(
+    val document: DocumentItem,
+    val isNew: Boolean
+)
+
+    /**
+     * Atomically reconciles or inserts a remote document from Google Drive.
+     * Prevents duplicate entries on concurrent catalog imports (V06).
+     * Compares remote modifiedTime with local lastSyncedAt and detects dirty conflicts (V05a).
+     * Checks local tombstones to prevent resurrecting deleted documents (V11c).
+     * Returns the persisted UpsertResult, or null if saveData failed.
+     */
+    @Synchronized
+    fun upsertFromDrive(
+        ownerId: String,
+        driveFileId: String,
+        title: String,
+        sizeBytes: Long,
+        modifiedTime: Long
+    ): UpsertResult? {
+        // V11c: Check local tombstones - if user explicitly deleted this file locally,
+        // do not resurrect it from Google Drive catalog!
+        if (isLocalTombstoned(driveFileId)) {
+            Log.d(TAG, "Skipping Drive file $driveFileId because it was deleted locally (tombstoned)")
+            return null
+        }
+
+        val cleanTitle = if (title.endsWith(".pdf", ignoreCase = true)) title.removeSuffix(".pdf") else title
+        val existingIndex = memoryDocs.indexOfFirst {
+            val ownerMatch = (it.ownerId == null || it.ownerId == ownerId)
+            ownerMatch && it.driveFileId == driveFileId
+        }
+
+        if (existingIndex != -1) {
+            val existing = memoryDocs[existingIndex]
+            val remoteBaseline = existing.remoteModifiedTime ?: existing.lastSyncedAt ?: 0L
+            val isRemoteNewer = modifiedTime > remoteBaseline
+
+            val updatedDoc = if (isRemoteNewer) {
+                // Check if local document is dirty (V05a)
+                val isLocalDirty = existing.syncStatus == SyncStatus.LOCAL_ONLY ||
+                        existing.syncStatus == SyncStatus.FAILED ||
+                        existing.syncStatus == SyncStatus.SYNCING
+                if (isLocalDirty) {
+                    Log.w(TAG, "Conflict detected for doc '${existing.title}' ($driveFileId): local edits exist while remote is newer.")
+                    existing.copy(
+                        isConflict = true,
+                        ownerId = ownerId
+                    )
+                } else {
+                    // Local is clean, remote has newer version: invalidate local catalog cache for lazy re-download,
+                    // but DO NOT delete existing physical file so offline readers retain access and rollback is safe.
+                    Log.i(TAG, "Remote is newer for doc '${existing.title}' ($driveFileId). Refreshing remote metadata.")
+                    existing.copy(
+                        title = cleanTitle,
+                        pdfPath = null,
+                        thumbnailPath = null,
+                        sizeBytes = sizeBytes,
+                        lastSyncedAt = modifiedTime,
+                        remoteModifiedTime = modifiedTime,
+                        isSynced = true,
+                        syncStatus = SyncStatus.SYNCED,
+                        ownerId = ownerId,
+                        isConflict = false
+                    )
+                }
+            } else {
+                // Remote not newer, ensure ownerId is attached
+                if (existing.ownerId == null) existing.copy(ownerId = ownerId) else existing
+            }
+
+            if (updatedDoc !== existing) {
+                memoryDocs[existingIndex] = updatedDoc
+                val saved = saveData()
+                if (saved) {
+                    publishDocuments()
+                    return UpsertResult(updatedDoc, isNew = false)
+                } else {
+                    // Rollback
+                    memoryDocs[existingIndex] = existing
+                    return null
+                }
+            }
+            return UpsertResult(existing, isNew = false)
+        } else {
+            // Document doesn't exist locally: create new lazy DocumentItem with unknown page count (V11a)
+            val newDoc = DocumentItem(
+                id = java.util.UUID.randomUUID().toString(),
+                title = cleanTitle,
+                pdfPath = null,
+                thumbnailPath = null,
+                pagePaths = emptyList(),
+                pageCount = 0,
+                sizeBytes = sizeBytes,
+                createdAt = modifiedTime,
+                isSynced = true,
+                driveFileId = driveFileId,
+                lastSyncedAt = modifiedTime,
+                remoteModifiedTime = modifiedTime,
+                syncStatus = SyncStatus.SYNCED,
+                ownerId = ownerId,
+                isConflict = false
+            )
+            memoryDocs.add(0, newDoc)
+            val saved = saveData()
+            if (saved) {
+                publishDocuments()
+                return UpsertResult(newDoc, isNew = true)
+            } else {
+                // Rollback
+                memoryDocs.removeAt(0)
+                return null
             }
         }
     }
 
     @Synchronized
-    fun updateDocumentPdfPath(docId: String, newPath: String, fileSize: Long, thumbPath: String? = null) {
-        val index = memoryDocs.indexOfFirst { it.id == docId }
-        if (index != -1) {
-            val doc = memoryDocs[index]
-            memoryDocs[index] = doc.copy(
-                pdfPath = newPath,
-                sizeBytes = fileSize,
-                thumbnailPath = thumbPath ?: doc.thumbnailPath
-            )
-            saveData()
-            publishDocuments()
+    fun getUnsyncedDocuments(userId: String? = null): List<DocumentItem> {
+        return memoryDocs.filter { doc ->
+            val ownerMatches = if (userId == null) true else (doc.ownerId == userId || doc.ownerId == null)
+            ownerMatches && !doc.isSynced && !doc.isConflict && doc.pdfPath != null && File(doc.pdfPath).exists()
         }
     }
 
     @Synchronized
-    fun getUnsyncedDocuments(): List<DocumentItem> {
-        return memoryDocs.filter { !it.isSynced && it.pdfPath != null && File(it.pdfPath).exists() }
-    }
-
-    @Synchronized
-    fun getStorageStats(): StorageStats {
-        val docCount = memoryDocs.size
-        val pdfCount = memoryDocs.count { it.pdfPath != null }
-        var totalBytes = memoryDocs.sumOf { it.sizeBytes }
-
-        // calculate actual directory sizes
-        val docDir = FileUtils.getDocumentsDir(context)
-        val imgDir = FileUtils.getImagesDir(context)
-        val exportDir = FileUtils.getExportsDir(context)
-
-        totalBytes = maxOf(totalBytes, getDirSize(docDir) + getDirSize(imgDir) + getDirSize(exportDir))
+    fun getStorageStats(userId: String? = null): StorageStats {
+        val userDocs = getDocumentsForUser(userId, includeGuest = (userId == null))
+        val docCount = userDocs.size
+        val pdfCount = userDocs.count { it.pdfPath != null }
+        val totalBytes = userDocs.sumOf { it.sizeBytes }
 
         return StorageStats(
             totalDocuments = docCount,
@@ -477,13 +946,19 @@ class DocumentRepo private constructor(private val context: Context) {
     )
 
     @Synchronized
-    fun getAllManagedFiles(): List<ManagedFileItem> {
+    fun getAllManagedFiles(userId: String? = null): List<ManagedFileItem> {
         val fileMap = mutableMapOf<String, ManagedFileItem>()
+        val otherUserDocPaths = if (userId != null) {
+            memoryDocs.filter { it.ownerId != null && it.ownerId != userId }.mapNotNull { it.pdfPath }.toSet()
+        } else {
+            memoryDocs.filter { it.ownerId != null }.mapNotNull { it.pdfPath }.toSet()
+        }
 
         fun addFileIfValid(f: File) {
             if (!f.exists() || f.isDirectory || f.length() == 0L) return
             if (f.name.startsWith("thumb_") || f.name.startsWith("page_") || f.name.startsWith("pdf_page_")) return
             val canonical = try { f.canonicalPath } catch (e: Exception) { f.absolutePath }
+            if (otherUserDocPaths.contains(canonical) || otherUserDocPaths.contains(f.absolutePath)) return
             if (fileMap.containsKey(canonical)) return
 
             val ext = f.extension.lowercase()
@@ -514,8 +989,9 @@ class DocumentRepo private constructor(private val context: Context) {
         val exportDir = FileUtils.getExportsDir(context)
         exportDir.listFiles()?.forEach { addFileIfValid(it) }
 
-        // 3. Also incorporate any files explicitly registered in memoryDocs
-        for (doc in memoryDocs) {
+        // 3. Also incorporate any files explicitly registered in memoryDocs for this user/guest
+        val relevantDocs = getDocumentsForUser(userId, includeGuest = (userId == null))
+        for (doc in relevantDocs) {
             doc.pdfPath?.let { addFileIfValid(File(it)) }
         }
 
@@ -565,6 +1041,7 @@ class DocumentRepo private constructor(private val context: Context) {
             return false
         }
 
+        val originalDocs = ArrayList(memoryDocs)
         var repoModified = false
         val toRemove = mutableListOf<DocumentItem>()
         for (i in memoryDocs.indices) {
@@ -593,14 +1070,59 @@ class DocumentRepo private constructor(private val context: Context) {
 
         if (toRemove.isNotEmpty()) {
             memoryDocs.removeAll(toRemove)
+            toRemove.forEach { doc ->
+                doc.driveFileId?.let { driveId ->
+                    localTombstones.add(driveId)
+                }
+                localTombstones.add(doc.id)
+            }
+            persistTombstones()
         }
 
         if (repoModified) {
-            saveData()
-            publishDocuments()
+            val saved = saveData()
+            if (saved) {
+                publishDocuments()
+            } else {
+                memoryDocs.clear()
+                memoryDocs.addAll(originalDocs)
+                return false
+            }
         }
 
         return true
+    }
+
+    /**
+     * Migrates ownership of all documents belonging to [legacyOwnerId] to [canonicalOwnerId].
+     * Atomically persists changes to storage and notifies observers.
+     * Returns the number of documents migrated.
+     */
+    @Synchronized
+    fun migrateOwnerId(legacyOwnerId: String, canonicalOwnerId: String): Int {
+        if (legacyOwnerId.isBlank() || canonicalOwnerId.isBlank() || legacyOwnerId == canonicalOwnerId) {
+            return 0
+        }
+        val originalDocs = ArrayList(memoryDocs)
+        var migratedCount = 0
+        for (i in memoryDocs.indices) {
+            val doc = memoryDocs[i]
+            if (doc.ownerId == legacyOwnerId) {
+                memoryDocs[i] = doc.copy(ownerId = canonicalOwnerId)
+                migratedCount++
+            }
+        }
+        if (migratedCount > 0) {
+            val saved = saveData()
+            if (saved) {
+                publishDocuments()
+            } else {
+                memoryDocs.clear()
+                memoryDocs.addAll(originalDocs)
+                return 0
+            }
+        }
+        return migratedCount
     }
 
     companion object {
@@ -613,6 +1135,11 @@ class DocumentRepo private constructor(private val context: Context) {
             return INSTANCE ?: synchronized(this) {
                 INSTANCE ?: DocumentRepo(context.applicationContext).also { INSTANCE = it }
             }
+        }
+
+        @androidx.annotation.VisibleForTesting
+        fun resetInstanceForTesting() {
+            INSTANCE = null
         }
     }
 }

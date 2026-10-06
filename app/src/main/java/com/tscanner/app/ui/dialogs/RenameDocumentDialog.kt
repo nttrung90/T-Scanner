@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
+import com.tscanner.app.R
 import com.tscanner.app.databinding.DialogRenameDocumentBinding
 
 class RenameDocumentDialog(
@@ -34,7 +35,7 @@ class RenameDocumentDialog(
                 dismiss()
                 onConfirm(newName)
             } else {
-                Toast.makeText(context, "Vui lòng nhập tên tài liệu", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.enter_document_name_prompt), Toast.LENGTH_SHORT).show()
             }
         }
     }

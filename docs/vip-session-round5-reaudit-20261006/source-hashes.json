@@ -1,0 +1,26 @@
+[
+  {
+    "Path": "E:\\DU AN AI\\T-Scanner\\app\\src\\main\\java\\com\\tscanner\\app\\utils\\BillingManager.kt",
+    "Hash": "38B9F8893E8E097E2C079B0F8FF27D8418CEC7B077FD2E599007FDAD21C112A9"
+  },
+  {
+    "Path": "E:\\DU AN AI\\T-Scanner\\app\\src\\main\\java\\com\\tscanner\\app\\ui\\dialogs\\VipPurchaseAuthConsumer.kt",
+    "Hash": "6EBABE166DCEC711A4515E446225B1C05F15A14F407A7867C5888720F2F02378"
+  },
+  {
+    "Path": "E:\\DU AN AI\\T-Scanner\\app\\src\\main\\java\\com\\tscanner\\app\\ui\\dialogs\\VipUpgradeDialog.kt",
+    "Hash": "0A8A5AA6D048EF40FAAD76F9A61CDB17674C173D0FF2D0618D46B0F2C17BF725"
+  },
+  {
+    "Path": "E:\\DU AN AI\\T-Scanner\\app\\src\\main\\java\\com\\tscanner\\app\\ui\\more\\MoreFragment.kt",
+    "Hash": "75CE07449BE6B7FF9E1C574AB9CD834045823E4461AB5FE04FC4C5AEA2156737"
+  },
+  {
+    "Path": "E:\\DU AN AI\\T-Scanner\\app\\src\\main\\java\\com\\tscanner\\app\\ui\\home\\HomeFragment.kt",
+    "Hash": "E700EFA1BF40EE6C8A6F4B8530C0A3CE6E40156FC2215A5C9993808EA6F2FACF"
+  },
+  {
+    "Path": "E:\\DU AN AI\\T-Scanner\\app\\src\\main\\java\\com\\tscanner\\app\\utils\\AppAuthManager.kt",
+    "Hash": "96E27C265828DD017573FF0390B9556E477A6976843ED59821D8ECFFA9CB5649"
+  }
+]

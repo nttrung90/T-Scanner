@@ -117,9 +117,16 @@ object FileUtils {
         }
     }
 
-    fun formatDate(timestamp: Long): String {
-        val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-        return sdf.format(Date(timestamp))
+    fun formatDate(timestamp: Long, context: Context? = null): String {
+        return if (context != null) {
+            val d = Date(timestamp)
+            val dateStr = android.text.format.DateFormat.getDateFormat(context).format(d)
+            val timeStr = android.text.format.DateFormat.getTimeFormat(context).format(d)
+            "$dateStr $timeStr"
+        } else {
+            val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+            sdf.format(Date(timestamp))
+        }
     }
 
     fun sanitizeFileName(name: String): String {

@@ -1,0 +1,15 @@
+Trong workspace E:\DU AN AI\T-Scanner, hãy sửa tiếp phần VIP session theo các tài liệu sau:
+1. PLAN_FIX_VIP_SESSION_ROUND5_GEMINI_2026-10-06.md
+2. RECHECK_VIP_SESSION_ROUND5_2026-10-06.md
+3. docs/vip-session-round5-reaudit-20261006/ — đọc README.md, VipSessionRound5ProbeTest.kt, run-probes.ps1, audit.init.gradle, source-evidence.txt, probes.log và TEST-*.xml.
+4. PLAN_FIX_VIP_SESSION_ROUND4_GEMINI_2026-10-05.md để giữ các yêu cầu và sửa đã đạt.
+
+Thực hiện tuần tự V00–V03, tự chuyển gói khi acceptance đạt, không hỏi lại từng gói. Baseline độc lập: 1.075 unit tests PASS; 21/21 regression cũ PASS; 4 probe mới có 3 FAIL/1 PASS. Chạy lại trước sửa, lưu bằng chứng riêng; không thay kỳ vọng hoặc ghi đè evidence cũ.
+
+Chỉ khép R01/U01 còn thiếu: recovery có atomic reservation và kết quả accepted/rejected từ host/provider. UI inactive hoặc provider busy/từ chối không được tiêu lượt; hai consumer không cùng nhận recovery. Giữ origin operation/context qua reauth đến restore; accepted recovery tối đa một lần mỗi operation, thao tác thủ công mới được retry. Không dùng listener tồn tại hoặc isRetry snapshot làm quyền nhận. Không mở giao dịch mua mới khi recover receipt.
+
+Test phải gọi production coordinator mà Dialog/host dùng thực, với fake provider/restore ở boundary; không hứng event rồi tự gọi restore/cancel trong test. Bổ sung các case lifecycle, duplicate, busy, cancel, stale completion, second401 và success→restore một lần; assert provider/restore/extra-launch counts. Giữ K02/K03 và 21 regression cũ.
+
+Chạy 25 probes chọn lọc, tests mới/permanent, full testDebugUnitTest, lintDebug, assembleDebug. Báo số XML thật, phân biệt executed/UP-TO-DATE. Giữ working tree, không reset/clean/stash; không đổi OAuth/signing/package/version/R8/dependencies/backend, không mua thật, commit/push/phát hành.
+
+Mỗi gói ghi REPORT_Vxx.md + PROGRESS.md và cuối cùng REPORT_FINAL.md trong docs/vip-session-round5-fix/. Nêu files, red→green, commands/log/XML, acceptance và giới hạn. Không có thiết bị thì ghi device/Play BLOCKED_EXTERNAL, không tuyên bố sửa xong 100%. Dừng ở bàn giao để kiểm tra lại.

@@ -6,9 +6,11 @@ import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.tscanner.app.R
 import com.tscanner.app.data.model.FolderItem
 import com.tscanner.app.data.repository.DocumentRepo
 import com.tscanner.app.databinding.ItemFolderBinding
+import com.tscanner.app.utils.AppAuthManager
 import com.tscanner.app.utils.FileUtils
 
 class FolderAdapter(
@@ -30,9 +32,15 @@ class FolderAdapter(
 
         fun bind(item: FolderItem) {
             binding.tvFolderName.text = item.name
-            val docsInFolder = DocumentRepo.getInstance(binding.root.context).getDocumentsInFolder(item.id)
-            val dateStr = FileUtils.formatDate(item.createdAt)
-            binding.tvFolderInfo.text = "${docsInFolder.size} tài liệu • $dateStr"
+            val currentUserId = AppAuthManager.getCurrentUser()?.id
+            val docsInFolder = DocumentRepo.getInstance(binding.root.context).getDocumentsInFolder(item.id, currentUserId)
+            val dateStr = FileUtils.formatDate(item.createdAt, binding.root.context)
+            binding.tvFolderInfo.text = binding.root.context.resources.getQuantityString(
+                R.plurals.folder_info_documents_plurals,
+                docsInFolder.size,
+                docsInFolder.size,
+                dateStr
+            )
 
             binding.root.setOnClickListener {
                 onFolderClick(item)
@@ -40,8 +48,8 @@ class FolderAdapter(
 
             binding.btnFolderMore.setOnClickListener { v ->
                 val popup = PopupMenu(v.context, v)
-                popup.menu.add(0, 1, 0, "Mở thư mục")
-                popup.menu.add(0, 2, 1, "Xóa thư mục")
+                popup.menu.add(0, 1, 0, v.context.getString(R.string.menu_open_folder))
+                popup.menu.add(0, 2, 1, v.context.getString(R.string.delete_folder_title))
 
                 popup.setOnMenuItemClickListener { menuItem ->
                     when (menuItem.itemId) {

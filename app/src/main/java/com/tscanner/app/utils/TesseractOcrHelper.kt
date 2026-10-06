@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
+import java.util.Locale
 
 object TesseractOcrHelper {
 
@@ -82,61 +83,253 @@ object TesseractOcrHelper {
     }
 
     /**
-     * Recognizes text from a Bitmap using Tesseract OCR with Vietnamese / English LSTM neural models.
+     * Interface to abstract TessBaseAPI operations for unit testing and JVM isolation.
      */
-    suspend fun recognizeTextFromBitmap(
+    interface TessApiDriver {
+        fun init(dataPath: String, language: String): Boolean
+        fun setPageSegMode(mode: Int)
+        fun setImage(bitmap: Bitmap)
+        fun getUTF8Text(): String?
+        fun getPageDocument(bitmapWidth: Int, bitmapHeight: Int, language: String): com.tscanner.app.ocr.model.OcrPage? = null
+        fun recycle()
+    }
+
+    class RealTessApiDriver(private val api: TessBaseAPI = TessBaseAPI()) : TessApiDriver {
+        override fun init(dataPath: String, language: String): Boolean = api.init(dataPath, language)
+        override fun setPageSegMode(mode: Int) = api.setPageSegMode(mode)
+        override fun setImage(bitmap: Bitmap) = api.setImage(bitmap)
+        override fun getUTF8Text(): String? = api.getUTF8Text()
+
+        override fun getPageDocument(bitmapWidth: Int, bitmapHeight: Int, language: String): com.tscanner.app.ocr.model.OcrPage? {
+            var iterator: com.googlecode.tesseract.android.ResultIterator? = null
+            try {
+                iterator = api.resultIterator ?: return null
+                iterator.begin()
+
+                val safeWidth = if (bitmapWidth <= 0) 1000f else bitmapWidth.toFloat()
+                val safeHeight = if (bitmapHeight <= 0) 1000f else bitmapHeight.toFloat()
+
+                val ocrLines = mutableListOf<com.tscanner.app.ocr.model.OcrLine>()
+                var lineIndex = 0
+                var tokenIndex = 0
+
+                do {
+                    val lineText = iterator.getUTF8Text(TessBaseAPI.PageIteratorLevel.RIL_TEXTLINE)?.trim() ?: ""
+                    val lineBox = iterator.getBoundingBox(TessBaseAPI.PageIteratorLevel.RIL_TEXTLINE)
+                    val lineConfidence = (iterator.confidence(TessBaseAPI.PageIteratorLevel.RIL_TEXTLINE) / 100f).coerceIn(0f, 1f)
+
+                    if (lineText.isNotBlank() && lineBox != null && lineBox.size >= 4) {
+                        val l = (lineBox[0].toFloat() / safeWidth).coerceIn(0f, 1f)
+                        val t = (lineBox[1].toFloat() / safeHeight).coerceIn(0f, 1f)
+                        val r = (lineBox[2].toFloat() / safeWidth).coerceIn(l, 1f)
+                        val b = (lineBox[3].toFloat() / safeHeight).coerceIn(t, 1f)
+
+                        val tokens = mutableListOf<com.tscanner.app.ocr.model.OcrToken>()
+                        do {
+                            val wordText = iterator.getUTF8Text(TessBaseAPI.PageIteratorLevel.RIL_WORD)?.trim() ?: ""
+                            val wordBox = iterator.getBoundingBox(TessBaseAPI.PageIteratorLevel.RIL_WORD)
+                            val wordConfidence = (iterator.confidence(TessBaseAPI.PageIteratorLevel.RIL_WORD) / 100f).coerceIn(0f, 1f)
+
+                            if (wordText.isNotBlank() && wordBox != null && wordBox.size >= 4) {
+                                val wl = (wordBox[0].toFloat() / safeWidth).coerceIn(0f, 1f)
+                                val wt = (wordBox[1].toFloat() / safeHeight).coerceIn(0f, 1f)
+                                val wr = (wordBox[2].toFloat() / safeWidth).coerceIn(wl, 1f)
+                                val wb = (wordBox[3].toFloat() / safeHeight).coerceIn(wt, 1f)
+
+                                tokens.add(
+                                    com.tscanner.app.ocr.model.OcrToken(
+                                        tokenId = "tok_1_$tokenIndex",
+                                        text = wordText,
+                                        polygon = com.tscanner.app.ocr.model.OcrPolygon(
+                                            listOf(
+                                                com.tscanner.app.ocr.model.OcrPoint(wl, wt),
+                                                com.tscanner.app.ocr.model.OcrPoint(wr, wt),
+                                                com.tscanner.app.ocr.model.OcrPoint(wr, wb),
+                                                com.tscanner.app.ocr.model.OcrPoint(wl, wb)
+                                            )
+                                        ),
+                                        confidence = wordConfidence
+                                    )
+                                )
+                                tokenIndex++
+                            }
+
+                            if (iterator.isAtFinalElement(TessBaseAPI.PageIteratorLevel.RIL_TEXTLINE, TessBaseAPI.PageIteratorLevel.RIL_WORD)) {
+                                break
+                            }
+                        } while (iterator.next(TessBaseAPI.PageIteratorLevel.RIL_WORD))
+
+                        ocrLines.add(
+                            com.tscanner.app.ocr.model.OcrLine(
+                                lineId = "line_1_$lineIndex",
+                                text = lineText,
+                                polygon = com.tscanner.app.ocr.model.OcrPolygon(
+                                    listOf(
+                                        com.tscanner.app.ocr.model.OcrPoint(l, t),
+                                        com.tscanner.app.ocr.model.OcrPoint(r, t),
+                                        com.tscanner.app.ocr.model.OcrPoint(r, b),
+                                        com.tscanner.app.ocr.model.OcrPoint(l, b)
+                                    )
+                                ),
+                                boundingBox = com.tscanner.app.ocr.model.OcrRect(l, t, r, b),
+                                confidence = lineConfidence,
+                                tokens = tokens
+                            )
+                        )
+                        lineIndex++
+                    }
+                } while (iterator.next(TessBaseAPI.PageIteratorLevel.RIL_TEXTLINE))
+
+                if (ocrLines.isEmpty()) return null
+
+                return com.tscanner.app.ocr.model.OcrPage(
+                    pageId = "page_1_${java.util.UUID.randomUUID().toString().take(8)}",
+                    pageIndex = 1,
+                    status = com.tscanner.app.ocr.model.OcrPageStatus.SUCCESS,
+                    imageInfo = com.tscanner.app.ocr.model.OcrImageInfo(
+                        localUri = "",
+                        widthPx = safeWidth.toInt(),
+                        heightPx = safeHeight.toInt(),
+                        rotationDegrees = 0
+                    ),
+                    engineId = "tesseract",
+                    sourceLanguage = language,
+                    sourceBlocks = listOf(
+                        com.tscanner.app.ocr.model.OcrBlock(
+                            blockId = "blk_1_0",
+                            lines = ocrLines
+                        )
+                    )
+                )
+            } catch (t: Throwable) {
+                Log.w("TessApiDriver", "Failed to extract geometry from Tesseract iterator: ${t.message}")
+                return null
+            } finally {
+                try {
+                    iterator?.delete()
+                } catch (_: Throwable) {}
+            }
+        }
+
+        override fun recycle() = api.recycle()
+    }
+
+    @Volatile
+    internal var tessDriverFactory: () -> TessApiDriver = { RealTessApiDriver() }
+
+    @Volatile
+    internal var dataPathOverride: String? = null
+
+    /**
+     * Resolves exact Tesseract model name without silent language fallback (F02).
+     * Request 'vi'/'vie' strictly maps to 'vie'.
+     * Request 'en'/'eng' strictly maps to 'eng'.
+     * Combined requests like 'vie+eng' strictly map to 'vie+eng' without silent single-model downgrade.
+     */
+    fun resolveTessModel(language: String): String {
+        return when (language.trim().lowercase(Locale.ROOT)) {
+            "vie", "vi" -> "vie"
+            "eng", "en" -> "eng"
+            "vi+en", "en+vi", "vie+eng", "eng+vie", "auto" -> "vie+eng"
+            else -> language.trim()
+        }
+    }
+
+    /**
+     * Recognizes text from a Bitmap using Tesseract OCR returning structured result.
+     */
+    suspend fun recognizeTextFromBitmapStructured(
         context: Context,
         bitmap: Bitmap,
         language: String = "vie"
-    ): String = withContext(Dispatchers.Default) {
+    ): EngineRunResult = withContext(Dispatchers.Default) {
         var safeBitmap: Bitmap? = null
-        var tess: TessBaseAPI? = null
+        var tess: TessApiDriver? = null
         try {
-            val dataPath = prepareTessData(context)
+            val dataPath = dataPathOverride ?: prepareTessData(context)
 
             // Ensure bitmap is in a software ARGB_8888 configuration accessible to native C++
-            safeBitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
-                bitmap.config == Bitmap.Config.HARDWARE) {
-                bitmap.copy(Bitmap.Config.ARGB_8888, false)
-            } else if (bitmap.config != Bitmap.Config.ARGB_8888) {
-                bitmap.copy(Bitmap.Config.ARGB_8888, false)
-            } else {
+            safeBitmap = try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+                    bitmap.config == Bitmap.Config.HARDWARE) {
+                    bitmap.copy(Bitmap.Config.ARGB_8888, false) ?: bitmap
+                } else if (bitmap.config != Bitmap.Config.ARGB_8888) {
+                    bitmap.copy(Bitmap.Config.ARGB_8888, false) ?: bitmap
+                } else {
+                    bitmap
+                }
+            } catch (_: Throwable) {
                 bitmap
             }
 
-            // Determine candidate language codes to try
-            val candidates = when (language) {
-                "vie", "vi" -> listOf("vie", "eng")
-                "eng", "en" -> listOf("eng", "vie")
-                "vie+eng" -> listOf("vie+eng", "vie", "eng")
-                else -> listOf(language, "vie", "eng")
+            val targetModel = resolveTessModel(language)
+            val driver = tessDriverFactory()
+            val initOk = try {
+                driver.init(dataPath, targetModel)
+            } catch (c: kotlinx.coroutines.CancellationException) {
+                try { driver.recycle() } catch (_: Throwable) {}
+                throw c
+            } catch (t: Throwable) {
+                Log.e(TAG, "Exception initializing Tesseract model '$targetModel': ${t.message}", t)
+                try { driver.recycle() } catch (_: Throwable) {}
+                return@withContext EngineRunResult.ModelUnavailable(
+                    "Tesseract model '$targetModel' failed to initialize: ${t.message}",
+                    OcrModelUnavailableType.INIT_FAILED
+                )
             }
 
-            for (lang in candidates) {
-                val candidateTess = TessBaseAPI()
-                val ok = candidateTess.init(dataPath, lang)
-                if (ok) {
-                    tess = candidateTess
-                    Log.d(TAG, "Tesseract initialized successfully with language '$lang'")
-                    break
-                } else {
-                    Log.w(TAG, "Tesseract candidate '$lang' failed to initialize, recycling instance")
-                    try { candidateTess.recycle() } catch (_: Throwable) {}
-                }
+            if (!initOk) {
+                Log.e(TAG, "Tesseract failed to initialize with model '$targetModel'")
+                try { driver.recycle() } catch (_: Throwable) {}
+                return@withContext EngineRunResult.ModelUnavailable(
+                    "Tesseract traineddata for '$targetModel' missing or failed to initialize",
+                    OcrModelUnavailableType.MISSING
+                )
             }
 
-            val activeTess = tess ?: run {
-                Log.e(TAG, "All Tesseract language candidates failed to initialize")
-                return@withContext ""
-            }
+            tess = driver
+            Log.d(TAG, "Tesseract initialized successfully with exact model '$targetModel'")
 
-            activeTess.setPageSegMode(TessBaseAPI.PageSegMode.PSM_AUTO)
-            activeTess.setImage(safeBitmap)
-            val result = activeTess.getUTF8Text() ?: ""
-            result.trim()
+            tess.setPageSegMode(TessBaseAPI.PageSegMode.PSM_AUTO)
+            tess.setImage(safeBitmap)
+            val result = tess.getUTF8Text()?.trim() ?: ""
+            if (result.isNotBlank()) {
+                val pageDoc = tess.getPageDocument(safeBitmap.width, safeBitmap.height, targetModel)
+                    ?: com.tscanner.app.ocr.model.OcrPage(
+                        pageId = "page_1_${java.util.UUID.randomUUID().toString().take(8)}",
+                        pageIndex = 1,
+                        status = com.tscanner.app.ocr.model.OcrPageStatus.SUCCESS,
+                        imageInfo = com.tscanner.app.ocr.model.OcrImageInfo(
+                            localUri = "",
+                            widthPx = safeBitmap.width.coerceAtLeast(1),
+                            heightPx = safeBitmap.height.coerceAtLeast(1),
+                            rotationDegrees = 0
+                        ),
+                        engineId = "tesseract",
+                        sourceLanguage = targetModel,
+                        sourceBlocks = listOf(
+                            com.tscanner.app.ocr.model.OcrBlock(
+                                blockId = "blk_1_0",
+                                lines = result.lines().mapIndexed { idx, lineText ->
+                                    com.tscanner.app.ocr.model.OcrLine(
+                                        lineId = "line_1_$idx",
+                                        text = lineText,
+                                        polygon = null, // geometryUnavailable fallback
+                                        tokens = emptyList()
+                                    )
+                                }
+                            )
+                        )
+                    )
+                EngineRunResult.Success(result, pageDoc)
+            } else {
+                EngineRunResult.NoText
+            }
+        } catch (c: kotlinx.coroutines.CancellationException) {
+            throw c
         } catch (t: Throwable) {
             Log.e(TAG, "Error in recognizeTextFromBitmap: ${t.message}", t)
-            ""
+            EngineRunResult.Failure(t.message ?: "Tesseract recognition error", t)
         } finally {
             try {
                 tess?.recycle()
@@ -145,6 +338,17 @@ object TesseractOcrHelper {
                 safeBitmap.recycle()
             }
         }
+    }
+
+    /**
+     * Recognizes text from a Bitmap using Tesseract OCR with Vietnamese / English LSTM neural models.
+     */
+    suspend fun recognizeTextFromBitmap(
+        context: Context,
+        bitmap: Bitmap,
+        language: String = "vie"
+    ): String {
+        return (recognizeTextFromBitmapStructured(context, bitmap, language) as? EngineRunResult.Success)?.text ?: ""
     }
 
     private fun calculateInSampleSize(options: BitmapFactory.Options, maxDim: Int = 2048): Int {

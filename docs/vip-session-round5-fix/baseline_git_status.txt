@@ -1,0 +1,650 @@
+On branch master
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	new file:   app/src/main/res/drawable/ic_arrow_back.xml
+	modified:   app/src/main/res/drawable/ic_chevron_right.xml
+	modified:   app/src/main/res/layout/activity_camera_scan.xml
+	modified:   app/src/main/res/layout/activity_crop_rotate.xml
+	modified:   app/src/main/res/layout/activity_document_management.xml
+	modified:   app/src/main/res/layout/activity_id_card_compose.xml
+	modified:   app/src/main/res/layout/activity_ocr_result.xml
+	modified:   app/src/main/res/layout/activity_pdf_viewer.xml
+	modified:   app/src/main/res/layout/activity_post_scan_editor.xml
+	modified:   app/src/main/res/layout/dialog_account_detail.xml
+	modified:   app/src/main/res/layout/dialog_doc_management.xml
+	modified:   app/src/main/res/layout/dialog_id_card_options.xml
+	modified:   app/src/main/res/layout/dialog_language_selection.xml
+	modified:   app/src/main/res/layout/dialog_save_export.xml
+	modified:   app/src/main/res/layout/dialog_scan_options.xml
+	modified:   app/src/main/res/layout/dialog_vip_upgrade.xml
+	modified:   app/src/main/res/layout/fragment_files.xml
+	modified:   app/src/main/res/layout/fragment_more.xml
+	modified:   app/src/main/res/layout/item_document.xml
+	modified:   app/src/main/res/layout/item_language_selection.xml
+	modified:   app/src/main/res/layout/item_managed_file.xml
+	modified:   app/src/main/res/layout/item_pdf_page.xml
+	modified:   app/src/main/res/layout/item_post_scan_thumbnail.xml
+	modified:   app/src/main/res/values-af/strings.xml
+	modified:   app/src/main/res/values-ar/strings.xml
+	modified:   app/src/main/res/values-b+sr+Latn/strings.xml
+	modified:   app/src/main/res/values-b+zh+Hans/strings.xml
+	modified:   app/src/main/res/values-ca/strings.xml
+	modified:   app/src/main/res/values-cs/strings.xml
+	modified:   app/src/main/res/values-da/strings.xml
+	modified:   app/src/main/res/values-de/strings.xml
+	modified:   app/src/main/res/values-en/strings.xml
+	modified:   app/src/main/res/values-es/strings.xml
+	modified:   app/src/main/res/values-et/strings.xml
+	modified:   app/src/main/res/values-fi/strings.xml
+	modified:   app/src/main/res/values-fil/strings.xml
+	modified:   app/src/main/res/values-fr/strings.xml
+	modified:   app/src/main/res/values-hi/strings.xml
+	modified:   app/src/main/res/values-hr/strings.xml
+	modified:   app/src/main/res/values-hu/strings.xml
+	modified:   app/src/main/res/values-in/strings.xml
+	modified:   app/src/main/res/values-is/strings.xml
+	modified:   app/src/main/res/values-it/strings.xml
+	modified:   app/src/main/res/values-ja/strings.xml
+	modified:   app/src/main/res/values-ko/strings.xml
+	modified:   app/src/main/res/values-lt/strings.xml
+	modified:   app/src/main/res/values-lv/strings.xml
+	modified:   app/src/main/res/values-ms/strings.xml
+	modified:   app/src/main/res/values-nb/strings.xml
+	modified:   app/src/main/res/values-nl/strings.xml
+	modified:   app/src/main/res/values-no/strings.xml
+	modified:   app/src/main/res/values-pl/strings.xml
+	modified:   app/src/main/res/values-pt/strings.xml
+	modified:   app/src/main/res/values-ro/strings.xml
+	modified:   app/src/main/res/values-sk/strings.xml
+	modified:   app/src/main/res/values-sl/strings.xml
+	modified:   app/src/main/res/values-sq/strings.xml
+	modified:   app/src/main/res/values-sr/strings.xml
+	modified:   app/src/main/res/values-sv/strings.xml
+	modified:   app/src/main/res/values-th/strings.xml
+	modified:   app/src/main/res/values-tl/strings.xml
+	modified:   app/src/main/res/values-tr/strings.xml
+	modified:   app/src/main/res/values-vi/strings.xml
+	modified:   app/src/main/res/values-zh/strings.xml
+	modified:   app/src/main/res/values/strings.xml
+	modified:   app/src/main/res/xml/locales_config.xml
+
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   app/build.gradle
+	modified:   app/proguard-rules.pro
+	modified:   app/release/app-release.aab
+	modified:   app/src/main/AndroidManifest.xml
+	deleted:    app/src/main/assets/paddleocr/ch_PP-OCRv4_det.onnx
+	deleted:    app/src/main/assets/paddleocr/ch_PP-OCRv4_rec.onnx
+	deleted:    app/src/main/assets/paddleocr/ppocr_keys_v1.txt
+	deleted:    app/src/main/assets/paddleocr/vi_dict.txt
+	modified:   app/src/main/java/com/tscanner/app/MainActivity.kt
+	modified:   app/src/main/java/com/tscanner/app/TScannerApplication.kt
+	modified:   app/src/main/java/com/tscanner/app/data/model/DocumentItem.kt
+	modified:   app/src/main/java/com/tscanner/app/data/model/ManagedFileItem.kt
+	modified:   app/src/main/java/com/tscanner/app/data/model/PostScanSessionDraft.kt
+	modified:   app/src/main/java/com/tscanner/app/data/model/VipTier.kt
+	modified:   app/src/main/java/com/tscanner/app/data/repository/DocumentRepo.kt
+	modified:   app/src/main/java/com/tscanner/app/data/repository/PostScanSessionRepository.kt
+	deleted:    app/src/main/java/com/tscanner/app/paddleocr/PaddleOcrEngine.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/adapter/DocumentAdapter.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/adapter/FolderAdapter.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/adapter/ManagedFileAdapter.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/adapter/PdfPageAdapter.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/camera/CameraScanActivity.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/dialogs/AboutAppDialog.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/dialogs/AccountDetailDialog.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/dialogs/CheckUpdateDialog.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/dialogs/CreateFolderDialog.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/dialogs/CreatePdfDialog.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/dialogs/DocumentManagementDialog.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/dialogs/ExportDocDialog.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/dialogs/LanguageAdapter.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/dialogs/LanguageSelectionDialog.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/dialogs/OcrEngineSelectionDialog.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/dialogs/QrResultDialog.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/dialogs/RenameDocumentDialog.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/dialogs/SaveExportDialog.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/dialogs/VipUpgradeDialog.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/docmanagement/DocumentManagementActivity.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/editor/CropOverlayView.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/editor/CropRotateActivity.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/editor/PostScanEditorActivity.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/editor/viewmodel/PostScanEditorViewModel.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/files/FilesFragment.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/home/HomeFragment.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/idcard/IdCardComposeActivity.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/more/MoreFragment.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/ocr/OcrResultActivity.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/tools/ToolsFragment.kt
+	modified:   app/src/main/java/com/tscanner/app/ui/viewer/PdfViewerActivity.kt
+	modified:   app/src/main/java/com/tscanner/app/utils/AppAuthManager.kt
+	modified:   app/src/main/java/com/tscanner/app/utils/AppLanguageManager.kt
+	modified:   app/src/main/java/com/tscanner/app/utils/CloudBackupManager.kt
+	modified:   app/src/main/java/com/tscanner/app/utils/DocumentScannerHelper.kt
+	modified:   app/src/main/java/com/tscanner/app/utils/FileUtils.kt
+	modified:   app/src/main/java/com/tscanner/app/utils/GoogleDriveBackupWorker.kt
+	modified:   app/src/main/java/com/tscanner/app/utils/GoogleDriveService.kt
+	modified:   app/src/main/java/com/tscanner/app/utils/ImageProcessingAlgorithms.kt
+	modified:   app/src/main/java/com/tscanner/app/utils/ImageProcessingEngine.kt
+	modified:   app/src/main/java/com/tscanner/app/utils/PdfConverterHelper.kt
+	modified:   app/src/main/java/com/tscanner/app/utils/QrScannerHelper.kt
+	modified:   app/src/main/java/com/tscanner/app/utils/SafeFileWriter.kt
+	modified:   app/src/main/java/com/tscanner/app/utils/TesseractOcrHelper.kt
+	modified:   app/src/main/java/com/tscanner/app/utils/TextRecognitionHelper.kt
+	modified:   app/src/main/java/com/tscanner/app/utils/WatermarkHelper.kt
+	modified:   app/src/main/res/layout/activity_ocr_result.xml
+	modified:   app/src/main/res/layout/dialog_about.xml
+	modified:   app/src/main/res/layout/dialog_id_card_options.xml
+	modified:   app/src/main/res/layout/dialog_ocr_engine_selection.xml
+	modified:   app/src/main/res/layout/dialog_scan_options.xml
+	modified:   app/src/main/res/layout/dialog_vip_upgrade.xml
+	modified:   app/src/main/res/layout/fragment_files.xml
+	modified:   app/src/main/res/layout/fragment_home.xml
+	modified:   app/src/main/res/layout/fragment_more.xml
+	modified:   app/src/main/res/layout/fragment_tools.xml
+	modified:   app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+	modified:   app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+	deleted:    app/src/main/res/values-af/strings.xml
+	deleted:    app/src/main/res/values-ar/strings.xml
+	deleted:    app/src/main/res/values-b+sr+Latn/strings.xml
+	deleted:    app/src/main/res/values-b+zh+Hans/strings.xml
+	deleted:    app/src/main/res/values-ca/strings.xml
+	deleted:    app/src/main/res/values-cs/strings.xml
+	deleted:    app/src/main/res/values-da/strings.xml
+	modified:   app/src/main/res/values-de/strings.xml
+	deleted:    app/src/main/res/values-en/strings.xml
+	modified:   app/src/main/res/values-es/strings.xml
+	deleted:    app/src/main/res/values-et/strings.xml
+	deleted:    app/src/main/res/values-fi/strings.xml
+	deleted:    app/src/main/res/values-fil/strings.xml
+	modified:   app/src/main/res/values-fr/strings.xml
+	deleted:    app/src/main/res/values-hi/strings.xml
+	deleted:    app/src/main/res/values-hr/strings.xml
+	deleted:    app/src/main/res/values-hu/strings.xml
+	modified:   app/src/main/res/values-in/strings.xml
+	deleted:    app/src/main/res/values-is/strings.xml
+	deleted:    app/src/main/res/values-it/strings.xml
+	modified:   app/src/main/res/values-ja/strings.xml
+	deleted:    app/src/main/res/values-ko/strings.xml
+	deleted:    app/src/main/res/values-lt/strings.xml
+	deleted:    app/src/main/res/values-lv/strings.xml
+	deleted:    app/src/main/res/values-ms/strings.xml
+	deleted:    app/src/main/res/values-nb/strings.xml
+	deleted:    app/src/main/res/values-nl/strings.xml
+	deleted:    app/src/main/res/values-no/strings.xml
+	deleted:    app/src/main/res/values-pl/strings.xml
+	modified:   app/src/main/res/values-pt/strings.xml
+	deleted:    app/src/main/res/values-ro/strings.xml
+	deleted:    app/src/main/res/values-sk/strings.xml
+	deleted:    app/src/main/res/values-sl/strings.xml
+	deleted:    app/src/main/res/values-sq/strings.xml
+	deleted:    app/src/main/res/values-sr/strings.xml
+	deleted:    app/src/main/res/values-sv/strings.xml
+	deleted:    app/src/main/res/values-th/strings.xml
+	deleted:    app/src/main/res/values-tl/strings.xml
+	deleted:    app/src/main/res/values-tr/strings.xml
+	modified:   app/src/main/res/values-vi/strings.xml
+	deleted:    app/src/main/res/values-zh/strings.xml
+	modified:   app/src/main/res/values/strings.xml
+	modified:   app/src/main/res/values/themes.xml
+	modified:   app/src/main/res/xml/locales_config.xml
+	modified:   app/src/test/java/com/tscanner/app/ImageProcessingPureMathTest.kt
+	modified:   app/src/test/java/com/tscanner/app/PostScanDraftSessionTest.kt
+	modified:   app/src/test/java/com/tscanner/app/SafeFileWriterTest.kt
+	modified:   build/reports/problems/problems-report.html
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	BUNDLE-METADATA/
+	DESIGN_LANGUAGE_MODES_AUTO_OCR_2026-09-20.md
+	DIAGNOSIS_LOGIN_PLAY_2026-10-03.md
+	LANGUAGE_ROLLOUT_STATUS.md
+	LOCALIZATION_AUDIT_2026-09-16.json
+	LOCALIZATION_AUDIT_CURRENT.json
+	PLAN_8_LANGUAGES_AUTO_SYSTEM_2026-09-18.md
+	PLAN_CRITICAL_OCR_FIRST_2026-09-17.md
+	PLAN_FILES_VIP_TWO_AGENTS_2026-09-24.md
+	PLAN_FIX_LOGIN_PLAY_GEMINI_2026-10-03.md
+	PLAN_FIX_PADDLE_REMOVAL_SMALL_MODEL_2026-09-24.md
+	PLAN_FIX_SMALL_MODEL_2026-09-21.md
+	PLAN_FIX_VIP_LOGIN_ROUND2_SMALL_MODEL_2026-09-25.md
+	PLAN_FIX_VIP_LOGIN_ROUND3_SMALL_MODEL_2026-09-25.md
+	PLAN_FIX_VIP_LOGIN_ROUND4_SMALL_MODEL_2026-09-25.md
+	PLAN_FIX_VIP_LOGIN_ROUND5_SMALL_MODEL_2026-09-25.md
+	PLAN_FIX_VIP_LOGIN_ROUND6_SMALL_MODEL_2026-09-25.md
+	PLAN_FIX_VIP_LOGIN_SMALL_MODEL_2026-09-25.md
+	PLAN_FIX_VIP_PLAY_BILLING_ROUND2_SMALL_MODEL_2026-09-26.md
+	PLAN_FIX_VIP_PLAY_BILLING_SMALL_MODEL_2026-09-26.md
+	PLAN_FIX_VIP_SESSION_GEMINI_ANTIGRAVITY_2026-10-04.md
+	PLAN_FIX_VIP_SESSION_ROUND2_GEMINI_2026-10-04.md
+	PLAN_FIX_VIP_SESSION_ROUND3_GEMINI_2026-10-04.md
+	PLAN_FIX_VIP_SESSION_ROUND4_GEMINI_2026-10-05.md
+	PLAN_FIX_VIP_SESSION_ROUND5_GEMINI_2026-10-06.md
+	PLAN_LANGUAGE_ROLLOUT_SMALL_MODEL_2026-09-17.md
+	PLAN_MAX_SHARPNESS_2026-09-21.md
+	PLAN_MOVE_CREATE_PDF_TO_TOOLS_2026-09-21.md
+	PLAN_MULTILINGUAL_2026-09-16.md
+	PLAN_OCR_DOCUMENT_READER_2026-09-22.md
+	PLAN_OCR_READER_EDITOR_SMALL_MODEL_10MB_2026-09-22.md
+	PLAN_PLAY5_ROUND2_GEMINI_2026-10-05.md
+	PLAN_PLAY_5_WARNINGS_2026-10-05.md
+	PLAN_PLAY_DEBUG_SYMBOLS_SMALL_MODEL_2026-09-24.md
+	PLAN_REMAINING_BUGS_2026-09-16.md
+	PLAN_REMOVE_PADDLE_ONNX_SMALL_MODEL_2026-09-23.md
+	PLAN_SCAN_UI_LANGUAGE_SMALL_MODEL_2026-09-26.md
+	PLAN_VIP_CLOUD_BACKUP_2026-09-22.md
+	PLAN_VIP_GEMINI_3_8_FLASH_ROUND3_2026-09-26.md
+	PLAN_VIP_GEMINI_3_8_FLASH_ROUND4_AUTORUN_2026-09-27.md
+	PLAN_VIP_GEMINI_ANTIGRAVITY_ROUND5_AUTORUN_2026-09-30.md
+	PLAN_VIP_GEMINI_ANTIGRAVITY_ROUND6_AUTORUN_2026-10-01.md
+	PLAN_VIP_GEMINI_ANTIGRAVITY_ROUND7_AUTORUN_2026-10-01.md
+	PLAN_VIP_GEMINI_ANTIGRAVITY_ROUND8_AUTORUN_2026-10-01.md
+	PROGRESS.md
+	PROGRESS_LOGIN_PLAY_AUTORUN.md
+	PROGRESS_VIP_R3_AUTORUN.md
+	PROGRESS_VIP_R4_AUTORUN.md
+	PROGRESS_VIP_R5_AUTORUN.md
+	PROGRESS_VIP_R6_AUTORUN.md
+	PROGRESS_VIP_R7_AUTORUN.md
+	PROGRESS_VIP_R8_AUTORUN.md
+	PROPOSAL_MINIMAL_LANGUAGES_2026-09-18.md
+	RECHECK_8_LANGUAGES_FIXES_2026-09-18.md
+	RECHECK_AFTER_S01_S06_2026-09-21.md
+	RECHECK_CRITICAL_CAMERA_2026-09-20.md
+	RECHECK_FILES_VIP_2026-09-24.md
+	RECHECK_OCR_READER_EDITOR_2026-09-23.md
+	RECHECK_OCR_READER_EDITOR_ROUND2_2026-09-23.md
+	RECHECK_OCR_READER_EDITOR_ROUND3_2026-09-23.md
+	RECHECK_OCR_READER_EDITOR_ROUND4_2026-09-23.md
+	RECHECK_PADDLE_REMOVAL_2026-09-24.md
+	RECHECK_PLAY5_ROUND2_2026-10-05.md
+	RECHECK_PROJECT_2026-09-21.md
+	RECHECK_SCAN_LANGUAGE_2026-09-26.md
+	RECHECK_SCAN_WORKFLOW_2026-09-20.md
+	RECHECK_VIP_CLOUD_BACKUP_2026-09-22.md
+	RECHECK_VIP_FULL_ROUND3_2026-09-26.md
+	RECHECK_VIP_FULL_ROUND4_2026-09-27.md
+	RECHECK_VIP_FULL_ROUND5_2026-09-30.md
+	RECHECK_VIP_FULL_ROUND6_2026-10-01.md
+	RECHECK_VIP_FULL_ROUND7_2026-10-01.md
+	RECHECK_VIP_FULL_ROUND8_2026-10-01.md
+	RECHECK_VIP_LOGIN_2026-09-25.md
+	RECHECK_VIP_LOGIN_ROUND2_2026-09-25.md
+	RECHECK_VIP_LOGIN_ROUND3_2026-09-25.md
+	RECHECK_VIP_LOGIN_ROUND4_2026-09-25.md
+	RECHECK_VIP_LOGIN_ROUND5_2026-09-25.md
+	RECHECK_VIP_LOGIN_ROUND6_2026-09-25.md
+	RECHECK_VIP_PLAY_BILLING_2026-09-26.md
+	RECHECK_VIP_PLAY_BILLING_ROUND2_2026-09-26.md
+	RECHECK_VIP_SESSION_ROUND2_2026-10-04.md
+	RECHECK_VIP_SESSION_ROUND3_2026-10-04.md
+	RECHECK_VIP_SESSION_ROUND4_2026-10-05.md
+	RECHECK_VIP_SESSION_ROUND5_2026-10-06.md
+	REPORT_FILES_VIP_AGENT_A.md
+	REPORT_FILES_VIP_AGENT_B.md
+	REPORT_LOGIN_PLAY_FINAL.md
+	REPORT_LOGIN_PLAY_L00.md
+	REPORT_LOGIN_PLAY_L01.md
+	REPORT_LOGIN_PLAY_L02.md
+	REPORT_LOGIN_PLAY_L03.md
+	REPORT_LOGIN_PLAY_L04.md
+	REPORT_LOGIN_PLAY_L05.md
+	REPORT_LOGIN_PLAY_L06.md
+	REPORT_PLAY5_G00.md
+	REPORT_PLAY5_G01.md
+	REPORT_PLAY5_G02.md
+	REPORT_PLAY5_G03a.md
+	REPORT_PLAY5_G03b.md
+	REPORT_PLAY5_G03c.md
+	REPORT_PLAY5_G04.md
+	REPORT_PLAY5_G05.md
+	REPORT_PLAY5_INTEGRATION_SUMMARY.md
+	REPORT_PLAY5_R00.md
+	REPORT_PLAY5_R01.md
+	REPORT_PLAY5_R02.md
+	REPORT_PLAY5_R03.md
+	REPORT_PLAY5_R04.md
+	REPORT_PLAY5_R05.md
+	REPORT_PLAY5_R06.md
+	REPORT_PLAY5_ROUND2_FINAL.md
+	REPORT_SCAN_LANGUAGE_L00.md
+	REPORT_SCAN_LANGUAGE_L04.md
+	REPORT_VIP_BILLING_B00.md
+	REPORT_VIP_BILLING_B01.md
+	REPORT_VIP_BILLING_B02.md
+	REPORT_VIP_BILLING_B03.md
+	REPORT_VIP_BILLING_B04a.md
+	REPORT_VIP_BILLING_B04b.md
+	REPORT_VIP_BILLING_B05.md
+	REPORT_VIP_BILLING_B06.md
+	REPORT_VIP_BILLING_B07.md
+	REPORT_VIP_BILLING_B08.md
+	REPORT_VIP_BILLING_B09.md
+	REPORT_VIP_BILLING_B10.md
+	REPORT_VIP_BILLING_B11.md
+	REPORT_VIP_BILLING_B12.md
+	REPORT_VIP_BILLING_INTEGRATION_STEP_A.md
+	REPORT_VIP_BILLING_ROUND2_Q00.md
+	REPORT_VIP_BILLING_ROUND2_Q01.md
+	REPORT_VIP_BILLING_ROUND2_Q02.md
+	REPORT_VIP_BILLING_ROUND2_Q03.md
+	REPORT_VIP_BILLING_ROUND2_Q04.md
+	REPORT_VIP_BILLING_ROUND2_Q05.md
+	REPORT_VIP_BILLING_ROUND2_Q06.md
+	REPORT_VIP_BILLING_ROUND2_Q07.md
+	REPORT_VIP_BILLING_ROUND2_Q08.md
+	REPORT_VIP_BILLING_ROUND2_Q09.md
+	REPORT_VIP_BILLING_ROUND2_Q10.md
+	REPORT_VIP_BILLING_ROUND2_Q11.md
+	REPORT_VIP_BILLING_ROUND2_Q12.md
+	REPORT_VIP_LOGIN_ROUND2_S00.md
+	REPORT_VIP_LOGIN_ROUND2_S01.md
+	REPORT_VIP_LOGIN_ROUND2_S02.md
+	REPORT_VIP_LOGIN_ROUND2_S03.md
+	REPORT_VIP_LOGIN_ROUND2_S04.md
+	REPORT_VIP_LOGIN_ROUND2_S05a.md
+	REPORT_VIP_LOGIN_ROUND2_S05b.md
+	REPORT_VIP_LOGIN_ROUND2_S06a.md
+	REPORT_VIP_LOGIN_ROUND2_S06b.md
+	REPORT_VIP_LOGIN_ROUND2_S07.md
+	REPORT_VIP_LOGIN_ROUND2_S08.md
+	REPORT_VIP_LOGIN_ROUND2_S09.md
+	REPORT_VIP_LOGIN_ROUND3_G00.md
+	REPORT_VIP_LOGIN_ROUND3_G01.md
+	REPORT_VIP_LOGIN_ROUND3_G02.md
+	REPORT_VIP_LOGIN_ROUND3_G03.md
+	REPORT_VIP_LOGIN_ROUND3_G04.md
+	REPORT_VIP_LOGIN_ROUND3_G05.md
+	REPORT_VIP_LOGIN_ROUND3_G06.md
+	REPORT_VIP_LOGIN_ROUND3_G07.md
+	REPORT_VIP_LOGIN_ROUND4_H00.md
+	REPORT_VIP_LOGIN_ROUND4_H01.md
+	REPORT_VIP_LOGIN_ROUND4_H02.md
+	REPORT_VIP_LOGIN_ROUND4_H03.md
+	REPORT_VIP_LOGIN_ROUND4_H04a.md
+	REPORT_VIP_LOGIN_ROUND4_H04b.md
+	REPORT_VIP_LOGIN_ROUND4_H05.md
+	REPORT_VIP_LOGIN_ROUND5_J00.md
+	REPORT_VIP_LOGIN_ROUND5_J01.md
+	REPORT_VIP_LOGIN_ROUND5_J02.md
+	REPORT_VIP_LOGIN_ROUND5_J03.md
+	REPORT_VIP_LOGIN_ROUND5_J04.md
+	REPORT_VIP_LOGIN_ROUND6_K00.md
+	REPORT_VIP_LOGIN_ROUND6_K01.md
+	REPORT_VIP_LOGIN_ROUND6_K02.md
+	REPORT_VIP_LOGIN_ROUND6_K03.md
+	REPORT_VIP_LOGIN_V00.md
+	REPORT_VIP_LOGIN_V01.md
+	REPORT_VIP_LOGIN_V02.md
+	REPORT_VIP_LOGIN_V03.md
+	REPORT_VIP_LOGIN_V04.md
+	REPORT_VIP_LOGIN_V05.md
+	REPORT_VIP_LOGIN_V06.md
+	REPORT_VIP_LOGIN_V07.md
+	REPORT_VIP_LOGIN_V08.md
+	REPORT_VIP_LOGIN_V09.md
+	REPORT_VIP_R3_M00.md
+	REPORT_VIP_R3_M01.md
+	REPORT_VIP_R3_M02.md
+	REPORT_VIP_R3_M03.md
+	REPORT_VIP_R3_M04.md
+	REPORT_VIP_R3_M05.md
+	REPORT_VIP_R3_M06.md
+	REPORT_VIP_R3_M07.md
+	REPORT_VIP_R3_M08.md
+	REPORT_VIP_R3_M09.md
+	REPORT_VIP_R3_M10.md
+	REPORT_VIP_R3_M11.md
+	REPORT_VIP_R4_T00.md
+	REPORT_VIP_R4_T01.md
+	REPORT_VIP_R4_T02.md
+	REPORT_VIP_R4_T03.md
+	REPORT_VIP_R4_T04.md
+	REPORT_VIP_R4_T05.md
+	REPORT_VIP_R4_T06.md
+	REPORT_VIP_R4_T07.md
+	REPORT_VIP_R4_T08.md
+	REPORT_VIP_R4_T09.md
+	REPORT_VIP_R4_T10.md
+	REPORT_VIP_R4_T11.md
+	REPORT_VIP_R4_T12.md
+	REPORT_VIP_R4_T13.md
+	REPORT_VIP_R5_FINAL.md
+	REPORT_VIP_R5_U00.md
+	REPORT_VIP_R5_U01.md
+	REPORT_VIP_R5_U02.md
+	REPORT_VIP_R5_U03.md
+	REPORT_VIP_R5_U04.md
+	REPORT_VIP_R5_U05.md
+	REPORT_VIP_R5_U06.md
+	REPORT_VIP_R5_U07.md
+	REPORT_VIP_R5_U08.md
+	REPORT_VIP_R5_U09.md
+	REPORT_VIP_R5_U10.md
+	REPORT_VIP_R6_FINAL.md
+	REPORT_VIP_R6_W00.md
+	REPORT_VIP_R6_W01.md
+	REPORT_VIP_R6_W02.md
+	REPORT_VIP_R6_W03.md
+	REPORT_VIP_R6_W04.md
+	REPORT_VIP_R6_W05.md
+	REPORT_VIP_R6_W06.md
+	REPORT_VIP_R6_W07.md
+	REPORT_VIP_R6_W08.md
+	REPORT_VIP_R6_W09.md
+	REPORT_VIP_R7_FINAL.md
+	REPORT_VIP_R7_X00.md
+	REPORT_VIP_R7_X01.md
+	REPORT_VIP_R7_X02.md
+	REPORT_VIP_R7_X03.md
+	REPORT_VIP_R7_X04.md
+	REPORT_VIP_R7_X05.md
+	REPORT_VIP_R7_X06.md
+	REPORT_VIP_R7_X07.md
+	REPORT_VIP_R7_X08.md
+	REPORT_VIP_R7_X09.md
+	REPORT_VIP_R7_X10.md
+	REPORT_VIP_R7_X11.md
+	REPORT_VIP_R8_FINAL.md
+	REPORT_VIP_R8_Y00.md
+	REPORT_VIP_R8_Y01.md
+	REPORT_VIP_R8_Y02.md
+	REPORT_VIP_R8_Y03.md
+	REPORT_VIP_R8_Y04.md
+	REPORT_VIP_R8_Y05.md
+	REPORT_VIP_R8_Y06.md
+	REPORT_VIP_R8_Y07.md
+	REPORT_VIP_R8_Y08.md
+	REPORT_VIP_R8_Y09.md
+	REPORT_VIP_R8_Y10.md
+	REPORT_VIP_R8_Y11.md
+	REPORT_VIP_R8_Y12.md
+	REVIEW_8_LANGUAGES_2026-09-18.md
+	REVIEW_AND_FIX_PLAN_POST_ROLLOUT_2026-09-17.md
+	REVIEW_LANGUAGE_MODES_AUTO_OCR_2026-09-20.md
+	REVIEW_MULTILINGUAL_2026-09-17.md
+	REVIEW_SCAN_WORKFLOW_2026-09-20.md
+	app/src/androidTest/
+	app/src/main/java/com/tscanner/app/ocr/
+	app/src/main/java/com/tscanner/app/ui/camera/CameraScanSessionManager.kt
+	app/src/main/java/com/tscanner/app/ui/dialogs/IdCardOptionsDialog.kt
+	app/src/main/java/com/tscanner/app/ui/dialogs/OcrLanguageAdapter.kt
+	app/src/main/java/com/tscanner/app/ui/dialogs/OcrLanguageSelectionDialog.kt
+	app/src/main/java/com/tscanner/app/ui/dialogs/VipPurchaseAuthConsumer.kt
+	app/src/main/java/com/tscanner/app/ui/editor/CropRotateViewModel.kt
+	app/src/main/java/com/tscanner/app/ui/editor/CropSaveCoordinator.kt
+	app/src/main/java/com/tscanner/app/ui/idcard/IdCardSessionDraft.kt
+	app/src/main/java/com/tscanner/app/ui/ocr/editor/
+	app/src/main/java/com/tscanner/app/ui/ocr/reader/
+	app/src/main/java/com/tscanner/app/utils/AvatarViewBinder.kt
+	app/src/main/java/com/tscanner/app/utils/BackupSnapshotStore.kt
+	app/src/main/java/com/tscanner/app/utils/BillingManager.kt
+	app/src/main/java/com/tscanner/app/utils/DocumentImportHelper.kt
+	app/src/main/java/com/tscanner/app/utils/DriveAuthorizationAttempt.kt
+	app/src/main/java/com/tscanner/app/utils/DriveAuthorizationResultRouter.kt
+	app/src/main/java/com/tscanner/app/utils/EdgeToEdgeInsetsHelper.kt
+	app/src/main/java/com/tscanner/app/utils/GoogleCredentialRequestFactory.kt
+	app/src/main/java/com/tscanner/app/utils/GoogleLoginAttempt.kt
+	app/src/main/java/com/tscanner/app/utils/GoogleSignInResultRouter.kt
+	app/src/main/java/com/tscanner/app/utils/ImageMemoryBudgetCalculator.kt
+	app/src/main/java/com/tscanner/app/utils/LegacyPaddleCleanup.kt
+	app/src/main/java/com/tscanner/app/utils/LogoutCoordinator.kt
+	app/src/main/java/com/tscanner/app/utils/OcrLanguageIdentifier.kt
+	app/src/main/java/com/tscanner/app/utils/OcrModels.kt
+	app/src/main/java/com/tscanner/app/utils/OcrScriptProbe.kt
+	app/src/main/java/com/tscanner/app/utils/ScanUiPolicy.kt
+	app/src/main/java/com/tscanner/app/utils/SyncResultPresenter.kt
+	app/src/main/java/com/tscanner/app/utils/VipLoginContinuationHandler.kt
+	app/src/main/java/com/tscanner/app/utils/VipPurchaseActionCoordinator.kt
+	app/src/main/java/com/tscanner/app/utils/billing/
+	app/src/main/res/drawable/bg_table_cell.xml
+	app/src/main/res/drawable/bg_table_cell_selected.xml
+	app/src/main/res/drawable/ic_chevron_left.xml
+	app/src/main/res/drawable/ic_launcher_background.xml
+	app/src/main/res/drawable/ic_launcher_foreground.xml
+	app/src/main/res/drawable/ic_redo.xml
+	app/src/main/res/layout/dialog_ocr_language_selection.xml
+	app/src/main/res/layout/fragment_ocr_table_editor.xml
+	app/src/main/res/layout/fragment_ocr_text_editor.xml
+	app/src/main/res/layout/item_ocr_language_selection.xml
+	app/src/main/res/layout/item_table_row.xml
+	app/src/main/res/raw/
+	app/src/test/java/android/
+	app/src/test/java/com/tscanner/app/AppAuthCanonicalIdentityTest.kt
+	app/src/test/java/com/tscanner/app/AppAuthDriveAuthorizationTest.kt
+	app/src/test/java/com/tscanner/app/AppAuthGoogleLogoutIntegrationTest.kt
+	app/src/test/java/com/tscanner/app/AppAuthLifecycleDiagnosticsTest.kt
+	app/src/test/java/com/tscanner/app/AppAuthReauthenticationTest.kt
+	app/src/test/java/com/tscanner/app/AppLanguageManagerTest.kt
+	app/src/test/java/com/tscanner/app/AvatarFallbackStaleRequestRegressionTest.kt
+	app/src/test/java/com/tscanner/app/BackupSnapshotLifecycleTest.kt
+	app/src/test/java/com/tscanner/app/BackupSnapshotStorageRecoveryTest.kt
+	app/src/test/java/com/tscanner/app/BillingConnectionCoordinatorTest.kt
+	app/src/test/java/com/tscanner/app/BillingEntitlementContractTest.kt
+	app/src/test/java/com/tscanner/app/BillingEntitlementStoreTest.kt
+	app/src/test/java/com/tscanner/app/BillingGuestOwnershipTest.kt
+	app/src/test/java/com/tscanner/app/BillingLifecycleIntegrationTest.kt
+	app/src/test/java/com/tscanner/app/BillingManagerTest.kt
+	app/src/test/java/com/tscanner/app/BillingOfferPresentationTest.kt
+	app/src/test/java/com/tscanner/app/BillingOperationEventsTest.kt
+	app/src/test/java/com/tscanner/app/BillingOperationSessionTest.kt
+	app/src/test/java/com/tscanner/app/BillingPurchaseFixtureTest.kt
+	app/src/test/java/com/tscanner/app/BillingPurchaseVerificationTest.kt
+	app/src/test/java/com/tscanner/app/BillingReadinessTest.kt
+	app/src/test/java/com/tscanner/app/BillingReauditRegressionTest.kt
+	app/src/test/java/com/tscanner/app/BillingReconciliationTest.kt
+	app/src/test/java/com/tscanner/app/BillingRevocationReconciliationTest.kt
+	app/src/test/java/com/tscanner/app/BillingRound2RegressionTest.kt
+	app/src/test/java/com/tscanner/app/BillingSnapshotPersistenceTest.kt
+	app/src/test/java/com/tscanner/app/BillingTestFixtures.kt
+	app/src/test/java/com/tscanner/app/ChineseMlKitRoutingTest.kt
+	app/src/test/java/com/tscanner/app/CloudBackupDispatchTest.kt
+	app/src/test/java/com/tscanner/app/CloudSessionGenerationGuardTest.kt
+	app/src/test/java/com/tscanner/app/CropPendingStateRegressionTest.kt
+	app/src/test/java/com/tscanner/app/CropRotateStateAndMathTest.kt
+	app/src/test/java/com/tscanner/app/CropSaveCoordinatorRegressionTest.kt
+	app/src/test/java/com/tscanner/app/DemoAccountIsolationTest.kt
+	app/src/test/java/com/tscanner/app/DocumentCatalogSyncAndConflictTest.kt
+	app/src/test/java/com/tscanner/app/DocumentImportHelperTest.kt
+	app/src/test/java/com/tscanner/app/DocumentLayoutAnalyzerTest.kt
+	app/src/test/java/com/tscanner/app/DocumentManagementFilterLogicTest.kt
+	app/src/test/java/com/tscanner/app/DocumentMetadataSyncAndTombstoneTest.kt
+	app/src/test/java/com/tscanner/app/DocumentPipelineFaultInjectionTest.kt
+	app/src/test/java/com/tscanner/app/DocumentRepoAccountIsolationTest.kt
+	app/src/test/java/com/tscanner/app/DocumentRepoBackupDispatchTest.kt
+	app/src/test/java/com/tscanner/app/DocumentRevisionCasTest.kt
+	app/src/test/java/com/tscanner/app/DocxWriterTest.kt
+	app/src/test/java/com/tscanner/app/DriveAuthorizationFlowTest.kt
+	app/src/test/java/com/tscanner/app/EdgeToEdgeInsetsHelperTest.kt
+	app/src/test/java/com/tscanner/app/GoogleCredentialRequestFactoryTest.kt
+	app/src/test/java/com/tscanner/app/GoogleDriveDownloadValidationTest.kt
+	app/src/test/java/com/tscanner/app/GoogleDriveTransportErrorTest.kt
+	app/src/test/java/com/tscanner/app/GoogleIdentityOptionsTest.kt
+	app/src/test/java/com/tscanner/app/GoogleLoginAttemptSerializationTest.kt
+	app/src/test/java/com/tscanner/app/GoogleLoginFlowTest.kt
+	app/src/test/java/com/tscanner/app/GoogleSignInResultRouterTest.kt
+	app/src/test/java/com/tscanner/app/IdCardSessionDraftTest.kt
+	app/src/test/java/com/tscanner/app/ImageMemoryBudgetTest.kt
+	app/src/test/java/com/tscanner/app/LegacyPaddleCleanupTest.kt
+	app/src/test/java/com/tscanner/app/LogoutCoordinatorTest.kt
+	app/src/test/java/com/tscanner/app/MainActivityNavigationTest.kt
+	app/src/test/java/com/tscanner/app/MlKitLayoutMapperTest.kt
+	app/src/test/java/com/tscanner/app/MlKitRecognizerLifecycleTest.kt
+	app/src/test/java/com/tscanner/app/NetworkImageLoadingPolicyTest.kt
+	app/src/test/java/com/tscanner/app/OcrAutosaveRecoveryTest.kt
+	app/src/test/java/com/tscanner/app/OcrCoordinateMapperTest.kt
+	app/src/test/java/com/tscanner/app/OcrDocumentModelTest.kt
+	app/src/test/java/com/tscanner/app/OcrDocumentRepositoryTest.kt
+	app/src/test/java/com/tscanner/app/OcrEditCommandTest.kt
+	app/src/test/java/com/tscanner/app/OcrExportFlowTest.kt
+	app/src/test/java/com/tscanner/app/OcrFormattingCommandTest.kt
+	app/src/test/java/com/tscanner/app/OcrFourthReauditPermanentTest.kt
+	app/src/test/java/com/tscanner/app/OcrHorizontalInsetsRegressionTest.kt
+	app/src/test/java/com/tscanner/app/OcrIndependentAuditTest.kt
+	app/src/test/java/com/tscanner/app/OcrLanguageIdentifierTest.kt
+	app/src/test/java/com/tscanner/app/OcrMultiPageIntegrationAndHandoffTest.kt
+	app/src/test/java/com/tscanner/app/OcrMultilingualAndTableAcceptanceTest.kt
+	app/src/test/java/com/tscanner/app/OcrReaderContractValidationTest.kt
+	app/src/test/java/com/tscanner/app/OcrReaderViewModelTest.kt
+	app/src/test/java/com/tscanner/app/OcrRoutingTest.kt
+	app/src/test/java/com/tscanner/app/OcrScriptProbeTest.kt
+	app/src/test/java/com/tscanner/app/OcrSecondReauditPermanentTest.kt
+	app/src/test/java/com/tscanner/app/OcrSelectionControllerTest.kt
+	app/src/test/java/com/tscanner/app/OcrTableEditorTest.kt
+	app/src/test/java/com/tscanner/app/OcrTableStructureTest.kt
+	app/src/test/java/com/tscanner/app/OcrTextEditorTest.kt
+	app/src/test/java/com/tscanner/app/OcrThirdReauditPermanentTest.kt
+	app/src/test/java/com/tscanner/app/OcrUserFlowIntegrationTest.kt
+	app/src/test/java/com/tscanner/app/OcrUserJourneyE2ETest.kt
+	app/src/test/java/com/tscanner/app/PaddleLegacyPersistenceExportTest.kt
+	app/src/test/java/com/tscanner/app/PaddlePhysicalRemovalVerificationTest.kt
+	app/src/test/java/com/tscanner/app/PaddlePreferenceMigrationTest.kt
+	app/src/test/java/com/tscanner/app/PaddleRemovalVerificationTest.kt
+	app/src/test/java/com/tscanner/app/PaddleUiAndStringsCleanupTest.kt
+	app/src/test/java/com/tscanner/app/PlayPurchaseVerifierHttpTest.kt
+	app/src/test/java/com/tscanner/app/PluralsAndFormattingTest.kt
+	app/src/test/java/com/tscanner/app/PostAuthorizationSyncResultTest.kt
+	app/src/test/java/com/tscanner/app/PostScanSessionConcurrencyTest.kt
+	app/src/test/java/com/tscanner/app/ScanEntryLanguageRegressionTest.kt
+	app/src/test/java/com/tscanner/app/ScanUiPolicyTest.kt
+	app/src/test/java/com/tscanner/app/ScannerErrorLanguageTest.kt
+	app/src/test/java/com/tscanner/app/TableStructureAnalyzerTest.kt
+	app/src/test/java/com/tscanner/app/TesseractOcrHelperTest.kt
+	app/src/test/java/com/tscanner/app/VipIdCardLoginContinuationTest.kt
+	app/src/test/java/com/tscanner/app/VipLoginContinuationTest.kt
+	app/src/test/java/com/tscanner/app/VipLoginRound2RegressionTest.kt
+	app/src/test/java/com/tscanner/app/VipLoginRound3RegressionTest.kt
+	app/src/test/java/com/tscanner/app/VipLoginRound4RegressionTest.kt
+	app/src/test/java/com/tscanner/app/VipLoginRound5RegressionTest.kt
+	app/src/test/java/com/tscanner/app/VipLoginRound6RegressionTest.kt
+	app/src/test/java/com/tscanner/app/VipPurchaseActionCoordinatorTest.kt
+	app/src/test/java/com/tscanner/app/VipRound3RegressionTest.kt
+	app/src/test/java/com/tscanner/app/VipRound4RegressionTest.kt
+	app/src/test/java/com/tscanner/app/VipRound5RegressionTest.kt
+	app/src/test/java/com/tscanner/app/VipRound6RegressionTest.kt
+	app/src/test/java/com/tscanner/app/VipRound7RegressionTest.kt
+	app/src/test/java/com/tscanner/app/VipRound8RegressionTest.kt
+	app/src/test/java/com/tscanner/app/VipSessionExpiryRegressionTest.kt
+	app/src/test/java/com/tscanner/app/VipSessionLanguageRegressionTest.kt
+	app/src/test/java/com/tscanner/app/VipSessionRound3IntegrationTest.kt
+	app/src/test/java/com/tscanner/app/VipViewerLoginContinuationTest.kt
+	app/src/test/java/com/tscanner/app/VipWatermarkPolicyTest.kt
+	app/src/test/java/com/tscanner/app/XlsxWriterTest.kt
+	app/src/test/resources/
+	audit_files_vip_build.log
+	audit_files_vip_tests.log
+	audit_login_expiry_20261004.log
+	audit_play5_baseline_20261005.log
+	audit_play5_recheck_20261005.log
+	backend/
+	baseline_artifacts_20261005/
+	build_p01_bundle_release.log
+	build_p02_r8.log
+	build_p03_host_checks.log
+	build_p03_release_candidate.log
+	docs/
+	locale_archive/
+	scripts/
+

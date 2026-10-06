@@ -1,0 +1,25 @@
+{
+  "id": "table_simple_01",
+  "category": "simple_table",
+  "language": "vi",
+  "pageWidth": 1200,
+  "pageHeight": 1600,
+  "rotationDegrees": 0,
+  "table": {
+    "tableId": "tbl_01",
+    "rowCount": 3,
+    "columnCount": 3,
+    "boundingBox": {"left": 0.1, "top": 0.2, "right": 0.9, "bottom": 0.6},
+    "cells": [
+      {"cellId": "c_r0_c0", "rowIndex": 0, "colIndex": 0, "rowSpan": 1, "colSpan": 1, "text": "STT", "cellType": "TEXT"},
+      {"cellId": "c_r0_c1", "rowIndex": 0, "colIndex": 1, "rowSpan": 1, "colSpan": 1, "text": "Mã định danh", "cellType": "TEXT"},
+      {"cellId": "c_r0_c2", "rowIndex": 0, "colIndex": 2, "rowSpan": 1, "colSpan": 1, "text": "Số lượng", "cellType": "TEXT"},
+      {"cellId": "c_r1_c0", "rowIndex": 1, "colIndex": 0, "rowSpan": 1, "colSpan": 1, "text": "1", "cellType": "NUMBER"},
+      {"cellId": "c_r1_c1", "rowIndex": 1, "colIndex": 1, "rowSpan": 1, "colSpan": 1, "text": "00123", "cellType": "TEXT"},
+      {"cellId": "c_r1_c2", "rowIndex": 1, "colIndex": 2, "rowSpan": 1, "colSpan": 1, "text": "50", "cellType": "NUMBER"},
+      {"cellId": "c_r2_c0", "rowIndex": 2, "colIndex": 0, "rowSpan": 1, "colSpan": 1, "text": "2", "cellType": "NUMBER"},
+      {"cellId": "c_r2_c1", "rowIndex": 2, "colIndex": 1, "rowSpan": 1, "colSpan": 1, "text": "00456", "cellType": "TEXT"},
+      {"cellId": "c_r2_c2", "rowIndex": 2, "colIndex": 2, "rowSpan": 1, "colSpan": 1, "text": "120", "cellType": "NUMBER"}
+    ]
+  }
+}

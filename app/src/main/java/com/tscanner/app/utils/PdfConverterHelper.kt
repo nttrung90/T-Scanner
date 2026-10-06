@@ -12,6 +12,7 @@ import android.graphics.pdf.PdfRenderer
 import androidx.exifinterface.media.ExifInterface
 import android.os.ParcelFileDescriptor
 import android.util.Log
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -112,44 +113,82 @@ object PdfConverterHelper {
         result is SafeFileWriter.Result.Success
     }
 
-    suspend fun convertPdfToImages(
+    sealed class PdfToImagesResult {
+        data class Success(val imagePaths: List<String>, val totalPages: Int) : PdfToImagesResult()
+        data class Failure(val failedPage: Int, val totalPages: Int, val message: String, val cause: Throwable? = null) : PdfToImagesResult()
+    }
+
+    suspend fun convertPdfToImagesStructured(
         context: Context,
         pdfFile: File,
         outputDir: File = FileUtils.getPdfPreviewDir(context)
-    ): List<String> = withContext(Dispatchers.IO) {
+    ): PdfToImagesResult = withContext(Dispatchers.IO) {
         val imagePaths = mutableListOf<String>()
         var fileDescriptor: ParcelFileDescriptor? = null
         var renderer: PdfRenderer? = null
         try {
+            if (!pdfFile.exists() || pdfFile.length() == 0L) {
+                return@withContext PdfToImagesResult.Failure(0, 0, "PDF file does not exist or is empty")
+            }
+            if (!outputDir.exists()) {
+                outputDir.mkdirs()
+            }
             fileDescriptor = ParcelFileDescriptor.open(pdfFile, ParcelFileDescriptor.MODE_READ_ONLY)
             renderer = PdfRenderer(fileDescriptor)
             val pageCount = renderer.pageCount
+            if (pageCount == 0) {
+                return@withContext PdfToImagesResult.Failure(0, 0, "PDF has 0 pages")
+            }
 
             for (i in 0 until pageCount) {
-                val page = renderer.openPage(i)
-                val maxDim = 2048f
-                val pageMax = maxOf(page.width, page.height).toFloat()
-                val scale = if (pageMax > maxDim) {
-                    maxDim / pageMax
-                } else {
-                    (1800f / pageMax).coerceIn(1.0f, 2.5f)
-                }
-                val width = (page.width * scale).toInt().coerceAtLeast(1)
-                val height = (page.height * scale).toInt().coerceAtLeast(1)
-                val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-                bitmap.eraseColor(Color.WHITE)
-                page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-                page.close()
+                val pageIndex = i + 1
+                try {
+                    val page = renderer.openPage(i)
+                    val maxDim = 2048f
+                    val pageMax = maxOf(page.width, page.height).toFloat()
+                    val scale = if (pageMax > maxDim) {
+                        maxDim / pageMax
+                    } else {
+                        (1800f / pageMax).coerceIn(1.0f, 2.5f)
+                    }
+                    val width = (page.width * scale).toInt().coerceAtLeast(1)
+                    val height = (page.height * scale).toInt().coerceAtLeast(1)
+                    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+                    bitmap.eraseColor(Color.WHITE)
+                    page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+                    page.close()
 
-                val imgFile = File(outputDir, "pdf_page_${System.currentTimeMillis()}_${i + 1}.jpg")
-                FileOutputStream(imgFile).use { out ->
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 95, out)
+                    val imgFile = File(outputDir, "pdf_page_${System.currentTimeMillis()}_${pageIndex}.jpg")
+                    val compressOk = FileOutputStream(imgFile).use { out ->
+                        val ok = bitmap.compress(Bitmap.CompressFormat.JPEG, 95, out)
+                        out.flush()
+                        ok
+                    }
+                    bitmap.recycle()
+
+                    if (!compressOk || !imgFile.exists() || imgFile.length() == 0L || !SafeFileWriter.validateImage(imgFile)) {
+                        imgFile.delete()
+                        imagePaths.forEach { try { File(it).delete() } catch (_: Exception) {} }
+                        return@withContext PdfToImagesResult.Failure(pageIndex, pageCount, "Failed to compress or validate page $pageIndex image")
+                    }
+                    imagePaths.add(imgFile.absolutePath)
+                } catch (e: Exception) {
+                    if (e is CancellationException) throw e
+                    imagePaths.forEach { try { File(it).delete() } catch (_: Exception) {} }
+                    return@withContext PdfToImagesResult.Failure(pageIndex, pageCount, "Error rendering page $pageIndex: ${e.message}", e)
                 }
-                bitmap.recycle()
-                imagePaths.add(imgFile.absolutePath)
+            }
+
+            if (imagePaths.size == pageCount) {
+                PdfToImagesResult.Success(imagePaths, pageCount)
+            } else {
+                imagePaths.forEach { try { File(it).delete() } catch (_: Exception) {} }
+                PdfToImagesResult.Failure(imagePaths.size + 1, pageCount, "Incomplete pages rendered: ${imagePaths.size} of $pageCount")
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            if (e is CancellationException) throw e
+            imagePaths.forEach { try { File(it).delete() } catch (_: Exception) {} }
+            PdfToImagesResult.Failure(0, 0, "Failed to open PDF renderer: ${e.message}", e)
         } finally {
             try {
                 renderer?.close()
@@ -158,7 +197,15 @@ object PdfConverterHelper {
                 e.printStackTrace()
             }
         }
-        imagePaths
+    }
+
+    suspend fun convertPdfToImages(
+        context: Context,
+        pdfFile: File,
+        outputDir: File = FileUtils.getPdfPreviewDir(context)
+    ): List<String> {
+        val result = convertPdfToImagesStructured(context, pdfFile, outputDir)
+        return if (result is PdfToImagesResult.Success) result.imagePaths else emptyList()
     }
 
     fun renderPdfFirstPage(pdfFile: File, outputFile: File): Boolean {
@@ -282,6 +329,41 @@ object PdfConverterHelper {
         }
     }
 
+    private fun escapeHtml(text: String): String {
+        return text.replace("&", "&amp;")
+            .replace("<", "&lt;")
+            .replace(">", "&gt;")
+            .replace("\"", "&quot;")
+            .replace("'", "&#39;")
+    }
+
+    private fun isRtlString(str: String): Boolean {
+        for (char in str) {
+            val dir = Character.getDirectionality(char)
+            if (dir == Character.DIRECTIONALITY_RIGHT_TO_LEFT || dir == Character.DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC) {
+                return true
+            } else if (dir == Character.DIRECTIONALITY_LEFT_TO_RIGHT) {
+                return false
+            }
+        }
+        return false
+    }
+
+    suspend fun exportDocumentToDocx(
+        document: com.tscanner.app.ocr.model.OcrDocument,
+        outputFile: File,
+        addWatermark: Boolean = false
+    ): Boolean = withContext(Dispatchers.IO) {
+        com.tscanner.app.ocr.export.DocxWriter.writeDocx(document, outputFile, addWatermark)
+    }
+
+    suspend fun exportDocumentToXlsx(
+        document: com.tscanner.app.ocr.model.OcrDocument,
+        outputFile: File
+    ): Boolean = withContext(Dispatchers.IO) {
+        com.tscanner.app.ocr.export.XlsxWriter.writeXlsx(document, outputFile)
+    }
+
     suspend fun exportTextToWord(
         text: String,
         outputFile: File,
@@ -290,6 +372,10 @@ object PdfConverterHelper {
         try {
             outputFile.parentFile?.mkdirs()
             val watermarkSnippet = if (addWatermark) WatermarkHelper.getWordWatermarkHtml() else ""
+            val paragraphs = text.split("\n").joinToString("") { line ->
+                val dirAttr = if (isRtlString(line)) " dir='rtl' align='right'" else " dir='ltr' align='left'"
+                "<p$dirAttr>${escapeHtml(line)}</p>"
+            }
             // Write standard formatted document / HTML that Word / WPS opens perfectly
             val htmlContent = """
                 <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
@@ -300,7 +386,7 @@ object PdfConverterHelper {
                 </style>
                 </head>
                 <body>
-                ${text.split("\n").joinToString("") { "<p>${it.replace("<", "&lt;").replace(">", "&gt;")}</p>" }}
+                $paragraphs
                 $watermarkSnippet
                 </body>
                 </html>

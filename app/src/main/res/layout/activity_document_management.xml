@@ -25,10 +25,9 @@
             android:layout_height="38dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="8dp"
-            android:src="@drawable/ic_chevron_right"
-            android:rotation="180"
+            android:src="@drawable/ic_arrow_back"
             app:tint="@color/text_primary"
-            android:contentDescription="Quay lại" />
+            android:contentDescription="@string/btn_back" />
 
         <TextView
             android:layout_width="0dp"
@@ -92,7 +91,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
                     android:background="@null"
-                    android:hint="Tìm theo tên tệp hoặc đường dẫn..."
+                    android:hint="@string/search_files_hint"
                     android:textColor="@color/text_primary"
                     android:textColorHint="@color/text_hint"
                     android:textSize="13sp"
@@ -125,7 +124,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Tổng dung lượng tệp"
+                            android:text="@string/stat_total_storage"
                             android:textColor="@color/text_secondary"
                             android:textSize="12sp" />
 
@@ -134,7 +133,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="0 KB"
+                            tools:text="0 KB"
                             android:textColor="@color/primary_teal"
                             android:textSize="22sp"
                             android:textStyle="bold" />
@@ -149,7 +148,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Tổng số tài liệu"
+                            android:text="@string/stat_total_count"
                             android:textColor="@color/text_secondary"
                             android:textSize="12sp" />
 
@@ -158,7 +157,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="0 tệp"
+                            tools:text="0 tệp"
                             android:textColor="@color/text_primary"
                             android:textSize="20sp"
                             android:textStyle="bold" />
@@ -176,7 +175,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Thống kê theo định dạng file:"
+                    android:text="@string/stat_by_type_title"
                     android:textColor="@color/text_primary"
                     android:textSize="13sp"
                     android:textStyle="bold" />
@@ -204,7 +203,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="6dp"
-                            android:text="PDF: 0 tệp (0 KB)"
+                            tools:text="PDF: 0 tệp (0 KB)"
                             android:textColor="@color/text_secondary"
                             android:textSize="12sp" />
                     </LinearLayout>
@@ -226,7 +225,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="6dp"
-                            android:text="Word: 0 tệp (0 KB)"
+                            tools:text="Word: 0 tệp (0 KB)"
                             android:textColor="@color/text_secondary"
                             android:textSize="12sp" />
                     </LinearLayout>
@@ -248,7 +247,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="6dp"
-                            android:text="Excel: 0 tệp (0 KB)"
+                            tools:text="Excel: 0 tệp (0 KB)"
                             android:textColor="@color/text_secondary"
                             android:textSize="12sp" />
                     </LinearLayout>
@@ -270,7 +269,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="6dp"
-                            android:text="PPT: 0 tệp (0 KB)"
+                            tools:text="PPT: 0 tệp (0 KB)"
                             android:textColor="@color/text_secondary"
                             android:textSize="12sp" />
                     </LinearLayout>
@@ -292,7 +291,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="6dp"
-                            android:text="Ảnh: 0 tệp (0 KB)"
+                            tools:text="Ảnh: 0 tệp (0 KB)"
                             android:textColor="@color/text_secondary"
                             android:textSize="12sp" />
                     </LinearLayout>
@@ -314,7 +313,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="6dp"
-                            android:text="Khác: 0 tệp (0 KB)"
+                            tools:text="Khác: 0 tệp (0 KB)"
                             android:textColor="@color/text_secondary"
                             android:textSize="12sp" />
                     </LinearLayout>
@@ -335,7 +334,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Danh sách tài liệu chi tiết:"
+                    android:text="@string/doc_list_detail_title"
                     android:textColor="@color/text_primary"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -344,7 +343,7 @@
                     android:id="@+id/tv_filtered_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0 tệp"
+                    tools:text="0 tệp"
                     android:textColor="@color/primary_teal"
                     android:textSize="13sp"
                     android:textStyle="bold" />
@@ -371,7 +370,7 @@
                         android:background="@drawable/btn_solid_teal"
                         android:gravity="center"
                         android:paddingHorizontal="14dp"
-                        android:text="Tất cả"
+                        android:text="@string/filter_all"
                         android:textColor="@color/bg_dark"
                         android:textSize="12sp"
                         android:textStyle="bold"
@@ -386,7 +385,7 @@
                         android:background="@drawable/btn_outline_teal"
                         android:gravity="center"
                         android:paddingHorizontal="14dp"
-                        android:text="PDF"
+                        android:text="@string/filter_pdf"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp"
                         android:clickable="true"
@@ -400,7 +399,7 @@
                         android:background="@drawable/btn_outline_teal"
                         android:gravity="center"
                         android:paddingHorizontal="14dp"
-                        android:text="Word"
+                        android:text="@string/filter_word"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp"
                         android:clickable="true"
@@ -414,7 +413,7 @@
                         android:background="@drawable/btn_outline_teal"
                         android:gravity="center"
                         android:paddingHorizontal="14dp"
-                        android:text="Excel"
+                        android:text="@string/filter_excel"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp"
                         android:clickable="true"
@@ -428,7 +427,7 @@
                         android:background="@drawable/btn_outline_teal"
                         android:gravity="center"
                         android:paddingHorizontal="14dp"
-                        android:text="PPT"
+                        android:text="@string/filter_ppt"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp"
                         android:clickable="true"
@@ -442,7 +441,7 @@
                         android:background="@drawable/btn_outline_teal"
                         android:gravity="center"
                         android:paddingHorizontal="14dp"
-                        android:text="Hình ảnh"
+                        android:text="@string/filter_image"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp"
                         android:clickable="true"
@@ -480,7 +479,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:text="Chưa có tài liệu nào"
+                    android:text="@string/empty_documents_title"
                     android:textColor="@color/text_primary"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -489,7 +488,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
-                    android:text="Tài liệu được quét, nhập hoặc chuyển đổi từ ứng dụng sẽ tự động xuất hiện tại đây."
+                    android:text="@string/empty_documents_desc"
                     android:textColor="@color/text_secondary"
                     android:textSize="13sp"
                     android:gravity="center" />

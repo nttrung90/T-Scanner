@@ -1,0 +1,201 @@
+{
+  "id": "doc_complex_table_01",
+  "documentId": "doc_complex_table_01",
+  "title": "Complex Multipage Table with Merged Cells and Zeroes",
+  "sourceLanguage": "vi",
+  "totalPages": 2,
+  "pages": [
+    {
+      "pageId": "p_table_1",
+      "pageIndex": 1,
+      "status": "SUCCESS",
+      "sourceLanguage": "vi",
+      "imageInfo": {
+        "imagePath": "/storage/emulated/0/sample_table_p1.jpg",
+        "width": 1200,
+        "height": 1600,
+        "rotationDegrees": 0
+      },
+      "tables": [
+        {
+          "tableId": "table_p1_01",
+          "rowCount": 3,
+          "columnCount": 4,
+          "cells": [
+            {
+              "cellId": "c00",
+              "rowIndex": 0,
+              "colIndex": 0,
+              "rowSpan": 1,
+              "colSpan": 4,
+              "text": "BÁO CÁO TÀI CHÍNH TỔNG HỢP NĂM 2026",
+              "editedText": "BÁO CÁO TÀI CHÍNH TỔNG HỢP NĂM 2026",
+              "cellType": "TEXT"
+            },
+            {
+              "cellId": "c10",
+              "rowIndex": 1,
+              "colIndex": 0,
+              "rowSpan": 1,
+              "colSpan": 1,
+              "text": "STT",
+              "editedText": "STT",
+              "cellType": "TEXT"
+            },
+            {
+              "cellId": "c11",
+              "rowIndex": 1,
+              "colIndex": 1,
+              "rowSpan": 1,
+              "colSpan": 1,
+              "text": "Mã Định Danh",
+              "editedText": "Mã Định Danh",
+              "cellType": "TEXT"
+            },
+            {
+              "cellId": "c12",
+              "rowIndex": 1,
+              "colIndex": 2,
+              "rowSpan": 1,
+              "colSpan": 1,
+              "text": "Tên Danh Mục",
+              "editedText": "Tên Danh Mục",
+              "cellType": "TEXT"
+            },
+            {
+              "cellId": "c13",
+              "rowIndex": 1,
+              "colIndex": 3,
+              "rowSpan": 1,
+              "colSpan": 1,
+              "text": "Số Tiền (VND)",
+              "editedText": "Số Tiền (VND)",
+              "cellType": "TEXT"
+            },
+            {
+              "cellId": "c20",
+              "rowIndex": 2,
+              "colIndex": 0,
+              "rowSpan": 1,
+              "colSpan": 1,
+              "text": "1",
+              "editedText": "1",
+              "cellType": "NUMBER"
+            },
+            {
+              "cellId": "c21",
+              "rowIndex": 2,
+              "colIndex": 1,
+              "rowSpan": 1,
+              "colSpan": 1,
+              "text": "000123",
+              "editedText": "000123",
+              "cellType": "TEXT"
+            },
+            {
+              "cellId": "c22",
+              "rowIndex": 2,
+              "colIndex": 2,
+              "rowSpan": 1,
+              "colSpan": 1,
+              "text": "Vật tư thiết bị",
+              "editedText": "Vật tư thiết bị",
+              "cellType": "TEXT"
+            },
+            {
+              "cellId": "c23",
+              "rowIndex": 2,
+              "colIndex": 3,
+              "rowSpan": 1,
+              "colSpan": 1,
+              "text": "98765432.10",
+              "editedText": "98765432.10",
+              "cellType": "NUMBER"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "pageId": "p_table_2",
+      "pageIndex": 2,
+      "status": "SUCCESS",
+      "sourceLanguage": "vi",
+      "imageInfo": {
+        "imagePath": "/storage/emulated/0/sample_table_p2.jpg",
+        "width": 1200,
+        "height": 1600,
+        "rotationDegrees": 0
+      },
+      "tables": [
+        {
+          "tableId": "table_p2_01",
+          "rowCount": 2,
+          "columnCount": 4,
+          "cells": [
+            {
+              "cellId": "c30",
+              "rowIndex": 0,
+              "colIndex": 0,
+              "rowSpan": 1,
+              "colSpan": 1,
+              "text": "2",
+              "editedText": "2",
+              "cellType": "NUMBER"
+            },
+            {
+              "cellId": "c31",
+              "rowIndex": 0,
+              "colIndex": 1,
+              "rowSpan": 1,
+              "colSpan": 1,
+              "text": "00789",
+              "editedText": "00789",
+              "cellType": "TEXT"
+            },
+            {
+              "cellId": "c32",
+              "rowIndex": 0,
+              "colIndex": 2,
+              "rowSpan": 1,
+              "colSpan": 1,
+              "text": "Dịch vụ phần mềm",
+              "editedText": "Dịch vụ phần mềm",
+              "cellType": "TEXT"
+            },
+            {
+              "cellId": "c33",
+              "rowIndex": 0,
+              "colIndex": 3,
+              "rowSpan": 1,
+              "colSpan": 1,
+              "text": "=SUM(D2:D10)",
+              "editedText": "=SUM(D2:D10)",
+              "cellType": "TEXT"
+            },
+            {
+              "cellId": "c40",
+              "rowIndex": 1,
+              "colIndex": 0,
+              "rowSpan": 1,
+              "colSpan": 3,
+              "text": "TỔNG CỘNG",
+              "editedText": "TỔNG CỘNG",
+              "cellType": "TEXT"
+            },
+            {
+              "cellId": "c43",
+              "rowIndex": 1,
+              "colIndex": 3,
+              "rowSpan": 1,
+              "colSpan": 1,
+              "text": "125000000",
+              "editedText": "125000000",
+              "cellType": "NUMBER"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

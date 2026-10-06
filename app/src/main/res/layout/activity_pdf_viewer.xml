@@ -24,10 +24,9 @@
             android:layout_height="36dp"
             android:padding="6dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_chevron_right"
-            android:rotation="180"
+            android:src="@drawable/ic_arrow_back"
             app:tint="@color/text_primary"
-            android:contentDescription="Back" />
+            android:contentDescription="@string/btn_back" />
 
         <TextView
             android:id="@+id/tv_viewer_title"
@@ -77,7 +76,7 @@
             android:background="@drawable/btn_solid_teal"
             android:paddingHorizontal="14dp"
             android:paddingVertical="7dp"
-            android:text="LƯU"
+            android:text="@string/save"
             android:textColor="@color/bg_dark"
             android:textSize="13sp"
             android:textStyle="bold"

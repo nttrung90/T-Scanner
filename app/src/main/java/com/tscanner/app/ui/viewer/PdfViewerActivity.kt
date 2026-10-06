@@ -30,13 +30,26 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.tscanner.app.data.model.DocumentItem
 import com.tscanner.app.data.repository.DocumentRepo
 import com.tscanner.app.ui.dialogs.CreatePdfDialog
+import com.tscanner.app.ui.dialogs.OcrLanguageSelectionDialog
 import com.tscanner.app.ui.dialogs.VipUpgradeDialog
 import com.tscanner.app.utils.AppAuthManager
+import com.tscanner.app.utils.DriveAuthorizationAttempt
 import com.tscanner.app.utils.FileUtils
+import com.tscanner.app.utils.BillingManager
+import com.tscanner.app.utils.EdgeToEdgeInsetsHelper
+import com.tscanner.app.utils.GoogleLoginAttempt
+import com.tscanner.app.utils.VipContinuationAction
+import com.tscanner.app.utils.VipLoginContinuationHandler
+import com.tscanner.app.utils.MultiPageOcrAggregator
+import com.tscanner.app.utils.MultiPageOcrResult
+import com.tscanner.app.utils.OcrResult
 import com.tscanner.app.utils.PdfConverterHelper
+import com.tscanner.app.utils.SyncCatalogResult
+import com.tscanner.app.utils.SyncResultPresenter
 import com.tscanner.app.utils.TextRecognitionHelper
 import com.tscanner.app.utils.WatermarkHelper
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -51,6 +64,293 @@ class PdfViewerActivity : AppCompatActivity() {
     private var isNewScan = false
     private var sessionId: String? = null
     private var isWatermarkRemoved = AppAuthManager.isUserVip()
+    private var pendingDriveAuthAttempt: DriveAuthorizationAttempt? = null
+
+    private val driveAuthorizationLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val attempt = pendingDriveAuthAttempt
+        pendingDriveAuthAttempt = null
+        AppAuthManager.handleDrivePermissionResult(
+            context = this,
+            resultCode = result.resultCode,
+            data = result.data,
+            attempt = attempt,
+            onSuccess = {
+                Toast.makeText(this, getString(R.string.drive_permission_granted_toast), Toast.LENGTH_SHORT).show()
+                val startUser = AppAuthManager.getCurrentUser()?.id
+                val startGen = AppAuthManager.getSessionGeneration()
+                AppAuthManager.runPostAuthorizationSync(this) { result ->
+                    handlePostAuthSyncResult(result, startUser, startGen)
+                }
+            },
+            onCancelled = {},
+            onError = { errorMsg ->
+                Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show()
+            }
+        )
+    }
+
+    private fun requestDrivePermission() {
+        try {
+            val intent = AppAuthManager.getGoogleDriveSignInIntent(this) { attempt ->
+                pendingDriveAuthAttempt = attempt
+            }
+            driveAuthorizationLauncher.launch(intent)
+        } catch (e: Exception) {
+            val toCancel = pendingDriveAuthAttempt
+            pendingDriveAuthAttempt = null
+            AppAuthManager.cancelDriveAuthorizationAttempt(toCancel)
+            Toast.makeText(this, getString(R.string.error_occurred_format, e.message.orEmpty()), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private val vipContinuationHandler = VipLoginContinuationHandler()
+    private var pendingSignInAttempt: GoogleLoginAttempt? = null
+    private var pendingDraftPdfName: String? = null
+
+    private val googleSignInFallbackLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val attempt = pendingSignInAttempt
+        val attemptId = attempt?.requestId ?: -1L
+        pendingSignInAttempt = null
+        AppAuthManager.handleGoogleSignInResult(
+            context = this,
+            resultCode = result.resultCode,
+            data = result.data,
+            attempt = attempt,
+            onSuccess = { profile ->
+                handleSignInSuccess(profile, attemptId)
+            },
+            onCancelled = {
+                vipContinuationHandler.onSignInCancelled(attemptId)
+            },
+            onError = { errorMsg ->
+                vipContinuationHandler.onSignInError(attemptId)
+                showSignInErrorDialog(errorMsg)
+            }
+        )
+    }
+
+    private fun performGoogleSignIn(): Boolean {
+        if (isFinishing || isDestroyed) return false
+        val currentUser = AppAuthManager.getCurrentUser()
+        var invocationAttempt: GoogleLoginAttempt? = null
+        val started = AppAuthManager.signInWithGoogle(
+            activity = this,
+            coroutineScope = lifecycleScope,
+            expectedOwnerId = currentUser?.id,
+            onAttemptCreated = { token ->
+                invocationAttempt = token
+                pendingSignInAttempt = token
+                vipContinuationHandler.bindAttempt(token)
+            },
+            onFallbackToIntent = {
+                val attemptToCancel = invocationAttempt ?: pendingSignInAttempt
+                if (isFinishing || isDestroyed) {
+                    AppAuthManager.cancelSignInProgress(attemptToCancel)
+                    if (pendingSignInAttempt === attemptToCancel) pendingSignInAttempt = null
+                    vipContinuationHandler.onSignInCancelled(attemptToCancel?.requestId ?: -1L)
+                    return@signInWithGoogle
+                }
+                try {
+                    val signInIntent = AppAuthManager.getGoogleSignInIntent(this)
+                    googleSignInFallbackLauncher.launch(signInIntent)
+                } catch (ex: Exception) {
+                    AppAuthManager.cancelSignInProgress(attemptToCancel)
+                    if (pendingSignInAttempt === attemptToCancel) pendingSignInAttempt = null
+                    vipContinuationHandler.onSignInError(attemptToCancel?.requestId ?: -1L)
+                    showSignInErrorDialog(getString(R.string.cannot_start_google_signin_format, ex.message.orEmpty()))
+                }
+            },
+            onSuccess = { profile ->
+                val attemptId = invocationAttempt?.requestId ?: pendingSignInAttempt?.requestId ?: -1L
+                if (pendingSignInAttempt === invocationAttempt) {
+                    pendingSignInAttempt = null
+                }
+                handleSignInSuccess(profile, attemptId)
+            },
+            onCancelled = {
+                val attemptId = invocationAttempt?.requestId ?: pendingSignInAttempt?.requestId ?: -1L
+                if (pendingSignInAttempt === invocationAttempt) {
+                    pendingSignInAttempt = null
+                }
+                vipContinuationHandler.onSignInCancelled(attemptId)
+            },
+            onError = { errorMsg ->
+                val attemptId = invocationAttempt?.requestId ?: pendingSignInAttempt?.requestId ?: -1L
+                if (pendingSignInAttempt === invocationAttempt) {
+                    pendingSignInAttempt = null
+                }
+                vipContinuationHandler.onSignInError(attemptId)
+                showSignInErrorDialog(errorMsg)
+            }
+        )
+        if (!started) {
+            Log.d("PdfViewerActivity", "Sign-in already in progress, ignoring duplicate tap")
+        }
+        return started
+    }
+
+    private fun handleSignInSuccess(profile: com.tscanner.app.data.model.UserProfile, attemptId: Long = -1L) {
+        if (isFinishing || isDestroyed) return
+        Toast.makeText(this, getString(R.string.sign_in_success), Toast.LENGTH_SHORT).show()
+        val startUser = AppAuthManager.getCurrentUser()?.id
+        val startGen = AppAuthManager.getSessionGeneration()
+        AppAuthManager.runPostAuthorizationSync(this) { result ->
+            handlePostAuthSyncResult(result, startUser, startGen)
+        }
+        vipContinuationHandler.onSignInSuccessWithAction(startGen, startUser, attemptId) { action, _, opContext ->
+            when (action) {
+                VipContinuationAction.UPGRADE -> showVipUpgradeDialog()
+                VipContinuationAction.RESTORE -> executeRestorePurchases(opContext)
+                VipContinuationAction.NONE -> Unit
+            }
+        }
+    }
+
+    private fun executeRestorePurchases(opContext: com.tscanner.app.utils.billing.BillingOperationContext? = null) {
+        if (isFinishing || isDestroyed) return
+        val billingManager = BillingManager.getInstance(this)
+        Toast.makeText(this, getString(R.string.vip_restore_purchases_btn), Toast.LENGTH_SHORT).show()
+        billingManager.restorePurchases(
+            opContext = opContext,
+            onAuthRequired = { authMessage ->
+                runOnUiThread {
+                    if (isFinishing || isDestroyed) return@runOnUiThread
+                    Toast.makeText(this, authMessage, Toast.LENGTH_LONG).show()
+                }
+            },
+            onComplete = { success, message ->
+                runOnUiThread {
+                    if (isFinishing || isDestroyed) return@runOnUiThread
+                    Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+                    if (success && AppAuthManager.isUserVip()) {
+                        isWatermarkRemoved = true
+                        updateWatermarkUI()
+                        Toast.makeText(this, getString(R.string.vip_unlocked_toast), Toast.LENGTH_LONG).show()
+                        val draftName = pendingDraftPdfName
+                        if (draftName != null) {
+                            pendingDraftPdfName = null
+                            if (isNewScan) {
+                                saveFinalDocument(draftName)
+                            } else {
+                                createNewPdf(draftName)
+                            }
+                        }
+                    }
+                }
+            }
+        )
+    }
+
+    fun startSignInForVipContinuation(
+        action: VipContinuationAction = VipContinuationAction.UPGRADE,
+        draftName: String? = null,
+        opContext: com.tscanner.app.utils.billing.BillingOperationContext? = null,
+        onStarted: (() -> Unit)? = null,
+        onRefused: (() -> Unit)? = null
+    ) {
+        if (isFinishing || isDestroyed) {
+            onRefused?.invoke()
+            return
+        }
+        if (vipContinuationHandler.isPending) {
+            Log.d("PdfViewerActivity", "Continuation already pending, ignoring duplicate tap")
+            onRefused?.invoke()
+            return
+        }
+        pendingDraftPdfName = draftName
+        val currentGen = AppAuthManager.getSessionGeneration()
+        val currentOwner = AppAuthManager.getCurrentUser()?.id
+        val currentEpoch = AppAuthManager.getProcessEpoch()
+        vipContinuationHandler.requestContinuation(
+            action = action,
+            sessionGeneration = currentGen,
+            initialOwnerId = currentOwner,
+            processEpoch = currentEpoch,
+            originatingOperationContext = opContext
+        )
+        val started = performGoogleSignIn()
+        if (started) {
+            onStarted?.invoke()
+        } else {
+            vipContinuationHandler.reset()
+            onRefused?.invoke()
+        }
+    }
+
+    private fun showVipUpgradeDialog() {
+        if (isFinishing || isDestroyed) return
+        VipUpgradeDialog(
+            context = this,
+            onRequestDrivePermission = { requestDrivePermission() },
+            onUpgradeSuccess = {
+                if (AppAuthManager.isUserVip()) {
+                    isWatermarkRemoved = true
+                    updateWatermarkUI()
+                    Toast.makeText(this, getString(R.string.vip_unlocked_toast), Toast.LENGTH_LONG).show()
+                    val draftName = pendingDraftPdfName
+                    if (draftName != null) {
+                        pendingDraftPdfName = null
+                        if (isNewScan) {
+                            saveFinalDocument(draftName)
+                        } else {
+                            createNewPdf(draftName)
+                        }
+                    }
+                }
+            },
+            onRequestSignIn = {
+                startSignInForVipContinuation(VipContinuationAction.UPGRADE, pendingDraftPdfName)
+            },
+            onSyncResult = { result ->
+                val startUser = AppAuthManager.getCurrentUser()?.id
+                val startGen = AppAuthManager.getSessionGeneration()
+                handlePostAuthSyncResult(result, startUser, startGen)
+            },
+            onRequestSignInForAction = { action ->
+                startSignInForVipContinuation(action, pendingDraftPdfName)
+            },
+            onRequestSignInForRecovery = { action, opContext, onStarted, onRefused ->
+                startSignInForVipContinuation(action, pendingDraftPdfName, opContext, onStarted, onRefused)
+            }
+        ).show()
+    }
+
+    private fun handlePostAuthSyncResult(result: SyncCatalogResult, originUserId: String?, originSessionGen: Long) {
+        if (isFinishing || isDestroyed) return
+        SyncResultPresenter.present(
+            context = this,
+            result = result,
+            expectedSessionGeneration = originSessionGen,
+            expectedUserId = originUserId,
+            isHostValid = { !isFinishing && !isDestroyed && lifecycle.currentState.isAtLeast(androidx.lifecycle.Lifecycle.State.STARTED) },
+            onRequestDrivePermission = { requestDrivePermission() },
+            onRetry = {
+                if (!isFinishing && !isDestroyed) {
+                    val retryUser = AppAuthManager.getCurrentUser()?.id
+                    val retryGen = AppAuthManager.getSessionGeneration()
+                    AppAuthManager.runPostAuthorizationSync(this) { retryResult ->
+                        handlePostAuthSyncResult(retryResult, retryUser, retryGen)
+                    }
+                }
+            }
+        )
+    }
+
+    private fun showSignInErrorDialog(errorMsg: String) {
+        if (isFinishing || isDestroyed) return
+        androidx.appcompat.app.AlertDialog.Builder(this, R.style.ThemeOverlay_TScanner_Dialog)
+            .setTitle(R.string.account_sign_in_title)
+            .setMessage(errorMsg)
+            .setPositiveButton(R.string.retry) { _, _ ->
+                performGoogleSignIn()
+            }
+            .setNegativeButton(R.string.close, null)
+            .show()
+    }
 
     private val cropLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -74,7 +374,7 @@ class PdfViewerActivity : AppCompatActivity() {
                             val ok = PdfConverterHelper.createPdfFromImages(
                                 imagePaths = renderedPagePaths,
                                 outputFile = currentPdf,
-                                addWatermark = !isWatermarkRemoved
+                                addWatermark = WatermarkHelper.shouldApplyWatermark(userWantsRemoved = isWatermarkRemoved)
                             )
                             if (ok) {
                                 // Regenerate thumbnail in .thumbnails directory
@@ -82,7 +382,8 @@ class PdfViewerActivity : AppCompatActivity() {
                                 PdfConverterHelper.renderPdfFirstPage(currentPdf, thumbFile)
                                 val repo = DocumentRepo.getInstance(this@PdfViewerActivity)
                                 val docId = currentPdf.nameWithoutExtension.removePrefix("doc_")
-                                repo.markDocumentModified(docId, currentPdf.length(), thumbFile.absolutePath)
+                                val currentUserId = AppAuthManager.getCurrentUser()?.id
+                                repo.markDocumentModified(docId, currentPdf.length(), thumbFile.absolutePath, currentUserId)
                                 true
                             } else {
                                 false
@@ -91,9 +392,9 @@ class PdfViewerActivity : AppCompatActivity() {
                     }
 
                     if (updateSuccess) {
-                        Toast.makeText(this@PdfViewerActivity, "Đã cập nhật trang ${pageIndex + 1}!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@PdfViewerActivity, getString(R.string.pdf_page_updated, pageIndex + 1), Toast.LENGTH_SHORT).show()
                     } else if (currentPdf != null) {
-                        Toast.makeText(this@PdfViewerActivity, "Không thể cập nhật trang vào PDF", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@PdfViewerActivity, getString(R.string.pdf_page_update_failed), Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -106,28 +407,33 @@ class PdfViewerActivity : AppCompatActivity() {
             navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
         )
         super.onCreate(savedInstanceState)
+        vipContinuationHandler.restoreInstanceState(savedInstanceState)
+        if (savedInstanceState != null) {
+            @Suppress("DEPRECATION")
+            pendingDriveAuthAttempt = savedInstanceState.getSerializable(KEY_PENDING_DRIVE_AUTH_ATTEMPT) as? DriveAuthorizationAttempt
+            pendingSignInAttempt = GoogleLoginAttempt.fromBundle(savedInstanceState)
+            pendingDraftPdfName = savedInstanceState.getString(KEY_PENDING_DRAFT_PDF_NAME)
+        }
         binding = ActivityPdfViewerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val baseBottomPadding = (12 * resources.displayMetrics.density).toInt()
+        val initialToolbarPadding = EdgeToEdgeInsetsHelper.recordInitialPadding(binding.layoutViewerToolbar)
+        val initialBottomPadding = EdgeToEdgeInsetsHelper.recordInitialPadding(binding.layoutViewerBottomActions)
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
-            val statusBarInsets = insets.getInsets(
-                WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.displayCutout()
-            )
-            val navInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            val sysInsets = EdgeToEdgeInsetsHelper.getSystemBarAndCutoutInsets(insets)
 
-            binding.layoutViewerToolbar.setPadding(
-                binding.layoutViewerToolbar.paddingLeft,
-                statusBarInsets.top,
-                binding.layoutViewerToolbar.paddingRight,
-                binding.layoutViewerToolbar.paddingBottom
+            EdgeToEdgeInsetsHelper.applyTopBarInsets(
+                binding.layoutViewerToolbar,
+                initialToolbarPadding,
+                sysInsets
             )
 
-            binding.layoutViewerBottomActions.setPadding(
-                binding.layoutViewerBottomActions.paddingLeft,
-                binding.layoutViewerBottomActions.paddingTop,
-                binding.layoutViewerBottomActions.paddingRight,
-                baseBottomPadding + navInsets.bottom
+            EdgeToEdgeInsetsHelper.applyBottomBarInsets(
+                binding.layoutViewerBottomActions,
+                initialBottomPadding,
+                sysInsets,
+                sysInsets.bottom
             )
 
             insets
@@ -137,8 +443,19 @@ class PdfViewerActivity : AppCompatActivity() {
         isNewScan = intent.getBooleanExtra(EXTRA_IS_NEW_SCAN, false)
         sessionId = intent.getStringExtra(EXTRA_SESSION_ID)
         pdfPath = intent.getStringExtra(EXTRA_PDF_PATH)
-        val title = intent.getStringExtra(EXTRA_TITLE) ?: "Tài liệu PDF"
+        val title = intent.getStringExtra(EXTRA_TITLE) ?: getString(R.string.pdf_default_title)
         binding.tvViewerTitle.text = title
+
+        val currentPath = pdfPath
+        if (!isNewScan && currentPath != null) {
+            val currentUserId = AppAuthManager.getCurrentUser()?.id
+            val matchingDoc = DocumentRepo.getInstance(this).getDocumentByPdfPath(currentPath)
+            if (matchingDoc != null && matchingDoc.ownerId != null && matchingDoc.ownerId != currentUserId) {
+                Toast.makeText(this, getString(R.string.document_access_denied), Toast.LENGTH_SHORT).show()
+                finish()
+                return
+            }
+        }
 
         if (isNewScan) {
             binding.btnSaveViewerDoc.text = getString(R.string.btn_save_pdf)
@@ -194,16 +511,7 @@ class PdfViewerActivity : AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
-                VipUpgradeDialog(
-                    context = this,
-                    onUpgradeSuccess = {
-                        if (AppAuthManager.isUserVip()) {
-                            isWatermarkRemoved = true
-                            updateWatermarkUI()
-                            Toast.makeText(this, "🎉 Đã mở khóa VIP! Tự động gỡ đóng dấu.", Toast.LENGTH_LONG).show()
-                        }
-                    }
-                ).show()
+                showVipUpgradeDialog()
             }
         }
         updateWatermarkUI()
@@ -226,9 +534,6 @@ class PdfViewerActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (AppAuthManager.isUserVip() && !isWatermarkRemoved) {
-            isWatermarkRemoved = true
-        }
         updateWatermarkUI()
     }
 
@@ -241,7 +546,7 @@ class PdfViewerActivity : AppCompatActivity() {
                 binding.tvWatermarkViewerLabel.setTextColor(ContextCompat.getColor(this, R.color.primary_teal))
             } else {
                 binding.ivWatermarkCrown.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.vip_gold))
-                binding.tvWatermarkViewerLabel.text = "Bật dấu (VIP)"
+                binding.tvWatermarkViewerLabel.text = getString(R.string.watermark_toggled_on_vip)
                 binding.tvWatermarkViewerLabel.setTextColor(ContextCompat.getColor(this, R.color.vip_gold))
             }
         } else {
@@ -259,7 +564,7 @@ class PdfViewerActivity : AppCompatActivity() {
         val path = pdfPath ?: return
         val file = File(path)
         if (!file.exists()) {
-            Toast.makeText(this, "Không tìm thấy file PDF", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.pdf_not_found), Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -298,23 +603,28 @@ class PdfViewerActivity : AppCompatActivity() {
     }
 
     private fun performOcrOnPages() {
+        if (!TextRecognitionHelper.isOcrDocumentLanguageConfigured(this)) {
+            OcrLanguageSelectionDialog(this) {
+                performOcrOnPages()
+            }.show()
+            return
+        }
+
         val progressDialog = MaterialAlertDialogBuilder(this)
-            .setTitle("Đang trích xuất văn bản (OCR)")
-            .setMessage("Đang chuẩn bị nhận diện...")
+            .setTitle(R.string.ocr_extracting_title)
+            .setMessage(R.string.ocr_preparing_message)
             .setCancelable(false)
             .create()
         progressDialog.show()
 
         lifecycleScope.launch {
-            val fullTextBuilder = StringBuilder()
-
             try {
                 // If pages haven't finished rendering yet, or preview files were cleaned up, render them now on the fly
                 val anyPageMissing = renderedPagePaths.isEmpty() || renderedPagePaths.any { !File(it).exists() }
                 if (anyPageMissing) {
                     val path = pdfPath
                     if (path != null && File(path).exists()) {
-                        progressDialog.setMessage("Đang kết xuất trang từ tài liệu PDF...")
+                        progressDialog.setMessage(getString(R.string.ocr_rendering_pdf_pages))
                         val previewDir = FileUtils.getPdfPreviewDir(this@PdfViewerActivity)
                         val pages = withContext(Dispatchers.IO) {
                             PdfConverterHelper.convertPdfToImages(this@PdfViewerActivity, File(path), previewDir)
@@ -328,47 +638,66 @@ class PdfViewerActivity : AppCompatActivity() {
                 }
 
                 if (renderedPagePaths.isEmpty()) {
-                    Toast.makeText(this@PdfViewerActivity, "Không tìm thấy trang tài liệu để trích xuất", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@PdfViewerActivity, getString(R.string.ocr_no_pages_found), Toast.LENGTH_SHORT).show()
                     return@launch
                 }
 
                 val totalPages = renderedPagePaths.size
-                for (index in 0 until totalPages) {
-                    val pagePath = renderedPagePaths[index]
-                    val engineName = TextRecognitionHelper.getPreferredEngineDisplayName(this@PdfViewerActivity)
-                    progressDialog.setMessage("Đang nhận diện trang ${index + 1}/$totalPages ($engineName)...")
+                val ocrRequest = TextRecognitionHelper.getDefaultOcrRequest(this@PdfViewerActivity)
+                val engineName = TextRecognitionHelper.getPreferredEngineDisplayName(this@PdfViewerActivity)
 
-                    val pageText = withContext(Dispatchers.IO) {
+                val pageResults = mutableListOf<OcrResult>()
+
+                for (index in 0 until totalPages) {
+                    if (!isActive) return@launch
+                    val pagePath = renderedPagePaths[index]
+                    progressDialog.setMessage(getString(R.string.ocr_recognizing_page_progress, index + 1, totalPages, engineName))
+
+                    val result = withContext(Dispatchers.IO) {
                         try {
-                            TextRecognitionHelper.recognizeTextFromFileSync(this@PdfViewerActivity, pagePath)
+                            TextRecognitionHelper.recognizeTextFromFileStructured(this@PdfViewerActivity, pagePath, ocrRequest)
+                        } catch (c: kotlinx.coroutines.CancellationException) {
+                            throw c
                         } catch (t: Throwable) {
                             Log.e("PdfViewerActivity", "Error recognizing page ${index + 1}: ${t.message}", t)
-                            ""
+                            OcrResult.Failure(t.message ?: "OCR error", t)
                         }
                     }
+                    pageResults.add(result)
 
-                    if (pageText.isNotBlank()) {
-                        if (totalPages > 1) {
-                            fullTextBuilder.append("--- TRANG ${index + 1} ---\n\n")
-                        }
-                        fullTextBuilder.append(pageText.trim())
-                        fullTextBuilder.append("\n\n")
+                    // Dừng xử lý các trang tiếp theo nếu gặp lỗi engine nghiêm trọng
+                    if (MultiPageOcrAggregator.isBlockingError(result)) {
+                        break
                     }
                 }
 
-                val extractedResult = fullTextBuilder.toString().trim()
-                if (extractedResult.isNotEmpty()) {
-                    OcrResultActivity.start(
-                        this@PdfViewerActivity,
-                        extractedResult,
-                        TextRecognitionHelper.lastEngineUsed
-                    )
-                } else {
-                    Toast.makeText(
-                        this@PdfViewerActivity,
-                        getString(R.string.no_text_found),
-                        Toast.LENGTH_LONG
-                    ).show()
+                if (!isActive) return@launch
+
+                val aggResult = TextRecognitionHelper.aggregateMultiPageResults(this@PdfViewerActivity, pageResults)
+                when (aggResult) {
+                    is MultiPageOcrResult.PageError -> {
+                        val errorMsg = TextRecognitionHelper.formatPageErrorMessage(this@PdfViewerActivity, aggResult)
+                        Toast.makeText(this@PdfViewerActivity, errorMsg, Toast.LENGTH_LONG).show()
+                    }
+                    is MultiPageOcrResult.AllNoText -> {
+                        Toast.makeText(this@PdfViewerActivity, getString(R.string.no_text_found), Toast.LENGTH_SHORT).show()
+                    }
+                    is MultiPageOcrResult.Success -> {
+                        TextRecognitionHelper.formatPartialSuccessNotice(this@PdfViewerActivity, aggResult)?.let { notice ->
+                            Toast.makeText(this@PdfViewerActivity, notice, Toast.LENGTH_SHORT).show()
+                        }
+                        val resolvedEngineLabel = if (aggResult.enginesUsed.isNotEmpty()) {
+                            aggResult.enginesUsed.joinToString(", ")
+                        } else {
+                            engineName
+                        }
+                        OcrResultActivity.start(
+                            this@PdfViewerActivity,
+                            aggResult,
+                            resolvedEngineLabel,
+                            imagePaths = ArrayList(renderedPagePaths)
+                        )
+                    }
                 }
             } finally {
                 if (progressDialog.isShowing && !isFinishing && !isDestroyed) {
@@ -383,7 +712,7 @@ class PdfViewerActivity : AppCompatActivity() {
         val file = File(path)
         if (!file.exists()) return
 
-        Toast.makeText(this, "Đang ghép các trang thành ảnh dài...", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.long_image_merging), Toast.LENGTH_SHORT).show()
 
         lifecycleScope.launch {
             val exportDir = FileUtils.getExportsDir(this@PdfViewerActivity)
@@ -393,12 +722,12 @@ class PdfViewerActivity : AppCompatActivity() {
                     context = this@PdfViewerActivity,
                     pdfFile = file,
                     outputFile = longImgFile,
-                    addWatermark = !isWatermarkRemoved
+                    addWatermark = WatermarkHelper.shouldApplyWatermark(userWantsRemoved = isWatermarkRemoved)
                 )
             }
 
             if (success) {
-                Toast.makeText(this@PdfViewerActivity, "Ghép ảnh dài thành công!", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@PdfViewerActivity, getString(R.string.long_image_success), Toast.LENGTH_LONG).show()
                 val uri = FileProvider.getUriForFile(
                     this@PdfViewerActivity,
                     "$packageName.provider",
@@ -409,20 +738,20 @@ class PdfViewerActivity : AppCompatActivity() {
                     putExtra(Intent.EXTRA_STREAM, uri)
                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 }
-                startActivity(Intent.createChooser(shareIntent, "Chia sẻ ảnh dài"))
+                startActivity(Intent.createChooser(shareIntent, getString(R.string.share_long_image)))
             } else {
-                Toast.makeText(this@PdfViewerActivity, "Không thể tạo ảnh dài", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@PdfViewerActivity, getString(R.string.long_image_failed), Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun createNewPdf() {
+    private fun createNewPdf(draftName: String? = null) {
         if (renderedPagePaths.isEmpty() && (pdfPath == null || !File(pdfPath!!).exists())) {
-            Toast.makeText(this, "Chưa tải xong trang tài liệu để tạo PDF", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.pdf_pages_not_ready), Toast.LENGTH_SHORT).show()
             return
         }
 
-        val defaultTitle = binding.tvViewerTitle.text.toString().trim().ifEmpty {
+        val defaultTitle = draftName ?: binding.tvViewerTitle.text.toString().trim().ifEmpty {
             "PDF_" + FileUtils.formatDate(System.currentTimeMillis()).replace('/', '-').replace(':', '-')
         }
 
@@ -433,6 +762,21 @@ class PdfViewerActivity : AppCompatActivity() {
             onWatermarkToggled = { removed ->
                 isWatermarkRemoved = removed
                 updateWatermarkUI()
+            },
+            onRequestDrivePermission = { requestDrivePermission() },
+            onRequestSignIn = { currentTypedName ->
+                startSignInForVipContinuation(VipContinuationAction.UPGRADE, currentTypedName)
+            },
+            onRequestSignInForAction = { action, currentTypedName ->
+                startSignInForVipContinuation(action, currentTypedName)
+            },
+            onRequestSignInForRecovery = { action, currentTypedName, opContext, onStarted, onRefused ->
+                startSignInForVipContinuation(action, currentTypedName, opContext, onStarted, onRefused)
+            },
+            onSyncResult = { result ->
+                val startUser = AppAuthManager.getCurrentUser()?.id
+                val startGen = AppAuthManager.getSessionGeneration()
+                handlePostAuthSyncResult(result, startUser, startGen)
             }
         ) { fileName ->
             val sanitized = FileUtils.sanitizeFileName(fileName.removeSuffix(".pdf"))
@@ -441,7 +785,7 @@ class PdfViewerActivity : AppCompatActivity() {
             exportDir.mkdirs()
             val outputFile = File(exportDir, cleanName)
 
-            Toast.makeText(this, "Đang tạo file PDF...", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.pdf_creating), Toast.LENGTH_SHORT).show()
 
             lifecycleScope.launch {
                 val success = withContext(Dispatchers.IO) {
@@ -449,7 +793,7 @@ class PdfViewerActivity : AppCompatActivity() {
                         PdfConverterHelper.createPdfFromImages(
                             imagePaths = renderedPagePaths,
                             outputFile = outputFile,
-                            addWatermark = !isWatermarkRemoved
+                            addWatermark = WatermarkHelper.shouldApplyWatermark(userWantsRemoved = isWatermarkRemoved)
                         )
                     } else if (pdfPath != null && File(pdfPath!!).exists() && File(pdfPath!!).length() > 0) {
                         val sourceFile = File(pdfPath!!)
@@ -470,13 +814,6 @@ class PdfViewerActivity : AppCompatActivity() {
                     // Lưu một bản vào thư mục Tải về (Downloads) của thiết bị để người dùng dễ tìm
                     FileUtils.savePdfToDownloads(this@PdfViewerActivity, outputFile)
 
-                    val toastMsg = if (AppAuthManager.isUserVip()) {
-                        "Đã tạo file PDF: ${outputFile.name} (Đang tự động sao lưu lên Google Drive)"
-                    } else {
-                        "Đã tạo file PDF: ${outputFile.name}"
-                    }
-                    Toast.makeText(this@PdfViewerActivity, toastMsg, Toast.LENGTH_LONG).show()
-
                     // Lưu vào DocumentRepo để quản lý trong danh sách tài liệu
                     val newDocId = UUID.randomUUID().toString()
                     val userTitle = sanitized.ifEmpty { outputFile.nameWithoutExtension }
@@ -495,12 +832,23 @@ class PdfViewerActivity : AppCompatActivity() {
                         createdAt = System.currentTimeMillis(),
                         ownerId = AppAuthManager.getCurrentUser()?.id
                     )
-                    DocumentRepo.getInstance(this@PdfViewerActivity).addDocument(docItem)
+                    val addSuccess = DocumentRepo.getInstance(this@PdfViewerActivity).addDocument(docItem)
 
-                    // Hiển thị dialog chia sẻ / mở file
-                    showPdfSuccessDialog(outputFile, userTitle)
+                    if (addSuccess) {
+                        val toastMsg = if (AppAuthManager.isUserVip()) {
+                            getString(R.string.pdf_created_with_drive_backup, outputFile.name)
+                        } else {
+                            getString(R.string.pdf_created_success, outputFile.name)
+                        }
+                        Toast.makeText(this@PdfViewerActivity, toastMsg, Toast.LENGTH_LONG).show()
+
+                        // Hiển thị dialog chia sẻ / mở file
+                        showPdfSuccessDialog(outputFile, userTitle)
+                    } else {
+                        Toast.makeText(this@PdfViewerActivity, getString(R.string.pdf_save_error), Toast.LENGTH_LONG).show()
+                    }
                 } else {
-                    Toast.makeText(this@PdfViewerActivity, "Không thể tạo file PDF", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@PdfViewerActivity, getString(R.string.pdf_create_failed), Toast.LENGTH_SHORT).show()
                 }
             }
         }.show()
@@ -510,14 +858,14 @@ class PdfViewerActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun saveFinalDocument() {
+    private fun saveFinalDocument(draftName: String? = null) {
         if (renderedPagePaths.isEmpty() && (pdfPath == null || !File(pdfPath!!).exists())) {
-            Toast.makeText(this, "Chưa tải xong trang tài liệu để lưu", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.pdf_save_not_ready), Toast.LENGTH_SHORT).show()
             return
         }
 
-        val defaultTitle = binding.tvViewerTitle.text.toString().trim().ifEmpty {
-            "Tài liệu " + FileUtils.formatDate(System.currentTimeMillis()).replace('/', '-').replace(':', '-')
+        val defaultTitle = draftName ?: binding.tvViewerTitle.text.toString().trim().ifEmpty {
+            "${getString(R.string.document_title_prefix)} " + FileUtils.formatDate(System.currentTimeMillis()).replace('/', '-').replace(':', '-')
         }
 
         CreatePdfDialog(
@@ -527,15 +875,30 @@ class PdfViewerActivity : AppCompatActivity() {
             onWatermarkToggled = { removed ->
                 isWatermarkRemoved = removed
                 updateWatermarkUI()
+            },
+            onRequestDrivePermission = { requestDrivePermission() },
+            onRequestSignIn = { currentTypedName ->
+                startSignInForVipContinuation(VipContinuationAction.UPGRADE, currentTypedName)
+            },
+            onRequestSignInForAction = { action, currentTypedName ->
+                startSignInForVipContinuation(action, currentTypedName)
+            },
+            onRequestSignInForRecovery = { action, currentTypedName, opContext, onStarted, onRefused ->
+                startSignInForVipContinuation(action, currentTypedName, opContext, onStarted, onRefused)
+            },
+            onSyncResult = { result ->
+                val startUser = AppAuthManager.getCurrentUser()?.id
+                val startGen = AppAuthManager.getSessionGeneration()
+                handlePostAuthSyncResult(result, startUser, startGen)
             }
         ) { fileName ->
             val sanitized = FileUtils.sanitizeFileName(fileName.removeSuffix(".pdf"))
             val newDocId = UUID.randomUUID().toString()
-            val userEnteredTitle = sanitized.ifEmpty { "Tài liệu " + FileUtils.formatDate(System.currentTimeMillis()).replace('/', '-').replace(':', '-') }
+            val userEnteredTitle = sanitized.ifEmpty { "${getString(R.string.document_title_prefix)} " + FileUtils.formatDate(System.currentTimeMillis()).replace('/', '-').replace(':', '-') }
             val docDir = FileUtils.getDocumentsDir(this)
             val finalPdfFile = File(docDir, "doc_${newDocId}.pdf")
 
-            Toast.makeText(this, "Đang lưu tài liệu vào máy...", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.pdf_saving_to_device), Toast.LENGTH_SHORT).show()
 
             lifecycleScope.launch {
                 val success = withContext(Dispatchers.IO) {
@@ -543,7 +906,7 @@ class PdfViewerActivity : AppCompatActivity() {
                         PdfConverterHelper.createPdfFromImages(
                             imagePaths = renderedPagePaths,
                             outputFile = finalPdfFile,
-                            addWatermark = !isWatermarkRemoved
+                            addWatermark = WatermarkHelper.shouldApplyWatermark(userWantsRemoved = isWatermarkRemoved)
                         )
                     } else if (pdfPath != null && File(pdfPath!!).exists()) {
                         try {
@@ -580,31 +943,41 @@ class PdfViewerActivity : AppCompatActivity() {
                         createdAt = System.currentTimeMillis(),
                         ownerId = AppAuthManager.getCurrentUser()?.id
                     )
-                    DocumentRepo.getInstance(this@PdfViewerActivity).addDocument(docItem)
-
-                    // Switch viewer to new saved PDF source and create dedicated preview BEFORE cleaning session (A03)
-                    val previewDir = FileUtils.getPdfPreviewDir(this@PdfViewerActivity)
-                    val newPreviewPages = withContext(Dispatchers.IO) {
-                        PdfConverterHelper.convertPdfToImages(this@PdfViewerActivity, finalPdfFile, previewDir)
+                    val addSuccess = DocumentRepo.getInstance(this@PdfViewerActivity).addDocument(docItem)
+                    if (!addSuccess) {
+                        Toast.makeText(this@PdfViewerActivity, getString(R.string.pdf_save_error), Toast.LENGTH_LONG).show()
+                        return@launch
                     }
-                    if (newPreviewPages.isNotEmpty()) {
+
+                    // Switch viewer to new saved PDF source and create dedicated preview BEFORE cleaning session (A03, S08)
+                    val previewDir = FileUtils.getPdfPreviewDir(this@PdfViewerActivity)
+                    val expectedPageCount = renderedPagePaths.size
+                    val newPreviewResult = withContext(Dispatchers.IO) {
+                        PdfConverterHelper.convertPdfToImagesStructured(this@PdfViewerActivity, finalPdfFile, previewDir)
+                    }
+                    if (newPreviewResult is PdfConverterHelper.PdfToImagesResult.Success &&
+                        newPreviewResult.imagePaths.size == expectedPageCount
+                    ) {
                         renderedPagePaths.clear()
-                        renderedPagePaths.addAll(newPreviewPages)
+                        renderedPagePaths.addAll(newPreviewResult.imagePaths)
                         pageAdapter = PdfPageAdapter(renderedPagePaths) { position, pagePath ->
                             val intent = CropRotateActivity.createIntent(this@PdfViewerActivity, pagePath, position)
                             cropLauncher.launch(intent)
                         }
                         binding.rvPdfPages.adapter = pageAdapter
+
+                        // Clean up temporary camera capture session only after viewer has switched to persistent preview
+                        sessionId?.let { sid ->
+                            withContext(Dispatchers.IO) {
+                                com.tscanner.app.data.repository.PostScanSessionRepository.getInstance(this@PdfViewerActivity).completeSession(sid)
+                                FileUtils.deleteTempSession(this@PdfViewerActivity, sid)
+                            }
+                        }
+                        sessionId = null
+                    } else {
+                        Log.w("PdfViewerActivity", "Preview render incomplete, keeping session files for safety")
                     }
 
-                    // Clean up temporary camera capture session only after viewer has switched to persistent preview
-                    sessionId?.let { sid ->
-                        withContext(Dispatchers.IO) {
-                            com.tscanner.app.data.repository.PostScanSessionRepository.getInstance(this@PdfViewerActivity).completeSession(sid)
-                            FileUtils.deleteTempSession(this@PdfViewerActivity, sid)
-                        }
-                    }
-                    sessionId = null
                     setResult(Activity.RESULT_OK)
 
                     // Update UI state to normal viewing mode
@@ -615,14 +988,14 @@ class PdfViewerActivity : AppCompatActivity() {
                     binding.btnShareViewer.visibility = View.VISIBLE
 
                     val saveMsg = if (AppAuthManager.isUserVip()) {
-                        "Đã lưu vào Quản lý tài liệu! (Đang tự động sao lưu lên Google Drive cá nhân)"
+                        getString(R.string.pdf_saved_with_drive_backup)
                     } else {
-                        "Đã lưu vào Quản lý tài liệu!"
+                        getString(R.string.pdf_saved_success)
                     }
                     Toast.makeText(this@PdfViewerActivity, saveMsg, Toast.LENGTH_SHORT).show()
                     showPdfSuccessDialog(finalPdfFile, userEnteredTitle)
                 } else {
-                    Toast.makeText(this@PdfViewerActivity, "Lỗi khi lưu tài liệu", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@PdfViewerActivity, getString(R.string.pdf_save_error), Toast.LENGTH_SHORT).show()
                 }
             }
         }.show()
@@ -631,17 +1004,17 @@ class PdfViewerActivity : AppCompatActivity() {
     private fun showPdfSuccessDialog(pdfFile: File, displayTitle: String = pdfFile.name) {
         val uri = FileProvider.getUriForFile(this, "$packageName.provider", pdfFile)
         MaterialAlertDialogBuilder(this)
-            .setTitle("Tạo file PDF thành công")
-            .setMessage("Tập tin đã được lưu:\n$displayTitle\n\nBạn có muốn chia sẻ hoặc mở tập tin không?")
-            .setPositiveButton("Chia sẻ") { _, _ ->
+            .setTitle(R.string.pdf_success_dialog_title)
+            .setMessage(getString(R.string.pdf_success_dialog_message, displayTitle))
+            .setPositiveButton(R.string.share) { _, _ ->
                 val shareIntent = Intent(Intent.ACTION_SEND).apply {
                     type = "application/pdf"
                     putExtra(Intent.EXTRA_STREAM, uri)
                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 }
-                startActivity(Intent.createChooser(shareIntent, "Chia sẻ file PDF"))
+                startActivity(Intent.createChooser(shareIntent, getString(R.string.share_pdf_title)))
             }
-            .setNeutralButton("Mở file") { _, _ ->
+            .setNeutralButton(R.string.open_file) { _, _ ->
                 val viewIntent = Intent(Intent.ACTION_VIEW).apply {
                     setDataAndType(uri, "application/pdf")
                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
@@ -649,11 +1022,19 @@ class PdfViewerActivity : AppCompatActivity() {
                 try {
                     startActivity(viewIntent)
                 } catch (e: Exception) {
-                    Toast.makeText(this, "Không tìm thấy ứng dụng đọc PDF", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.pdf_no_reader_app), Toast.LENGTH_SHORT).show()
                 }
             }
-            .setNegativeButton("Đóng", null)
+            .setNegativeButton(R.string.close, null)
             .show()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putSerializable(KEY_PENDING_DRIVE_AUTH_ATTEMPT, pendingDriveAuthAttempt)
+        vipContinuationHandler.saveInstanceState(outState)
+        pendingSignInAttempt?.writeToBundle(outState)
+        outState.putString(KEY_PENDING_DRAFT_PDF_NAME, pendingDraftPdfName)
     }
 
     override fun onDestroy() {
@@ -670,6 +1051,10 @@ class PdfViewerActivity : AppCompatActivity() {
         const val EXTRA_PAGE_PATHS = "extra_page_paths"
         const val EXTRA_IS_NEW_SCAN = "extra_is_new_scan"
         const val EXTRA_SESSION_ID = "extra_session_id"
+        private const val KEY_PENDING_DRIVE_AUTH_ATTEMPT = "key_pending_drive_auth_attempt"
+        private const val KEY_PENDING_SIGN_IN_REQ_ID = "key_pending_sign_in_req_id"
+        private const val KEY_PENDING_SIGN_IN_SESSION_GEN = "key_pending_sign_in_session_gen"
+        private const val KEY_PENDING_DRAFT_PDF_NAME = "key_pending_draft_pdf_name"
 
         fun start(context: Context, pdfPath: String, title: String, pagePaths: List<String>? = null) {
             val intent = Intent(context, PdfViewerActivity::class.java).apply {
@@ -694,7 +1079,7 @@ class PdfViewerActivity : AppCompatActivity() {
             pagePaths: ArrayList<String>,
             title: String? = null
         ): Intent {
-            val defaultTitle = title?.ifEmpty { null } ?: ("Tài liệu " + FileUtils.formatDate(System.currentTimeMillis()).replace('/', '-').replace(':', '-'))
+            val defaultTitle = title?.ifEmpty { null } ?: ("${context.getString(R.string.document_title_prefix)} " + FileUtils.formatDate(System.currentTimeMillis()).replace('/', '-').replace(':', '-'))
             return Intent(context, PdfViewerActivity::class.java).apply {
                 putExtra(EXTRA_IS_NEW_SCAN, true)
                 putExtra(EXTRA_SESSION_ID, sessionId)

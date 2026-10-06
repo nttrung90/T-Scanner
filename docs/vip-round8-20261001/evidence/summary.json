@@ -1,0 +1,15 @@
+{
+  "androidTests": 20.0,
+  "androidFailures": 14.0,
+  "androidErrors": 0.0,
+  "androidPasses": 6.0,
+  "backendTests": 13,
+  "backendFailures": 9,
+  "backendPasses": 4,
+  "backendExit": 1,
+  "totalTests": 33.0,
+  "totalFailures": 23.0,
+  "totalPasses": 10.0,
+  "reproducedFindingGroups": 9,
+  "codeDerivedFindingGroups": 1
+}

@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -35,7 +36,7 @@
                 android:id="@+id/tv_file_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="document.pdf"
+                tools:text="document.pdf"
                 android:textColor="@color/text_primary"
                 android:textSize="15sp"
                 android:textStyle="bold"
@@ -56,7 +57,7 @@
                     android:background="@drawable/badge_new"
                     android:paddingHorizontal="6dp"
                     android:paddingVertical="2dp"
-                    android:text="PDF"
+                    tools:text="PDF"
                     android:textColor="@color/primary_teal"
                     android:textSize="10sp"
                     android:textStyle="bold" />
@@ -66,7 +67,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="1.2 MB"
+                    tools:text="1.2 MB"
                     android:textColor="@color/primary_teal"
                     android:textSize="12sp"
                     android:textStyle="bold" />
@@ -84,7 +85,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
-                    android:text="12/09/2026 19:30"
+                    tools:text="12/09/2026 19:30"
                     android:textColor="@color/text_secondary"
                     android:textSize="11sp" />
             </LinearLayout>
@@ -111,7 +112,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Đường dẫn tập tin:"
+                android:text="@string/file_path_label"
                 android:textColor="@color/text_hint"
                 android:textSize="10sp" />
 
@@ -120,7 +121,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="/data/user/0/com.tscanner.app/files/documents/..."
+                tools:text="/data/user/0/com.tscanner.app/files/documents/..."
                 android:textColor="@color/text_primary"
                 android:textSize="11sp"
                 android:fontFamily="monospace"
@@ -137,7 +138,7 @@
             android:padding="6dp"
             android:src="@drawable/ic_copy"
             app:tint="@color/primary_teal"
-            android:contentDescription="Sao chép đường dẫn" />
+            android:contentDescription="@string/copy_path" />
     </LinearLayout>
 
     <!-- Bottom Actions: Mở, Chia sẻ, Xóa -->
@@ -155,7 +156,7 @@
             android:background="@drawable/btn_outline_teal"
             android:gravity="center"
             android:paddingHorizontal="14dp"
-            android:text="Mở file"
+            android:text="@string/open_file"
             android:textColor="@color/primary_teal"
             android:textSize="12sp"
             android:textStyle="bold"
@@ -171,7 +172,7 @@
             android:padding="6dp"
             android:src="@drawable/ic_share"
             app:tint="@color/text_secondary"
-            android:contentDescription="Chia sẻ" />
+            android:contentDescription="@string/share" />
 
         <ImageView
             android:id="@+id/btn_delete_file"
@@ -182,6 +183,6 @@
             android:padding="6dp"
             android:src="@drawable/ic_delete"
             app:tint="#FF5252"
-            android:contentDescription="Xóa" />
+            android:contentDescription="@string/delete" />
     </LinearLayout>
 </LinearLayout>

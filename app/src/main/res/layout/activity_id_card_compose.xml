@@ -23,10 +23,9 @@
             android:layout_height="36dp"
             android:padding="6dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_chevron_right"
-            android:rotation="180"
+            android:src="@drawable/ic_arrow_back"
             app:tint="@color/text_primary"
-            android:contentDescription="@string/close" />
+            android:contentDescription="@string/btn_back" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -48,7 +47,7 @@
                 android:id="@+id/tv_compose_subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Khổ A4 • 210 × 297 mm"
+                android:text="@string/id_card_a4_subtitle"
                 android:textColor="@color/text_secondary"
                 android:textSize="11sp" />
         </LinearLayout>
@@ -92,7 +91,7 @@
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
-                android:contentDescription="Bản xem trước A4" />
+                android:contentDescription="@string/id_card_a4_preview_desc" />
         </androidx.cardview.widget.CardView>
 
         <ProgressBar
@@ -126,7 +125,7 @@
             <TextView
                 android:layout_width="54dp"
                 android:layout_height="wrap_content"
-                android:text="Bố cục"
+                android:text="@string/id_card_section_layout"
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp"
                 android:textStyle="bold" />
@@ -185,7 +184,7 @@
             <TextView
                 android:layout_width="54dp"
                 android:layout_height="wrap_content"
-                android:text="Tỉ lệ"
+                android:text="@string/id_card_section_scale"
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp"
                 android:textStyle="bold" />

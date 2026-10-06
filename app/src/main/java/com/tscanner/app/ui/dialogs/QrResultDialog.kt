@@ -39,8 +39,9 @@ class QrResultDialog(
         if (result.type == QrType.WIFI) {
             binding.tvQrContent.visibility = View.GONE
             binding.layoutWifiDetails.visibility = View.VISIBLE
-            binding.tvWifiSsid.text = "Tên mạng (SSID): ${result.wifiSsid.orEmpty()} (${result.wifiEncryptionType.orEmpty()})"
-            binding.tvWifiPassword.text = "Mật khẩu: ${if (result.wifiPassword.isNullOrEmpty()) "(Không có mật khẩu)" else result.wifiPassword}"
+            val noPass = context.getString(R.string.wifi_no_password)
+            binding.tvWifiSsid.text = context.getString(R.string.wifi_ssid_format, result.wifiSsid.orEmpty(), result.wifiEncryptionType.orEmpty())
+            binding.tvWifiPassword.text = context.getString(R.string.wifi_password_format, if (result.wifiPassword.isNullOrEmpty()) noPass else result.wifiPassword)
         } else {
             binding.tvQrContent.visibility = View.VISIBLE
             binding.tvQrContent.text = result.displayContent ?: result.rawValue
@@ -76,8 +77,9 @@ class QrResultDialog(
                 else -> result.rawValue
             }
             val msg = when (result.type) {
-                QrType.WIFI -> "Đã sao chép mật khẩu Wi-Fi!"
-                QrType.CCCD -> "Đã sao chép thông tin thẻ CCCD!"
+                QrType.WIFI -> context.getString(R.string.copied_wifi_password)
+                QrType.CCCD -> context.getString(R.string.copied_id_card_info)
+                QrType.VIETQR -> context.getString(R.string.copied_vietqr_code)
                 else -> context.getString(R.string.copied)
             }
             copyToClipboard(textToCopy, msg)
@@ -108,15 +110,15 @@ class QrResultDialog(
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(fixedUrl))
                     context.startActivity(intent)
                 } catch (e: Exception) {
-                    Toast.makeText(context, "Không thể mở liên kết: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.cannot_open_link_format, e.message.orEmpty()), Toast.LENGTH_SHORT).show()
                 }
             }
             QrType.WIFI -> {
                 val password = result.wifiPassword.orEmpty()
                 if (password.isNotEmpty()) {
-                    copyToClipboard(password, "Đã sao chép mật khẩu Wi-Fi!")
+                    copyToClipboard(password, context.getString(R.string.copied_wifi_password))
                 } else {
-                    Toast.makeText(context, "Mạng Wi-Fi này không có mật khẩu", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.wifi_network_no_password_toast), Toast.LENGTH_SHORT).show()
                 }
             }
             QrType.PHONE -> {
@@ -124,7 +126,7 @@ class QrResultDialog(
                     val intent = Intent(Intent.ACTION_DIAL, Uri.parse(result.primaryActionUrl ?: "tel:${result.rawValue}"))
                     context.startActivity(intent)
                 } catch (e: Exception) {
-                    Toast.makeText(context, "Không thể gọi điện", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.cannot_make_call_toast), Toast.LENGTH_SHORT).show()
                 }
             }
             QrType.EMAIL -> {
@@ -132,7 +134,7 @@ class QrResultDialog(
                     val intent = Intent(Intent.ACTION_SENDTO, Uri.parse(result.primaryActionUrl ?: "mailto:${result.rawValue}"))
                     context.startActivity(intent)
                 } catch (e: Exception) {
-                    Toast.makeText(context, "Không thể mở ứng dụng gửi Email", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.cannot_open_email_app_toast), Toast.LENGTH_SHORT).show()
                 }
             }
             QrType.SMS -> {
@@ -140,14 +142,14 @@ class QrResultDialog(
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(result.primaryActionUrl ?: "smsto:${result.rawValue}"))
                     context.startActivity(intent)
                 } catch (e: Exception) {
-                    Toast.makeText(context, "Không thể mở ứng dụng tin nhắn SMS", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.cannot_open_sms_app_toast), Toast.LENGTH_SHORT).show()
                 }
             }
             QrType.CCCD -> {
-                copyToClipboard(result.displayContent ?: result.rawValue, "Đã sao chép thông tin thẻ CCCD!")
+                copyToClipboard(result.displayContent ?: result.rawValue, context.getString(R.string.copied_id_card_info))
             }
             QrType.VIETQR -> {
-                copyToClipboard(result.rawValue, "Đã sao chép mã VietQR!")
+                copyToClipboard(result.rawValue, context.getString(R.string.copied_vietqr_code))
             }
             else -> {
                 copyToClipboard(result.rawValue, context.getString(R.string.copied))
@@ -170,7 +172,7 @@ class QrResultDialog(
             }
             context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.share)))
         } catch (e: Exception) {
-            Toast.makeText(context, "Không thể chia sẻ", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.cannot_share_file), Toast.LENGTH_SHORT).show()
         }
     }
 

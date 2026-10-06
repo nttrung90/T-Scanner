@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tscanner.app.VipPurchaseRecoveryIntegrationTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-06T02:35:44.458Z" hostname="NTT-LAPTOPACER" time="0.019">
+  <properties/>
+  <testcase name="contract7_guestUpgradeToFirstAccount_validContinuation" classname="com.tscanner.app.VipPurchaseRecoveryIntegrationTest" time="0.003"/>
+  <testcase name="contract5_cancelOrFailureThenNewOperation_allowsRetryAndStaleCallbackSafe" classname="com.tscanner.app.VipPurchaseRecoveryIntegrationTest" time="0.003"/>
+  <testcase name="contract4_acceptedReauthToSuccess_restoresOnceWithZeroExtraLaunch" classname="com.tscanner.app.VipPurchaseRecoveryIntegrationTest" time="0.004"/>
+  <testcase name="contract6_ownerOrGenerationChange_suppressesStaleAuthAndRestore" classname="com.tscanner.app.VipPurchaseRecoveryIntegrationTest" time="0.002"/>
+  <testcase name="contract1_inactiveUiThenActive_acceptedStartsZeroToOne" classname="com.tscanner.app.VipPurchaseRecoveryIntegrationTest" time="0.002"/>
+  <testcase name="contract3_duplicateConsumers_onlyOneProviderInvocationAllowed" classname="com.tscanner.app.VipPurchaseRecoveryIntegrationTest" time="0.002"/>
+  <testcase name="contract2_providerBusyRefusalThenAvailable_acceptedStartsZeroToOne" classname="com.tscanner.app.VipPurchaseRecoveryIntegrationTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

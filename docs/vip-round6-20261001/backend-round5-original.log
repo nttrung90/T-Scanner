@@ -1,0 +1,17 @@
+(node:8964) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ B07 late RTDN must not overwrite newer verify expiry (5.3596ms)
+✔ B01 first-binding late active must not resurrect committed expiry (2.1763ms)
+✔ B02 conflict must not discard authoritative expiry and return active (2.7895ms)
+✔ B03 on-hold V2 must invalidate stored active grant (41.3015ms)
+✔ B04 missing V2 lifecycle state must not grant active (1.7026ms)
+✔ B05 client metadata must not suppress refresh of known refunded receipt (1.9105ms)
+✔ B06 control empty restore refreshes refund with no conflicting metadata (1.7008ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 408.2179

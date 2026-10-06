@@ -3,9 +3,11 @@ package com.tscanner.app.data.repository
 import android.content.Context
 import android.util.Log
 import androidx.core.util.AtomicFile
+import com.tscanner.app.R
 import com.tscanner.app.data.model.PostScanSessionDraft
 import com.tscanner.app.ui.editor.model.PageEditState
 import com.tscanner.app.utils.FileUtils
+import com.tscanner.app.utils.SafeFileWriter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -29,37 +31,37 @@ class PostScanSessionRepository private constructor(private val context: Context
         if (!basePreviewsDir.exists()) basePreviewsDir.mkdirs()
     }
 
+    private val sessionLocks = ConcurrentHashMap<String, Mutex>()
+    private val latestPersistedRevision = ConcurrentHashMap<String, Long>()
+    private val closedSessions = ConcurrentHashMap.newKeySet<String>()
+
     fun getSessionDir(sessionId: String): File {
         val dir = File(baseDraftsDir, sessionId)
-        if (!dir.exists()) dir.mkdirs()
+        if (!closedSessions.contains(sessionId) && !dir.exists()) dir.mkdirs()
         return dir
     }
 
     fun getRawPagesDir(sessionId: String): File {
-        val dir = File(getSessionDir(sessionId), "raw_pages")
-        if (!dir.exists()) dir.mkdirs()
+        val dir = File(baseDraftsDir, "$sessionId/raw_pages")
+        if (!closedSessions.contains(sessionId) && !dir.exists()) dir.mkdirs()
         return dir
     }
 
     fun getProcessedPagesDir(sessionId: String): File {
-        val dir = File(getSessionDir(sessionId), "processed_pages")
-        if (!dir.exists()) dir.mkdirs()
+        val dir = File(baseDraftsDir, "$sessionId/processed_pages")
+        if (!closedSessions.contains(sessionId) && !dir.exists()) dir.mkdirs()
         return dir
     }
 
     fun getPreviewDir(sessionId: String): File {
         val dir = File(basePreviewsDir, sessionId)
-        if (!dir.exists()) dir.mkdirs()
+        if (!closedSessions.contains(sessionId) && !dir.exists()) dir.mkdirs()
         return dir
     }
 
     private fun getMetadataFile(sessionId: String): File {
-        return File(getSessionDir(sessionId), "session_metadata.json")
+        return File(baseDraftsDir, "$sessionId/session_metadata.json")
     }
-
-    private val sessionLocks = ConcurrentHashMap<String, Mutex>()
-    private val latestPersistedRevision = ConcurrentHashMap<String, Long>()
-    private val closedSessions = ConcurrentHashMap.newKeySet<String>()
 
     private fun getSessionLock(sessionId: String): Mutex {
         return sessionLocks.computeIfAbsent(sessionId) { Mutex() }
@@ -73,49 +75,91 @@ class PostScanSessionRepository private constructor(private val context: Context
         sessionId: String,
         sourceImagePaths: List<String>,
         documentTitle: String? = null
-    ): PostScanSessionDraft = withContext(Dispatchers.IO) {
-        closedSessions.remove(sessionId)
-        val rawDir = getRawPagesDir(sessionId)
-        val defaultTitle = documentTitle?.trim()?.ifEmpty { null }
-            ?: ("Tài liệu " + FileUtils.formatDate(System.currentTimeMillis()).replace('/', '-').replace(':', '-'))
-
-        val pageStates = mutableListOf<PageEditState>()
-        sourceImagePaths.forEachIndexed { index, sourcePath ->
-            val sourceFile = File(sourcePath)
-            val destFile = File(rawDir, "raw_page_${index + 1}.jpg")
-            if (sourceFile.exists() && sourceFile.length() > 0L) {
-                try {
-                    val tempCopy = File(rawDir, "tmp_copy_${index + 1}_${System.currentTimeMillis()}.tmp")
-                    sourceFile.copyTo(tempCopy, overwrite = true)
-                    if (tempCopy.exists() && tempCopy.length() > 0L) {
-                        tempCopy.renameTo(destFile)
-                    } else {
-                        tempCopy.delete()
-                    }
-                } catch (e: Exception) {
-                    Log.e(TAG, "Lỗi sao chép ảnh trang ${index + 1}: ${e.message}")
-                }
-            }
-            val validPath = if (destFile.exists()) destFile.absolutePath else sourcePath
-            pageStates.add(
-                PageEditState(
-                    pageIndex = index,
-                    inputImagePath = validPath
-                )
-            )
+    ): PostScanSessionDraft? = withContext(Dispatchers.IO) {
+        if (closedSessions.contains(sessionId)) {
+            Log.e(TAG, "Không thể khởi tạo phiên đã bị đóng hoặc hủy: $sessionId")
+            return@withContext null
         }
+        val mutex = getSessionLock(sessionId)
+        mutex.withLock {
+            if (closedSessions.contains(sessionId)) {
+                Log.e(TAG, "Không thể khởi tạo phiên đã bị đóng hoặc hủy: $sessionId")
+                return@withContext null
+            }
+            val rawDir = getRawPagesDir(sessionId)
+            if (!rawDir.exists()) {
+                rawDir.mkdirs()
+            }
+            val defaultTitle = documentTitle?.trim()?.ifEmpty { null }
+                ?: (context.getString(R.string.document_title_prefix) + FileUtils.formatDate(System.currentTimeMillis()).replace('/', '-').replace(':', '-'))
 
-        val draft = PostScanSessionDraft(
-            sessionId = sessionId,
-            documentTitle = defaultTitle,
-            pageStates = pageStates,
-            schemaVersion = 1,
-            revision = 1L,
-            createdAt = System.currentTimeMillis(),
-            updatedAt = System.currentTimeMillis()
-        )
-        saveDraft(draft)
-        draft
+            try {
+                val pageStates = mutableListOf<PageEditState>()
+                for ((index, sourcePath) in sourceImagePaths.withIndex()) {
+                    if (closedSessions.contains(sessionId)) {
+                        Log.e(TAG, "Phiên $sessionId đã bị hủy trong quá trình sao chép ảnh")
+                        cleanupSessionFilesLocked(sessionId)
+                        return@withContext null
+                    }
+                    val sourceFile = File(sourcePath)
+                    val destFile = File(rawDir, "raw_page_${index + 1}.jpg")
+                    var copyOk = false
+                    if (sourceFile.exists() && sourceFile.length() > 0L) {
+                        val tempCopy = File(rawDir, "tmp_copy_${index + 1}_${System.currentTimeMillis()}.tmp")
+                        try {
+                            sourceFile.copyTo(tempCopy, overwrite = true)
+                            if (tempCopy.exists() && tempCopy.length() > 0L && SafeFileWriter.validateImage(tempCopy)) {
+                                copyOk = SafeFileWriter.DefaultFileCommitStrategy.commit(tempCopy, destFile)
+                            }
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Lỗi sao chép ảnh trang ${index + 1}: ${e.message}")
+                        } finally {
+                            if (tempCopy.exists()) {
+                                try { tempCopy.delete() } catch (_: Exception) {}
+                            }
+                        }
+                    }
+                    if (!copyOk || !destFile.exists() || destFile.length() == 0L) {
+                        Log.e(TAG, "Sao chép ảnh trang ${index + 1} vào phiên thất bại: $sourcePath")
+                        cleanupSessionFilesLocked(sessionId)
+                        return@withContext null
+                    }
+                    pageStates.add(
+                        PageEditState(
+                            pageIndex = index,
+                            inputImagePath = destFile.absolutePath
+                        )
+                    )
+                }
+
+                if (closedSessions.contains(sessionId)) {
+                    Log.e(TAG, "Phiên $sessionId đã bị hủy trước khi lưu bản nháp ban đầu")
+                    cleanupSessionFilesLocked(sessionId)
+                    return@withContext null
+                }
+
+                val draft = PostScanSessionDraft(
+                    sessionId = sessionId,
+                    documentTitle = defaultTitle,
+                    pageStates = pageStates,
+                    schemaVersion = 1,
+                    revision = 1L,
+                    createdAt = System.currentTimeMillis(),
+                    updatedAt = System.currentTimeMillis()
+                )
+                val saveSuccess = saveDraftLocked(draft)
+                if (saveSuccess) {
+                    draft
+                } else {
+                    cleanupSessionFilesLocked(sessionId)
+                    null
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Lỗi trong quá trình khởi tạo phiên $sessionId: ${e.message}", e)
+                cleanupSessionFilesLocked(sessionId)
+                null
+            }
+        }
     }
 
     /**
@@ -154,36 +198,53 @@ class PostScanSessionRepository private constructor(private val context: Context
 
         val mutex = getSessionLock(sessionId)
         mutex.withLock {
-            if (closedSessions.contains(sessionId)) {
-                return@withContext false
-            }
+            saveDraftLocked(draft)
+        }
+    }
 
-            val lastRev = latestPersistedRevision[sessionId] ?: 0L
-            if (draft.revision < lastRev) {
-                // Đã có revision mới hơn được lưu, bỏ qua snapshot lỗi thời
-                return@withContext true
-            }
+    private fun saveDraftLocked(draft: PostScanSessionDraft): Boolean {
+        val sessionId = draft.sessionId
+        if (closedSessions.contains(sessionId)) {
+            return false
+        }
 
-            val file = getMetadataFile(sessionId)
+        val lastRev = latestPersistedRevision[sessionId] ?: 0L
+        if (draft.revision < lastRev) {
+            // Đã có revision mới hơn được lưu, bỏ qua snapshot lỗi thời
+            return true
+        }
+
+        val file = getMetadataFile(sessionId)
+        return try {
+            val atomicFile = AtomicFile(file)
+            val jsonBytes = draft.copy(updatedAt = System.currentTimeMillis()).toJson().toString(2).toByteArray(Charsets.UTF_8)
+            var fos: FileOutputStream? = null
             try {
-                val atomicFile = AtomicFile(file)
-                val jsonBytes = draft.copy(updatedAt = System.currentTimeMillis()).toJson().toString(2).toByteArray(Charsets.UTF_8)
-                var fos: FileOutputStream? = null
-                try {
-                    fos = atomicFile.startWrite()
-                    fos.write(jsonBytes)
-                    atomicFile.finishWrite(fos)
-                    latestPersistedRevision[sessionId] = draft.revision
-                    true
-                } catch (e: Exception) {
-                    if (fos != null) atomicFile.failWrite(fos)
-                    Log.e(TAG, "Lỗi ghi session metadata: ${e.message}")
-                    false
-                }
+                fos = atomicFile.startWrite()
+                fos.write(jsonBytes)
+                atomicFile.finishWrite(fos)
+                latestPersistedRevision[sessionId] = draft.revision
+                true
             } catch (e: Exception) {
-                Log.e(TAG, "Lỗi AtomicFile session metadata: ${e.message}")
+                if (fos != null) atomicFile.failWrite(fos)
+                Log.e(TAG, "Lỗi ghi session metadata: ${e.message}")
                 false
             }
+        } catch (e: Exception) {
+            Log.e(TAG, "Lỗi AtomicFile session metadata: ${e.message}")
+            false
+        }
+    }
+
+    private fun cleanupSessionFilesLocked(sessionId: String): Boolean {
+        return try {
+            FileUtils.deleteDir(File(baseDraftsDir, sessionId))
+            FileUtils.deleteDir(File(basePreviewsDir, sessionId))
+            latestPersistedRevision.remove(sessionId)
+            true
+        } catch (e: Exception) {
+            Log.e(TAG, "Lỗi dọn dẹp phiên $sessionId: ${e.message}")
+            false
         }
     }
 
@@ -210,28 +271,63 @@ class PostScanSessionRepository private constructor(private val context: Context
     }
 
     /**
-     * Hủy phiên khi người dùng xác nhận Hủy tài liệu: Đóng phiên trước, sau đó xóa toàn bộ file nháp và preview
+     * Hủy phiên khi người dùng xác nhận Hủy tài liệu: Đóng phiên và dọn dẹp an toàn dưới session lock.
+     * Dấu đóng closedSessions được giữ vĩnh viễn trong vòng đời repo để chặn mọi writer đến muộn.
      */
     suspend fun discardSession(sessionId: String): Boolean = withContext(Dispatchers.IO) {
-        closeSession(sessionId)
-        try {
-            FileUtils.deleteDir(getSessionDir(sessionId))
-            FileUtils.deleteDir(getPreviewDir(sessionId))
-            sessionLocks.remove(sessionId)
-            latestPersistedRevision.remove(sessionId)
-            closedSessions.remove(sessionId)
-            true
-        } catch (e: Exception) {
-            Log.e(TAG, "Lỗi hủy phiên $sessionId: ${e.message}")
-            false
+        closedSessions.add(sessionId)
+        val mutex = getSessionLock(sessionId)
+        mutex.withLock {
+            cleanupSessionFilesLocked(sessionId)
         }
     }
+
+    fun isSessionClosed(sessionId: String): Boolean = closedSessions.contains(sessionId)
 
     /**
      * Hoàn tất phiên sau khi PDF đã được tạo và lưu thành công
      */
     suspend fun completeSession(sessionId: String): Boolean = withContext(Dispatchers.IO) {
         discardSession(sessionId)
+    }
+
+    /**
+     * Lấy danh sách các bản nháp hợp lệ hiện có trên đĩa, sắp xếp theo thời gian cập nhật giảm dần.
+     */
+    suspend fun getActiveDrafts(): List<PostScanSessionDraft> = withContext(Dispatchers.IO) {
+        val drafts = mutableListOf<PostScanSessionDraft>()
+        val dirs = baseDraftsDir.listFiles() ?: return@withContext emptyList()
+        for (dir in dirs) {
+            if (dir.isDirectory) {
+                val metaFile = File(dir, "session_metadata.json")
+                if (metaFile.exists() && metaFile.length() > 0L) {
+                    try {
+                        val atomicFile = AtomicFile(metaFile)
+                        val jsonStr = atomicFile.openRead().use { stream ->
+                            stream.bufferedReader(Charsets.UTF_8).readText()
+                        }
+                        val draft = PostScanSessionDraft.fromJson(JSONObject(jsonStr))
+                        val validPages = draft.pageStates.filter {
+                            val f = File(it.inputImagePath)
+                            f.exists() && f.length() > 0L
+                        }
+                        if (validPages.isNotEmpty()) {
+                            drafts.add(draft)
+                        }
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Lỗi đọc bản nháp tại ${dir.name}: ${e.message}")
+                    }
+                }
+            }
+        }
+        drafts.sortedByDescending { it.updatedAt }
+    }
+
+    /**
+     * Lấy bản nháp được cập nhật gần nhất nếu có.
+     */
+    suspend fun getLatestDraft(): PostScanSessionDraft? {
+        return getActiveDrafts().firstOrNull()
     }
 
     /**
@@ -265,6 +361,14 @@ class PostScanSessionRepository private constructor(private val context: Context
             return instance ?: synchronized(this) {
                 instance ?: PostScanSessionRepository(context.applicationContext).also { instance = it }
             }
+        }
+
+        fun resetForTesting() {
+            instance = null
+        }
+
+        fun createForTesting(context: Context): PostScanSessionRepository {
+            return PostScanSessionRepository(context)
         }
     }
 }

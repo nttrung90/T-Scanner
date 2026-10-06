@@ -1,0 +1,49 @@
+{
+  "id": "doc_indic_01",
+  "documentId": "doc_indic_01",
+  "title": "Indic Hindi Devanagari Sample",
+  "sourceLanguage": "hi",
+  "totalPages": 1,
+  "pages": [
+    {
+      "pageId": "p_indic_1",
+      "pageIndex": 1,
+      "status": "SUCCESS",
+      "sourceLanguage": "hi",
+      "imageInfo": {
+        "imagePath": "/storage/emulated/0/sample_indic.jpg",
+        "width": 1000,
+        "height": 1400,
+        "rotationDegrees": 0
+      },
+      "sourceBlocks": [
+        {
+          "blockId": "b1",
+          "boundingBox": { "left": 100, "top": 100, "right": 900, "bottom": 250 },
+          "lines": [
+            {
+              "lineId": "l1",
+              "text": "नमस्ते भारत और ओसीआर प्रणाली",
+              "confidence": 0.95,
+              "boundingBox": { "left": 100, "top": 100, "right": 900, "bottom": 160 },
+              "tokens": [
+                {
+                  "tokenId": "t1",
+                  "text": "नमस्ते",
+                  "confidence": 0.95,
+                  "boundingBox": { "left": 100, "top": 100, "right": 250, "bottom": 160 }
+                },
+                {
+                  "tokenId": "t2",
+                  "text": "भारत",
+                  "confidence": 0.95,
+                  "boundingBox": { "left": 270, "top": 100, "right": 400, "bottom": 160 }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "tscanner-billing-verifier",
+  "version": "1.0.0",
+  "description": "Authoritative Google Play Billing Verifier for T-Scanner VIP",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "test": "node --experimental-strip-types --test test/*.test.ts",
+    "start": "node --experimental-strip-types src/index.ts"
+  },
+  "keywords": ["t-scanner", "billing", "play-billing", "verifier"],
+  "author": "T-Scanner Team",
+  "license": "UNLICENSED"
+}

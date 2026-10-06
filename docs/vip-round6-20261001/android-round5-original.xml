@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tscanner.app.VipRound5AuditTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-10-01T00:45:08.520Z" hostname="NTT-LAPTOPACER" time="0.192">
+  <properties/>
+  <testcase name="A07ControlValidRestoreParses" classname="com.tscanner.app.VipRound5AuditTest" time="0.123"/>
+  <testcase name="A06StaleActiveSnapshotMustNotReportRestoredAgainstNewerRevocation" classname="com.tscanner.app.VipRound5AuditTest" time="0.026"/>
+  <testcase name="A01RestoreWrongOwnerMustFail" classname="com.tscanner.app.VipRound5AuditTest" time="0.003"/>
+  <testcase name="A04Http400MustNotAcceptSuccessBody" classname="com.tscanner.app.VipRound5AuditTest" time="0.004"/>
+  <testcase name="A09ExpiredSessionMustOfferReauthentication" classname="com.tscanner.app.VipRound5AuditTest" time="0.005"/>
+  <testcase name="A08PartialRestoreMustProjectCommittedEntitlementToCurrentProfile" classname="com.tscanner.app.VipRound5AuditTest" time="0.004"/>
+  <testcase name="A05LateRestoreAfterAccountSwitchMustNotWriteOrSignal" classname="com.tscanner.app.VipRound5AuditTest" time="0.012"/>
+  <testcase name="A02RestoreUnknownSkuMustFail" classname="com.tscanner.app.VipRound5AuditTest" time="0.003"/>
+  <testcase name="A03RestoreInvalidItemMustNotBecomeSuccessEmpty" classname="com.tscanner.app.VipRound5AuditTest" time="0.004"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

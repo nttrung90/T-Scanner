@@ -1,0 +1,22 @@
+{
+  "id": "table_merged_01",
+  "category": "merged_cell_table",
+  "language": "vi",
+  "pageWidth": 1200,
+  "pageHeight": 1600,
+  "rotationDegrees": 0,
+  "table": {
+    "tableId": "tbl_merged_01",
+    "rowCount": 3,
+    "columnCount": 3,
+    "boundingBox": {"left": 0.1, "top": 0.2, "right": 0.9, "bottom": 0.6},
+    "cells": [
+      {"cellId": "c_r0_c0", "rowIndex": 0, "colIndex": 0, "rowSpan": 1, "colSpan": 3, "text": "BẢNG TỔNG HỢP KINH DOANH", "cellType": "TEXT"},
+      {"cellId": "c_r1_c0", "rowIndex": 1, "colIndex": 0, "rowSpan": 2, "colSpan": 1, "text": "Khu vực Bắc", "cellType": "TEXT"},
+      {"cellId": "c_r1_c1", "rowIndex": 1, "colIndex": 1, "rowSpan": 1, "colSpan": 1, "text": "Tháng 1", "cellType": "TEXT"},
+      {"cellId": "c_r1_c2", "rowIndex": 1, "colIndex": 2, "rowSpan": 1, "colSpan": 1, "text": "1000", "cellType": "NUMBER"},
+      {"cellId": "c_r2_c1", "rowIndex": 2, "colIndex": 1, "rowSpan": 1, "colSpan": 1, "text": "Tháng 2", "cellType": "TEXT"},
+      {"cellId": "c_r2_c2", "rowIndex": 2, "colIndex": 2, "rowSpan": 1, "colSpan": 1, "text": "1500", "cellType": "NUMBER"}
+    ]
+  }
+}

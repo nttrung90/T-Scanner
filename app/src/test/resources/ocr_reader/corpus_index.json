@@ -1,0 +1,28 @@
+{
+  "corpusVersion": "1.0.0",
+  "generatedAt": "2026-09-22T08:00:00Z",
+  "totalSamples": 35,
+  "categories": [
+    { "id": "single_column_vi", "name": "Văn bản tiếng Việt 1 cột", "count": 5, "targetMaxCer": 0.02 },
+    { "id": "single_column_en", "name": "Văn bản tiếng Anh 1 cột", "count": 5, "targetMaxCer": 0.01 },
+    { "id": "two_column_doc", "name": "Bố cục 2 cột", "count": 4, "targetReadingOrder": "column_first" },
+    { "id": "simple_table", "name": "Bảng đơn giản có lưới", "count": 5, "targetTableF1": 0.98 },
+    { "id": "merged_cell_table", "name": "Bảng có ô gộp", "count": 4, "targetTableF1": 0.95 },
+    { "id": "rotated_page", "name": "Trang xoay 90/180/270 độ", "count": 4, "coordinatePreservation": true },
+    { "id": "blank_page", "name": "Trang trắng không chữ", "count": 3, "expectedStatus": "NO_TEXT" },
+    { "id": "formula_defense", "name": "An toàn công thức injection", "count": 3, "expectedSanitization": true },
+    { "id": "multipage_sequence", "name": "Tài liệu đa trang tuần tự", "count": 2, "pageOrderStrict": true }
+  ],
+  "samples": [
+    { "id": "vi_doc_01", "file": "single_col_vi_01.json", "category": "single_column_vi" },
+    { "id": "vi_doc_02", "file": "single_col_vi_02.json", "category": "single_column_vi" },
+    { "id": "en_doc_01", "file": "single_col_en_01.json", "category": "single_column_en" },
+    { "id": "two_col_01", "file": "two_column_doc_01.json", "category": "two_column_doc" },
+    { "id": "table_simple_01", "file": "simple_table_01.json", "category": "simple_table" },
+    { "id": "table_merged_01", "file": "merged_table_01.json", "category": "merged_cell_table" },
+    { "id": "rot_90_01", "file": "rotated_page_01.json", "category": "rotated_page" },
+    { "id": "blank_01", "file": "blank_page_01.json", "category": "blank_page" },
+    { "id": "formula_inj_01", "file": "formula_defense_01.json", "category": "formula_defense" },
+    { "id": "multi_seq_01", "file": "multipage_sequence_01.json", "category": "multipage_sequence" }
+  ]
+}

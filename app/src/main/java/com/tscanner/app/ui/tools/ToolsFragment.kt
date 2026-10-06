@@ -23,15 +23,19 @@ import com.tscanner.app.R
 import com.tscanner.app.data.model.DocumentItem
 import com.tscanner.app.data.repository.DocumentRepo
 import com.tscanner.app.databinding.FragmentToolsBinding
+import com.tscanner.app.ui.dialogs.IdCardOptionsDialog
+import com.tscanner.app.ui.dialogs.OcrLanguageSelectionDialog
 import com.tscanner.app.ui.dialogs.QrResultDialog
 import com.tscanner.app.ui.dialogs.SaveExportDialog
 import com.tscanner.app.ui.idcard.IdCardComposeActivity
 import com.tscanner.app.utils.AppLanguageManager
 import com.tscanner.app.utils.FileUtils
+import com.tscanner.app.utils.OcrResult
 import com.tscanner.app.utils.PdfConverterHelper
 import com.tscanner.app.utils.QrCodeResult
 import com.tscanner.app.utils.QrScannerHelper
 import com.tscanner.app.utils.TextRecognitionHelper
+import com.tscanner.app.utils.DocumentImportHelper
 import com.tscanner.app.utils.WatermarkHelper
 import kotlinx.coroutines.launch
 import java.io.File
@@ -49,6 +53,7 @@ class ToolsFragment : Fragment() {
 
     // Launchers for input picking
     private lateinit var imagePickerLauncher: ActivityResultLauncher<String>
+    private lateinit var createPdfPickerLauncher: ActivityResultLauncher<String>
     private lateinit var idCardPickerLauncher: ActivityResultLauncher<String>
     private lateinit var qrGalleryPickerLauncher: ActivityResultLauncher<String>
     private lateinit var filePickerLauncher: ActivityResultLauncher<Array<String>>
@@ -61,7 +66,7 @@ class ToolsFragment : Fragment() {
     // Launchers for saving exported files
     private var pendingSingleFile: File? = null
     private var pendingMimeType: String = "*/*"
-    private var pendingFileTypeTitle: String = "Tập tin"
+    private var pendingFileTypeTitle: String = ""
     private var pendingFilesList: List<File> = emptyList()
 
     private lateinit var createDocLauncher: ActivityResultLauncher<String>
@@ -71,11 +76,19 @@ class ToolsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         repo = DocumentRepo.getInstance(requireContext())
+        pendingFileTypeTitle = getString(R.string.file_generic_label)
 
         // 1. Nhập ảnh
         imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris: List<Uri> ->
             if (uris.isNotEmpty()) {
                 handleImportImages(uris)
+            }
+        }
+
+        // Tạo file PDF từ ảnh (Chuyển đổi)
+        createPdfPickerLauncher = registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris: List<Uri> ->
+            if (uris.isNotEmpty()) {
+                handleCreatePdfFromImages(uris)
             }
         }
 
@@ -142,13 +155,13 @@ class ToolsFragment : Fragment() {
                 val success = FileUtils.copyFileToUri(requireContext(), file, uri)
                 if (success) {
                     showSaveSuccessDialog(
-                        locationDesc = "Thư mục đã chọn",
+                        locationDesc = getString(R.string.selected_folder),
                         file = file,
                         mimeType = pendingMimeType,
-                        title = "Đã lưu $pendingFileTypeTitle thành công"
+                        title = getString(R.string.saved_file_type_success_format, pendingFileTypeTitle)
                     )
                 } else {
-                    Toast.makeText(requireContext(), "Lỗi khi lưu tập tin", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.save_file_error), Toast.LENGTH_SHORT).show()
                 }
             } else if (uri == null) {
                 Toast.makeText(requireContext(), getString(R.string.cancel_save), Toast.LENGTH_SHORT).show()
@@ -165,7 +178,7 @@ class ToolsFragment : Fragment() {
                     if (savedUris.isNotEmpty()) {
                         showMultiFilesSuccessDialog(folderName, pendingFilesList, "image/jpeg")
                     } else {
-                        Toast.makeText(requireContext(), "Lỗi khi lưu các ảnh vào thư mục", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), getString(R.string.save_images_to_folder_error), Toast.LENGTH_SHORT).show()
                     }
                 } else if (pendingSingleFile != null) {
                     val file = pendingSingleFile!!
@@ -175,10 +188,10 @@ class ToolsFragment : Fragment() {
                             locationDesc = folderName,
                             file = file,
                             mimeType = pendingMimeType,
-                            title = "Đã lưu $pendingFileTypeTitle thành công"
+                            title = getString(R.string.saved_file_type_success_format, pendingFileTypeTitle)
                         )
                     } else {
-                        Toast.makeText(requireContext(), "Lỗi khi lưu tập tin vào thư mục", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), getString(R.string.save_file_to_folder_error), Toast.LENGTH_SHORT).show()
                     }
                 }
             } else {
@@ -206,7 +219,7 @@ class ToolsFragment : Fragment() {
     private fun setupListeners() {
         // Search icon
         binding.btnSearchTools.setOnClickListener {
-            Toast.makeText(requireContext(), "Tìm kiếm công cụ", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.search_tools_hint), Toast.LENGTH_SHORT).show()
         }
 
         // Subtabs
@@ -226,10 +239,10 @@ class ToolsFragment : Fragment() {
         }
 
         binding.toolIdCard.setOnClickListener {
-            (activity as? MainActivity)?.startGoogleIdCardScan()
+            showIdCardOptionsDialog()
         }
         binding.toolIdCard.setOnLongClickListener {
-            Toast.makeText(requireContext(), "Đang mở Chụp thẻ Siêu Tốc...", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.opening_fast_id_card_scan_toast), Toast.LENGTH_SHORT).show()
             (activity as? MainActivity)?.startFastIdCardScan()
             true
         }
@@ -243,34 +256,45 @@ class ToolsFragment : Fragment() {
         }
 
         // Mục "Chuyển đổi"
+        binding.toolConvertCreatePdf.setOnClickListener {
+            Toast.makeText(requireContext(), getString(R.string.select_images_create_pdf_prompt), Toast.LENGTH_SHORT).show()
+            createPdfPickerLauncher.launch("image/*")
+        }
+
         binding.toolConvertWord.setOnClickListener {
-            Toast.makeText(requireContext(), "Chọn ảnh để trích xuất chữ và tạo file Word", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.tool_prompt_word), Toast.LENGTH_SHORT).show()
             wordPickerLauncher.launch("image/*")
         }
 
         binding.toolConvertExcel.setOnClickListener {
-            Toast.makeText(requireContext(), "Chọn ảnh hóa đơn / bảng biểu để xuất Excel", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.tool_prompt_excel), Toast.LENGTH_SHORT).show()
             excelPickerLauncher.launch("image/*")
         }
 
         binding.toolConvertPpt.setOnClickListener {
-            Toast.makeText(requireContext(), "Chọn các ảnh để xuất thành bài trình chiếu PPT", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.tool_prompt_ppt), Toast.LENGTH_SHORT).show()
             pptPickerLauncher.launch("image/*")
         }
 
         binding.toolConvertPdfToImages.setOnClickListener {
-            Toast.makeText(requireContext(), "Chọn file PDF để tách thành các ảnh", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.tool_prompt_pdf_to_images), Toast.LENGTH_SHORT).show()
             pdfToImgPickerLauncher.launch(arrayOf("application/pdf"))
         }
 
         binding.toolConvertPdfToLongImage.setOnClickListener {
-            Toast.makeText(requireContext(), "Chọn file PDF để ghép thành 1 ảnh dài", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.tool_prompt_pdf_to_long_image), Toast.LENGTH_SHORT).show()
             pdfToLongImgPickerLauncher.launch(arrayOf("application/pdf"))
         }
     }
 
+    private fun handleCreatePdfFromImages(uris: List<Uri>) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            DocumentImportHelper.importImagesToPdf(requireContext(), uris, repo)
+        }
+    }
+
     private fun handleImportImages(uris: List<Uri>) {
-        showLoading("Đang nhập và tạo tài liệu từ ${uris.size} ảnh...")
+        showLoading(getString(R.string.importing_and_creating_doc_format, uris.size))
         viewLifecycleOwner.lifecycleScope.launch {
             val imgDir = FileUtils.getImagesDir(requireContext())
             val pagePaths = mutableListOf<String>()
@@ -292,7 +316,7 @@ class ToolsFragment : Fragment() {
 
             val docItem = DocumentItem(
                 id = docId,
-                title = "Ảnh đã nhập " + FileUtils.formatDate(System.currentTimeMillis()),
+                title = getString(R.string.imported_images_title) + " " + FileUtils.formatDate(System.currentTimeMillis()),
                 pdfPath = pdfFile.absolutePath,
                 thumbnailPath = pagePaths.firstOrNull(),
                 pagePaths = pagePaths,
@@ -303,7 +327,7 @@ class ToolsFragment : Fragment() {
 
             repo.addDocument(docItem)
             hideLoading()
-            Toast.makeText(requireContext(), "Đã nhập ${pagePaths.size} ảnh thành công!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.imported_images_success_format, pagePaths.size), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -329,94 +353,146 @@ class ToolsFragment : Fragment() {
             repo.addDocument(docItem)
             Toast.makeText(requireContext(), getString(R.string.file_imported, fileName), Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(requireContext(), "Không thể nhập tập tin", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.import_file_failed), Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun convertToWordFromUri(uri: Uri) {
-        val langCode = AppLanguageManager.getCurrentLanguageCode(requireContext())
-        val langInfo = AppLanguageManager.getLanguage(langCode)
-        val langLabel = if (langInfo?.isTesseractPrimary == true) "Tiếng Việt + Tiếng Anh" else (langInfo?.nativeName ?: "Đa ngôn ngữ")
+        val ctx = context ?: return
+        if (!TextRecognitionHelper.isOcrDocumentLanguageConfigured(ctx)) {
+            OcrLanguageSelectionDialog(requireActivity()) {
+                convertToWordFromUri(uri)
+            }.show()
+            return
+        }
+
+        val ocrRequest = TextRecognitionHelper.getDefaultOcrRequest(requireContext())
+        val isTessPrimary = (ocrRequest.languageTag == "vi" || ocrRequest.languageTag == "en")
+        val langLabel = if (isTessPrimary) {
+            getString(R.string.ocr_lang_vi_en)
+        } else {
+            TextRecognitionHelper.getOcrDocumentLanguageDisplayName(requireContext(), ocrRequest.languageTag)
+        }
         
-        showLoading("Đang nhận diện văn bản ($langLabel)...")
-        TextRecognitionHelper.recognizeTextFromUri(
+        showLoading(getString(R.string.recognizing_text_with_lang_format, langLabel))
+        TextRecognitionHelper.recognizeTextFromUriStructuredCallback(
             requireContext(),
             uri,
-            onSuccess = { text ->
-                viewLifecycleOwner.lifecycleScope.launch {
-                    val exportDir = FileUtils.getExportsDir(requireContext())
-                    val timeStamp = SimpleDateFormat("dd-MM-yyyy_HH-mm", Locale.getDefault()).format(Date())
-                    val file = File(exportDir, "Word_$timeStamp.doc")
-                    val success = PdfConverterHelper.exportTextToWord(
-                        text = text,
-                        outputFile = file,
-                        addWatermark = WatermarkHelper.shouldApplyWatermark(requireContext())
-                    )
-                    hideLoading()
-
-                    if (success && file.exists()) {
-                        promptSaveSingleFile(
-                            file = file,
-                            mimeType = "application/msword",
-                            fileTypeTitle = "Word",
-                            iconRes = R.drawable.ic_word,
-                            extension = "doc"
+            ocrRequest
+        ) { result ->
+            if (!isAdded || context == null) {
+                hideLoading()
+                return@recognizeTextFromUriStructuredCallback
+            }
+            when (result) {
+                is OcrResult.Success -> {
+                    val text = result.text.trim()
+                    if (text.isBlank()) {
+                        hideLoading()
+                        Toast.makeText(requireContext(), getString(R.string.no_text_found), Toast.LENGTH_SHORT).show()
+                        return@recognizeTextFromUriStructuredCallback
+                    }
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        val exportDir = FileUtils.getExportsDir(requireContext())
+                        val timeStamp = SimpleDateFormat("dd-MM-yyyy_HH-mm", Locale.ROOT).format(Date())
+                        val file = File(exportDir, "Word_$timeStamp.doc")
+                        val success = PdfConverterHelper.exportTextToWord(
+                            text = text,
+                            outputFile = file,
+                            addWatermark = WatermarkHelper.shouldApplyWatermark(requireContext())
                         )
-                    } else {
-                        Toast.makeText(requireContext(), "Lỗi khi tạo tập tin Word", Toast.LENGTH_SHORT).show()
+                        hideLoading()
+
+                        if (success && file.exists()) {
+                            promptSaveSingleFile(
+                                file = file,
+                                mimeType = "application/msword",
+                                fileTypeTitle = "Word",
+                                iconRes = R.drawable.ic_word,
+                                extension = "doc"
+                            )
+                        } else {
+                            Toast.makeText(requireContext(), getString(R.string.create_word_failed), Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
-            },
-            onError = {
-                hideLoading()
-                Toast.makeText(requireContext(), "Không thể nhận diện văn bản", Toast.LENGTH_SHORT).show()
+                else -> {
+                    hideLoading()
+                    TextRecognitionHelper.showOcrErrorToast(requireContext(), result)
+                }
             }
-        )
+        }
     }
 
     private fun convertToExcelFromUri(uri: Uri) {
-        val langCode = AppLanguageManager.getCurrentLanguageCode(requireContext())
-        val langInfo = AppLanguageManager.getLanguage(langCode)
-        val langLabel = if (langInfo?.isTesseractPrimary == true) "Tiếng Việt + Tiếng Anh" else (langInfo?.nativeName ?: "Đa ngôn ngữ")
+        val ctx = context ?: return
+        if (!TextRecognitionHelper.isOcrDocumentLanguageConfigured(ctx)) {
+            OcrLanguageSelectionDialog(requireActivity()) {
+                convertToExcelFromUri(uri)
+            }.show()
+            return
+        }
+
+        val ocrRequest = TextRecognitionHelper.getDefaultOcrRequest(requireContext())
+        val isTessPrimary = (ocrRequest.languageTag == "vi" || ocrRequest.languageTag == "en")
+        val langLabel = if (isTessPrimary) {
+            getString(R.string.ocr_lang_vi_en)
+        } else {
+            TextRecognitionHelper.getOcrDocumentLanguageDisplayName(requireContext(), ocrRequest.languageTag)
+        }
         
-        showLoading("Đang nhận diện bảng tính ($langLabel)...")
-        TextRecognitionHelper.recognizeTextFromUri(
+        showLoading(getString(R.string.recognizing_spreadsheet_with_lang_format, langLabel))
+        TextRecognitionHelper.recognizeTextFromUriStructuredCallback(
             requireContext(),
             uri,
-            onSuccess = { text ->
-                viewLifecycleOwner.lifecycleScope.launch {
-                    val exportDir = FileUtils.getExportsDir(requireContext())
-                    val timeStamp = SimpleDateFormat("dd-MM-yyyy_HH-mm", Locale.getDefault()).format(Date())
-                    val file = File(exportDir, "Excel_$timeStamp.csv")
-                    val success = PdfConverterHelper.exportTextToExcel(
-                        text = text,
-                        outputFile = file,
-                        addWatermark = WatermarkHelper.shouldApplyWatermark(requireContext())
-                    )
-                    hideLoading()
-
-                    if (success && file.exists()) {
-                        promptSaveSingleFile(
-                            file = file,
-                            mimeType = "text/csv",
-                            fileTypeTitle = "Excel",
-                            iconRes = R.drawable.ic_excel,
-                            extension = "csv"
+            ocrRequest
+        ) { result ->
+            if (!isAdded || context == null) {
+                hideLoading()
+                return@recognizeTextFromUriStructuredCallback
+            }
+            when (result) {
+                is OcrResult.Success -> {
+                    val text = result.text.trim()
+                    if (text.isBlank()) {
+                        hideLoading()
+                        Toast.makeText(requireContext(), getString(R.string.no_text_found), Toast.LENGTH_SHORT).show()
+                        return@recognizeTextFromUriStructuredCallback
+                    }
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        val exportDir = FileUtils.getExportsDir(requireContext())
+                        val timeStamp = SimpleDateFormat("dd-MM-yyyy_HH-mm", Locale.ROOT).format(Date())
+                        val file = File(exportDir, "Excel_$timeStamp.csv")
+                        val success = PdfConverterHelper.exportTextToExcel(
+                            text = text,
+                            outputFile = file,
+                            addWatermark = WatermarkHelper.shouldApplyWatermark(requireContext())
                         )
-                    } else {
-                        Toast.makeText(requireContext(), "Lỗi khi tạo tập tin Excel", Toast.LENGTH_SHORT).show()
+                        hideLoading()
+
+                        if (success && file.exists()) {
+                            promptSaveSingleFile(
+                                file = file,
+                                mimeType = "text/csv",
+                                fileTypeTitle = "Excel",
+                                iconRes = R.drawable.ic_excel,
+                                extension = "csv"
+                            )
+                        } else {
+                            Toast.makeText(requireContext(), getString(R.string.create_excel_failed), Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
-            },
-            onError = {
-                hideLoading()
-                Toast.makeText(requireContext(), "Không thể nhận diện văn bản", Toast.LENGTH_SHORT).show()
+                else -> {
+                    hideLoading()
+                    TextRecognitionHelper.showOcrErrorToast(requireContext(), result)
+                }
             }
-        )
+        }
     }
 
     private fun convertToPptFromUris(uris: List<Uri>) {
-        showLoading("Đang tạo bài thuyết trình PPT từ ${uris.size} ảnh...")
+        showLoading(getString(R.string.creating_ppt_from_images_format, uris.size))
         viewLifecycleOwner.lifecycleScope.launch {
             val imgDir = FileUtils.getImagesDir(requireContext())
             val imagePaths = mutableListOf<String>()
@@ -431,7 +507,7 @@ class ToolsFragment : Fragment() {
             }
 
             val exportDir = FileUtils.getExportsDir(requireContext())
-            val timeStamp = SimpleDateFormat("dd-MM-yyyy_HH-mm", Locale.getDefault()).format(Date())
+            val timeStamp = SimpleDateFormat("dd-MM-yyyy_HH-mm", Locale.ROOT).format(Date())
             val file = File(exportDir, "Presentation_$timeStamp.html")
             val success = PdfConverterHelper.exportToPpt(
                 imagePaths = imagePaths,
@@ -449,19 +525,19 @@ class ToolsFragment : Fragment() {
                     extension = "html"
                 )
             } else {
-                Toast.makeText(requireContext(), "Không thể tạo bài thuyết trình", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.cannot_create_ppt), Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     private fun convertPdfToImagesFromUri(uri: Uri) {
-        showLoading("Đang tách các trang PDF thành ảnh...")
+        showLoading(getString(R.string.extracting_pdf_to_images_loading))
         viewLifecycleOwner.lifecycleScope.launch {
             val docDir = FileUtils.getDocumentsDir(requireContext())
             val pdfFile = FileUtils.copyUriToAppStorage(requireContext(), uri, docDir, "temp_pdf")
             if (pdfFile == null) {
                 hideLoading()
-                Toast.makeText(requireContext(), "Không thể đọc tệp PDF", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.cannot_read_pdf_file), Toast.LENGTH_SHORT).show()
                 return@launch
             }
             val exportDir = FileUtils.getExportsDir(requireContext())
@@ -473,27 +549,27 @@ class ToolsFragment : Fragment() {
                 promptSaveMultiFiles(
                     files = fileList,
                     mimeType = "image/jpeg",
-                    fileTypeTitle = "Ảnh từ PDF",
+                    fileTypeTitle = getString(R.string.pdf_extracted_images_title),
                     iconRes = R.drawable.ic_pdf_to_img
                 )
             } else {
-                Toast.makeText(requireContext(), "Không thể tách ảnh từ PDF", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.cannot_extract_images_from_pdf), Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     private fun convertPdfToLongImageFromUri(uri: Uri) {
-        showLoading("Đang ghép các trang PDF thành một ảnh dài...")
+        showLoading(getString(R.string.merging_pdf_to_long_image_loading))
         viewLifecycleOwner.lifecycleScope.launch {
             val docDir = FileUtils.getDocumentsDir(requireContext())
             val pdfFile = FileUtils.copyUriToAppStorage(requireContext(), uri, docDir, "temp_pdf")
             if (pdfFile == null) {
                 hideLoading()
-                Toast.makeText(requireContext(), "Không thể đọc tệp PDF", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.cannot_read_pdf_file), Toast.LENGTH_SHORT).show()
                 return@launch
             }
             val exportDir = FileUtils.getExportsDir(requireContext())
-            val timeStamp = SimpleDateFormat("dd-MM-yyyy_HH-mm", Locale.getDefault()).format(Date())
+            val timeStamp = SimpleDateFormat("dd-MM-yyyy_HH-mm", Locale.ROOT).format(Date())
             val longImgFile = File(exportDir, "LongImage_$timeStamp.jpg")
 
             val success = PdfConverterHelper.convertPdfToLongImage(
@@ -508,12 +584,12 @@ class ToolsFragment : Fragment() {
                 promptSaveSingleFile(
                     file = longImgFile,
                     mimeType = "image/jpeg",
-                    fileTypeTitle = "Ảnh dài",
+                    fileTypeTitle = getString(R.string.long_image_title),
                     iconRes = R.drawable.ic_pdf_to_long_img,
                     extension = "jpg"
                 )
             } else {
-                Toast.makeText(requireContext(), "Không thể tạo ảnh dài từ PDF", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.cannot_create_long_image_from_pdf), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -528,8 +604,8 @@ class ToolsFragment : Fragment() {
         val defaultName = file.name
         SaveExportDialog(
             context = requireContext(),
-            title = "Chuyển đổi $fileTypeTitle hoàn tất",
-            description = "Tập tin đã sẵn sàng. Vui lòng chọn nơi lưu trữ:",
+            title = getString(R.string.convert_file_type_complete_format, fileTypeTitle),
+            description = getString(R.string.file_ready_choose_location),
             iconRes = iconRes,
             defaultName = defaultName,
             extension = extension
@@ -548,10 +624,10 @@ class ToolsFragment : Fragment() {
                             locationDesc = getString(R.string.saved_to_downloads_desc),
                             file = file,
                             mimeType = mimeType,
-                            title = "Đã lưu $fileTypeTitle thành công"
+                            title = getString(R.string.saved_file_type_success_format, fileTypeTitle)
                         )
                     } else {
-                        Toast.makeText(requireContext(), "Không thể lưu vào Tải về", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), getString(R.string.cannot_save_to_downloads), Toast.LENGTH_SHORT).show()
                     }
                 }
                 SaveExportDialog.SaveAction.SHARE -> {
@@ -569,10 +645,10 @@ class ToolsFragment : Fragment() {
     ) {
         SaveExportDialog(
             context = requireContext(),
-            title = "Tách ảnh từ PDF hoàn tất",
-            description = "Đã trích xuất ${files.size} hình ảnh từ PDF. Vui lòng chọn nơi lưu trữ:",
+            title = getString(R.string.extract_pdf_images_complete),
+            description = getString(R.string.extracted_images_count_desc_format, files.size),
             iconRes = iconRes,
-            filesInfo = "Đã tạo ${files.size} hình ảnh (.jpg)"
+            filesInfo = getString(R.string.created_images_count_format, files.size)
         ) { _, action ->
             when (action) {
                 SaveExportDialog.SaveAction.CHOOSE_FOLDER -> {
@@ -588,7 +664,7 @@ class ToolsFragment : Fragment() {
                             mimeType = mimeType
                         )
                     } else {
-                        Toast.makeText(requireContext(), "Không thể lưu vào Tải về", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), getString(R.string.cannot_save_to_downloads), Toast.LENGTH_SHORT).show()
                     }
                 }
                 SaveExportDialog.SaveAction.SHARE -> {
@@ -602,11 +678,11 @@ class ToolsFragment : Fragment() {
         locationDesc: String,
         file: File,
         mimeType: String,
-        title: String = "Lưu tập tin thành công"
+        title: String = getString(R.string.save_file_success)
     ) {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(title)
-            .setMessage("Tập tin đã được lưu trữ thành công:\n📁 Vị trí: $locationDesc\n📄 Tập tin: ${file.name}\n\nBạn có muốn mở xem ngay hoặc chia sẻ không?")
+            .setMessage(getString(R.string.save_success_dialog_message_format, locationDesc, file.name))
             .setPositiveButton(getString(R.string.open_file)) { _, _ ->
                 openFile(file, mimeType)
             }
@@ -624,7 +700,7 @@ class ToolsFragment : Fragment() {
     ) {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(R.string.save_file_success))
-            .setMessage("Đã lưu ${files.size} hình ảnh thành công vào thư mục:\n📁 $folderName\n\nBạn có muốn xem ảnh đầu tiên hoặc chia sẻ không?")
+            .setMessage(getString(R.string.save_multi_images_success_dialog_message_format, files.size, folderName))
             .setPositiveButton(getString(R.string.open_file)) { _, _ ->
                 files.firstOrNull()?.let { openFile(it, mimeType) }
             }
@@ -646,9 +722,9 @@ class ToolsFragment : Fragment() {
                 setDataAndType(uri, mimeType)
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
-            startActivity(Intent.createChooser(viewIntent, "Mở tập tin bằng..."))
+            startActivity(Intent.createChooser(viewIntent, getString(R.string.open_file_with_chooser)))
         } catch (e: Exception) {
-            Toast.makeText(requireContext(), "Không tìm thấy ứng dụng phù hợp để mở file", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.no_app_to_open_file), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -664,9 +740,9 @@ class ToolsFragment : Fragment() {
                 putExtra(Intent.EXTRA_STREAM, uri)
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
-            startActivity(Intent.createChooser(shareIntent, "Chia sẻ kết quả"))
+            startActivity(Intent.createChooser(shareIntent, getString(R.string.share_result_chooser)))
         } catch (e: Exception) {
-            Toast.makeText(requireContext(), "Không thể chia sẻ tập tin", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.cannot_share_file), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -689,7 +765,7 @@ class ToolsFragment : Fragment() {
             }
             startActivity(Intent.createChooser(shareIntent, getString(R.string.share)))
         } catch (e: Exception) {
-            Toast.makeText(requireContext(), "Không thể chia sẻ tập tin", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.cannot_share_file), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -725,6 +801,21 @@ class ToolsFragment : Fragment() {
         progressDialog = null
     }
 
+    private fun showIdCardOptionsDialog() {
+        IdCardOptionsDialog(
+            context = requireContext(),
+            onCameraScan = {
+                (activity as? MainActivity)?.startGoogleIdCardScan()
+            },
+            onFastScan = {
+                (activity as? MainActivity)?.startFastIdCardScan()
+            },
+            onGalleryPick = {
+                idCardPickerLauncher.launch("image/*")
+            }
+        ).show()
+    }
+
     private fun handleImportIdCardImages(uris: List<Uri>) {
         viewLifecycleOwner.lifecycleScope.launch {
             val sessionId = UUID.randomUUID().toString()
@@ -753,7 +844,7 @@ class ToolsFragment : Fragment() {
                     backPath = backFile
                 )
             } else {
-                Toast.makeText(requireContext(), "Không thể đọc ảnh thẻ đã chọn", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.cannot_read_id_card_images), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -800,7 +891,7 @@ class ToolsFragment : Fragment() {
 
     private fun handleQrFromGallery(uri: Uri) {
         val ctx = context ?: return
-        Toast.makeText(ctx, "Đang đọc mã QR...", Toast.LENGTH_SHORT).show()
+        Toast.makeText(ctx, getString(R.string.reading_qr_code_toast), Toast.LENGTH_SHORT).show()
         QrScannerHelper.scanFromUri(
             context = ctx,
             uri = uri,
